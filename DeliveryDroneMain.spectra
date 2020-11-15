@@ -2,4 +2,71 @@ import "./imports/DwyerPatterns.spectra"
 
 spec DeliveryDronMain
 
-env boolean hi;
+// types
+
+type Cord = Int(0..GRID_DIM);
+// House[0] = In , House[1] = Out
+
+// Defines
+// drone[0] is row , drone[1] is column
+// Specify locations of warehouse, charging station and houses on the grid
+define
+	GRID_DIM := 4;
+	atWarehouse := drone[0] = 4 & drone[1] = 4;
+	atChargingStation := drone[0] = 3 & drone[1] = 4;
+	atHouse0 := drone[0] = 0 & drone[1] = 0;
+	atHouse1 := drone[0] = 0 & drone[1] = 2;
+	atHouse2 := drone[0] = 2 & drone[1] = 0;
+	atHouse3 := drone[0] = 2 & drone[1] = 2;
+
+define
+	NUM_OF_HOUSES := 4;
+	NUM_OF_HOUSES_PLUS_ONE := 5;
+	NUM_OF_HOUSES_MINUS_ONE := 3;
+	
+
+//predicates
+predicate moveDir(Cord pos):
+  pos+1 = next(pos) |
+  pos   = next(pos) |
+  pos-1 = next(pos); 
+
+// env variables
+env boolean[NUM_OF_HOUSES] outHousePackages;
+env boolean[NUM_OF_HOUSES] outWarehousePackages;
+
+// sys variables
+sys Cord[2] drone;
+sys boolean[NUM_OF_HOUSES_PLUS_ONE] droneToHouseCap;
+sys Int(0..NUM_OF_HOUSES) droneToWarehouseCap;
+
+// assumptions
+// Init houses input and output to be empty at start of the simulation
+//asm initHousesEmpty:
+//forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
+//	forall j in Int(0..1) .
+//		packagesArrived[i][j] = false;
+
+
+/* MONITORS TO WATCH PACKAGES WAIT TILL PICKED UP */
+//monitor boolean packageOutHouse0{
+//	!packageOutHouse0;
+//	G next(packageOutHouse0) = packagesArrived[0][1] | (packageOutHouse0 & !atHouse0);
+//}
+//
+//monitor boolean packageInHouse0{
+//	!packageInHouse0;
+//	G next(packageInHouse0) = packagesArrived[0][0] | (toHousePackages[0] & !); 
+//}
+// more monitors to come
+
+
+// guarantees
+
+// Init location of drone at the start of the simulation
+gar startAtChargingStation:
+	atChargingStation;
+	
+// Ensure at every step drone has to decide if to make a move in both row and col directions
+gar droneAlwaysMoves:
+	G moveDir(drone[0]) & moveDir(drone[1]);

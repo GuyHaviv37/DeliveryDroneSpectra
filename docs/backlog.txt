@@ -1,0 +1,19 @@
+Tasks:
+
+Enviorment
+T1: Define variables that notify when packages arrive.
+T2: Write assumptions that init all outgoing packages as false.
+T3: Write monitors for waiting packages - that wait if package arrived 
+	or yet to be picked up by drone (SAME CONDITIONS AS DRONE PICKUP)
+
+
+System:
+T1: Define how to manage drone capacity
+T2: Define a counter for # of packages on the drone
+T3: Write guarantees on when drone can pick up packages (from warehouse / houses)
+T4: Write guarantee that drone can pick up at most one package each state
+T5: Make sure to update drone capacity variables on each pick up / drop-off
+
+Looking ahead:
+- Patterns that guarantee packages are delivered.
+- Charging Station trigger
