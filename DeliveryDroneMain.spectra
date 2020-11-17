@@ -23,6 +23,7 @@ define
 	NUM_OF_HOUSES := 4;
 	NUM_OF_HOUSES_PLUS_ONE := 5;
 	NUM_OF_HOUSES_MINUS_ONE := 3;
+	CAPACITY := 2;
 	
 
 //predicates
@@ -30,36 +31,67 @@ predicate moveDir(Cord pos):
   pos+1 = next(pos) |
   pos   = next(pos) |
   pos-1 = next(pos); 
-
+ 
+ 
 // env variables
 env boolean[NUM_OF_HOUSES] outHousePackages;
 env boolean[NUM_OF_HOUSES] outWarehousePackages;
+
 
 // sys variables
 sys Cord[2] drone;
 sys boolean[NUM_OF_HOUSES_PLUS_ONE] droneToHouseCap;
 sys Int(0..NUM_OF_HOUSES) droneToWarehouseCap;
+sys boolean[NUM_OF_HOUSES] pickUpThisStateFromWareHouse; 
+sys boolean[NUM_OF_HOUSES] pickUpThisStateFromHouse; 
 
 // assumptions
-// Init houses input and output to be empty at start of the simulation
-//asm initHousesEmpty:
-//forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
-//	forall j in Int(0..1) .
-//		packagesArrived[i][j] = false;
+// Init houses output to be empty at start of the simulation
+asm initHousesEmpty:
+forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
+		outHousePackages[i] = false;
 
+// assumptions
+// Init houses output to be empty at start of the simulation
+asm initWarehouseEmpty:
+forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
+		outWarehousePackages[i] = false;
+		
+/* MONITORS TO WATCH PACKAGES WAIT TILL PICKED UP FROM OUT-HOUSE*/
+monitor boolean waitingPackageOutHouse0{
+	!waitingPackageOutHouse0;
+	G next(waitingPackageOutHouse0) = outHousePackages[0]  | (waitingPackageOutHouse0 & !pickUpThisStateFromWareHouse[0]);
+}
+monitor boolean waitingPackageOutHouse1{
+	!waitingPackageOutHouse1;
+	G next(waitingPackageOutHouse1) = outHousePackages[1]  | (waitingPackageOutHouse1 & !pickUpThisStateFromWareHouse[1]);
+}
+monitor boolean waitingPackageOutHouse2{
+	!waitingPackageOutHouse2;
+	G next(waitingPackageOutHouse2) = outHousePackages[2]  | (waitingPackageOutHouse2 & !pickUpThisStateFromWareHouse[2]);
+}
+monitor boolean waitingPackageOutHouse3{
+	!waitingPackageOutHouse3;
+	G next(waitingPackageOutHouse3) = outHousePackages[3]  | (waitingPackageOutHouse3 & !pickUpThisStateFromWareHouse[3]);
+}
 
-/* MONITORS TO WATCH PACKAGES WAIT TILL PICKED UP */
-//monitor boolean packageOutHouse0{
-//	!packageOutHouse0;
-//	G next(packageOutHouse0) = packagesArrived[0][1] | (packageOutHouse0 & !atHouse0);
-//}
-//
-//monitor boolean packageInHouse0{
-//	!packageInHouse0;
-//	G next(packageInHouse0) = packagesArrived[0][0] | (toHousePackages[0] & !); 
-//}
-// more monitors to come
-
+/* MONITORS TO WATCH PACKAGES WAIT TILL PICKED UP FROM WAREHOUSE*/
+monitor boolean waitingPackageInWarehouseToHouse0{
+	!waitingPackageInWarehouseToHouse0;
+	G next(waitingPackageInWarehouseToHouse0) = outWarehousePackages[0] | (waitingPackageInWarehouseToHouse0 & !pickUpThisStateFromWareHouse[0]); 
+}
+monitor boolean waitingPackageInWarehouseToHouse1{
+	!waitingPackageInWarehouseToHouse1;
+	G next(waitingPackageInWarehouseToHouse1) = outWarehousePackages[1] | (waitingPackageInWarehouseToHouse1 & !pickUpThisStateFromWareHouse[1]); 
+}
+monitor boolean waitingPackageInWarehouseToHouse2{
+	!waitingPackageInWarehouseToHouse2;
+	G next(waitingPackageInWarehouseToHouse2) = outWarehousePackages[2] | (waitingPackageInWarehouseToHouse2 & !pickUpThisStateFromWareHouse[2]); 
+}
+monitor boolean waitingPackageInWarehouseToHouse3{
+	!waitingPackageInWarehouseToHouse3;
+	G next(waitingPackageInWarehouseToHouse3) = outWarehousePackages[3] | (waitingPackageInWarehouseToHouse3 & !pickUpThisStateFromWareHouse[3]); 
+}
 
 // guarantees
 
@@ -70,3 +102,32 @@ gar startAtChargingStation:
 // Ensure at every step drone has to decide if to make a move in both row and col directions
 gar droneAlwaysMoves:
 	G moveDir(drone[0]) & moveDir(drone[1]);
+
+//can pick up only if droneCapCounter < CAPACITY
+// gar ......
+
+//cannot pick up from warehouse if it is not atWarehouse or there is no a waiting package there
+gar cannotPickUpFromWarehouse:
+  G (!atWarehouse) | (!waitingPackageInWarehouseToHouse0) -> next(pickUpThisStateFromWareHouse[0])= false &
+	(!atWarehouse) | (!waitingPackageInWarehouseToHouse1) -> next(pickUpThisStateFromWareHouse[1])= false &
+	(!atWarehouse) | (!waitingPackageInWarehouseToHouse2) -> next(pickUpThisStateFromWareHouse[2])= false &
+	(!atWarehouse) | (!waitingPackageInWarehouseToHouse3) -> next(pickUpThisStateFromWareHouse[3])= false;
+		
+		
+//cannot pick up from house only if it is not athouse and there is not a waiting package there
+gar cannotPickUpFromHouse:
+	G (!atHouse0) | (!waitingPackageOutHouse0) -> next(pickUpThisStateFromHouse[0])= false &
+	  (!atHouse1) | (!waitingPackageOutHouse1) -> next(pickUpThisStateFromHouse[1])= false &
+	  (!atHouse2) | (!waitingPackageOutHouse2) -> next(pickUpThisStateFromHouse[2])= false &
+	  (!atHouse3) | (!waitingPackageOutHouse3) -> next(pickUpThisStateFromHouse[3])= false;
+		
+gar G pRespondsToS(pickUpThisStateFromHouse[0], waitingPackageOutHouse0);
+gar G pRespondsToS(pickUpThisStateFromHouse[1], waitingPackageOutHouse1);
+gar G pRespondsToS(pickUpThisStateFromHouse[2], waitingPackageOutHouse2);
+gar G pRespondsToS(pickUpThisStateFromHouse[3], waitingPackageOutHouse3);
+
+// can pick only one package at a time
+gar G pickUpThisStateFromWareHouse[0] -> !pickUpThisStateFromWareHouse[1] & ! pickUpThisStateFromWareHouse[2] & !pickUpThisStateFromWareHouse[3];
+gar G pickUpThisStateFromWareHouse[1] -> !pickUpThisStateFromWareHouse[0] & ! pickUpThisStateFromWareHouse[2] & !pickUpThisStateFromWareHouse[3];
+gar G pickUpThisStateFromWareHouse[2] -> !pickUpThisStateFromWareHouse[1] & ! pickUpThisStateFromWareHouse[0] & !pickUpThisStateFromWareHouse[3];
+gar G pickUpThisStateFromWareHouse[3] -> !pickUpThisStateFromWareHouse[1] & ! pickUpThisStateFromWareHouse[2] & !pickUpThisStateFromWareHouse[0];
