@@ -1,11 +1,16 @@
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
@@ -31,9 +36,10 @@ public class App extends JComponent {
 	int droneToWarehouseCap;
 	boolean[] pickUpThisStateFromWareHouse= new boolean[NUM_OF_HOUSES];
 	boolean[] pickUpThisStateFromHouse= new boolean[NUM_OF_HOUSES];
-
-	//	BufferedImage car;
-	//	BufferedImage ambulance;
+	// simulation variables
+	BufferedImage droneImg;
+	int squareSize = 145;
+	int droneSize = 125;
 
 	Thread thread;
 	void initAllArraysToFalse() {
@@ -117,6 +123,7 @@ public class App extends JComponent {
 		}	
 		System.out.println();
 	}
+	
 	public App() {
 		Thread animationThread = new Thread(new Runnable() {
 			public void run() {
@@ -133,6 +140,7 @@ public class App extends JComponent {
 				updateInputsWithCurrentVal(inputs);
 				printEnvValue();
 				executor.initState(inputs);
+				repaint();
 
 				while (true) {
 
@@ -140,7 +148,8 @@ public class App extends JComponent {
 					updateSysVaribleValue(sysValues);
 					printSysValue();
 					//should paint here!
-					System.out.println("should paint here");
+					//System.out.println("should paint here");
+					repaint();
 					///////
 					getEnvValueFromConsole();
 					updateInputsWithCurrentVal(inputs);
@@ -149,17 +158,69 @@ public class App extends JComponent {
 				}
 			}
 		});
+		try {
+			droneImg = ImageIO.read(new File("img/drone.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		animationThread.start();
 		repaint();
 	}
+	
+	@Override
+	public void paintComponent(Graphics g) {
+		int row;
+		int col;
+		g.setFont(new Font("MV Boli",Font.BOLD,14));
+		// fill "grass" background
+		g.setColor(new Color(50,160,70));
+		g.fillRect(0, 0, 600, 600);
+		
+		// "paint houses"
+		int houseNum = 0;
+		for(row=0;row<=2;row+=2) {
+			for(col=0;col<=2;col+=2) {
+				g.setColor(new Color(50,60,210));
+				g.fillRect(col*squareSize, row*squareSize, squareSize, squareSize);
+				g.setColor(Color.black);
+				g.drawString("House"+(houseNum), col*squareSize + 20, row*squareSize + 20);
+				houseNum++;
+			}
+		}
+		
+		//"paint charging station"
+		g.setColor(Color.yellow);
+		row = 2;
+		col = 3;
+		g.fillRect(col*squareSize, row*squareSize, squareSize, squareSize);
+		g.setColor(Color.black);
+		g.drawString("Charging Station", col*squareSize + 20, row*squareSize + 20);
+		
+		// "paint warehouse"
+		g.setColor(Color.red);
+		row = 3;
+		col = 3;
+		g.fillRect(col*squareSize, row*squareSize, squareSize, squareSize);
+		g.setColor(Color.black);
+		g.drawString("Warehouse", col*squareSize + 20, row*squareSize + 20);
+		
+		// "paint drone"
+		g.drawImage(droneImg, this.drone[1]*squareSize, this.drone[0]*squareSize, droneSize, droneSize, null);
+		
+	}
+	
 	public static void main(String[] args) {
-		System.out.println("Hello drone");
-		JFrame f = new JFrame("Drone Simulator");
-		f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		f.setSize(800, 500);
-		App droneSim = new App();
-		f.setContentPane(droneSim);
-		f.setVisible(true);
+		// Frame init
+		JFrame frame = new JFrame("DeliveryDrone");
+		frame.setSize(594,617);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setResizable(false);
+		frame.setLocationRelativeTo(null);
+		
+		App app = new App();
+		
+		frame.setContentPane(app);
+		frame.setVisible(true);
 	}
 
 }

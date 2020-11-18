@@ -11,7 +11,7 @@ type Cord = Int(0..GRID_DIM);
 // drone[0] is row , drone[1] is column
 // Specify locations of warehouse, charging station and houses on the grid
 define
-	GRID_DIM := 4;
+	GRID_DIM := 3; //actually 3+1
 	
 define
 	atWarehouse := drone[0] = 3 & drone[1] = 3;
