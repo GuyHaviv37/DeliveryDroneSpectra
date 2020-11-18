@@ -144,11 +144,10 @@ gar cannotPickUpFromWarehouse:
 		
 		
 //cannot pick up from house only if it is not athouse and there is not a waiting package there or there's no room in the drone
-gar cannotPickUpFromHouse:
-	G (!atHouse0) | (!waitingPackageOutHouse0) | (!roomForPickup) -> next(pickUpThisStateFromHouse[0])= false &
-	  (!atHouse1) | (!waitingPackageOutHouse1) | (!roomForPickup) -> next(pickUpThisStateFromHouse[1])= false &
-	  (!atHouse2) | (!waitingPackageOutHouse2) | (!roomForPickup) -> next(pickUpThisStateFromHouse[2])= false &
-	  (!atHouse3) | (!waitingPackageOutHouse3) | (!roomForPickup) -> next(pickUpThisStateFromHouse[3])= false;
+gar G (!atHouse0) | (!waitingPackageOutHouse0) | (!roomForPickup) -> next(pickUpThisStateFromHouse[0])= false;
+gar G (!atHouse1) | (!waitingPackageOutHouse1) | (!roomForPickup) -> next(pickUpThisStateFromHouse[1])= false;
+gar G (!atHouse2) | (!waitingPackageOutHouse2) | (!roomForPickup) -> next(pickUpThisStateFromHouse[2])= false;
+gar G (!atHouse3) | (!waitingPackageOutHouse3) | (!roomForPickup) -> next(pickUpThisStateFromHouse[3])= false;
 
 // always eventually pick up a waiting package	
 gar G pRespondsToS(waitingPackageOutHouse0, pickUpThisStateFromHouse[0]);
@@ -161,10 +160,18 @@ gar G pRespondsToS(waitingPackageInWarehouseToHouse2, pickUpThisStateFromWareHou
 gar G pRespondsToS(waitingPackageInWarehouseToHouse3, pickUpThisStateFromWareHouse[3]);
 
 // can pick only one package at a time from the warehouse
-gar G pickUpThisStateFromWareHouse[0] -> !pickUpThisStateFromWareHouse[1] & ! pickUpThisStateFromWareHouse[2] & !pickUpThisStateFromWareHouse[3];
-gar G pickUpThisStateFromWareHouse[1] -> !pickUpThisStateFromWareHouse[0] & ! pickUpThisStateFromWareHouse[2] & !pickUpThisStateFromWareHouse[3];
-gar G pickUpThisStateFromWareHouse[2] -> !pickUpThisStateFromWareHouse[1] & ! pickUpThisStateFromWareHouse[0] & !pickUpThisStateFromWareHouse[3];
-gar G pickUpThisStateFromWareHouse[3] -> !pickUpThisStateFromWareHouse[1] & ! pickUpThisStateFromWareHouse[2] & !pickUpThisStateFromWareHouse[0];
+//gar G pickUpThisStateFromWareHouse[0] -> !pickUpThisStateFromWareHouse[1] & ! pickUpThisStateFromWareHouse[2] & !pickUpThisStateFromWareHouse[3];
+//gar G pickUpThisStateFromWareHouse[1] -> !pickUpThisStateFromWareHouse[0] & ! pickUpThisStateFromWareHouse[2] & !pickUpThisStateFromWareHouse[3];
+//gar G pickUpThisStateFromWareHouse[2] -> !pickUpThisStateFromWareHouse[1] & ! pickUpThisStateFromWareHouse[0] & !pickUpThisStateFromWareHouse[3];
+//gar G pickUpThisStateFromWareHouse[3] -> !pickUpThisStateFromWareHouse[1] & ! pickUpThisStateFromWareHouse[2] & !pickUpThisStateFromWareHouse[0];
+
+predicate onlyOnePickup(Int(0..NUM_OF_HOUSES_MINUS_ONE) picked,Int(0..NUM_OF_HOUSES_MINUS_ONE) notPicked1,Int(0..NUM_OF_HOUSES_MINUS_ONE) notPicked2, Int(0..NUM_OF_HOUSES_MINUS_ONE) notPicked3):
+	pickUpThisStateFromWareHouse[picked] & !pickUpThisStateFromWareHouse[notPicked1] & !pickUpThisStateFromWareHouse[notPicked2] & !pickUpThisStateFromWareHouse[notPicked3];
+
+define noPickups := !pickUpThisStateFromWareHouse[0] & !pickUpThisStateFromWareHouse[1] & !pickUpThisStateFromWareHouse[2] & !pickUpThisStateFromWareHouse[3];
+
+gar onlyOnePickupPerState:
+	 G onlyOnePickup(0,1,2,3) | onlyOnePickup(1,0,2,3) | onlyOnePickup(2,0,1,3) | onlyOnePickup(3,0,1,2) | noPickups;
 
 // positive changes in inventory happen only on pickup
 gar positiveInvChangeOnlyOnPickupFromWarehouse:

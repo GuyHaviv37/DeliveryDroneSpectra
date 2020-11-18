@@ -147,10 +147,9 @@ public class App extends JComponent {
 					sysValues = executor.getCurrOutputs();
 					updateSysVaribleValue(sysValues);
 					printSysValue();
-					//should paint here!
-					//System.out.println("should paint here");
+					
 					repaint();
-					///////
+
 					getEnvValueFromConsole();
 					updateInputsWithCurrentVal(inputs);
 					printEnvValue();
