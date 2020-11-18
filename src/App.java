@@ -37,6 +37,7 @@ public class App extends JComponent {
 	boolean[] pickUpThisStateFromWareHouse= new boolean[NUM_OF_HOUSES];
 	boolean[] pickUpThisStateFromHouse= new boolean[NUM_OF_HOUSES];
 	int totalPackages=0;
+	boolean waitingHouse0;
 	// simulation variables
 	BufferedImage droneImg;
 	int squareSize = 145;
@@ -91,6 +92,7 @@ public class App extends JComponent {
 			pickUpThisStateFromHouse[i] = Boolean.parseBoolean(sysValues.get("pickUpThisStateFromHouse["+Integer.toString(i)+"]"));
 		}	
 		totalPackages =Integer.parseInt(sysValues.get("totalPackages"));
+		waitingHouse0 =Boolean.parseBoolean(sysValues.get("waitingPackageOutHouse0"));
 	}
 	void printEnvValue() {
 		System.out.println("Envirenment varibales");
@@ -110,6 +112,7 @@ public class App extends JComponent {
 		System.out.println("totalPackages= " + totalPackages);
 		System.out.println("drone[0] = " + drone[0] +"  |  drone[1] = " +drone[1]);
 		System.out.println("droneToWarehouseCap = " + droneToWarehouseCap);
+		System.out.println("waitingPackageOutHouse0 = " + waitingHouse0);
 		for(int i=0; i<NUM_OF_HOUSES;i++) {
 			System.out.print("  |  droneToHouseCap["+Integer.toString(i)+"]= ");
 			System.out.print(droneToHouseCap[i]);
