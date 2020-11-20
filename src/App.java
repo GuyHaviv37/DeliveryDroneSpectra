@@ -1,4 +1,6 @@
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -13,6 +15,7 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 import tau.smlab.syntech.controller.executor.ControllerExecutor;
@@ -36,13 +39,16 @@ public class App extends JComponent {
 	int[] drone= new int[2];
 	int[] droneToHouseCap= new int[NUM_OF_HOUSES];
 	int droneToWarehouseCap;
-	boolean[] pickUpThisStateFromWareHouse= new boolean[NUM_OF_HOUSES];
-	boolean[] pickUpThisStateFromHouse= new boolean[NUM_OF_HOUSES];
+//	boolean[] pickUpThisStateFromWareHouse= new boolean[NUM_OF_HOUSES];
+//	boolean[] pickUpThisStateFromHouse= new boolean[NUM_OF_HOUSES];
+	int pickUpThisState;
+	int dropOffThisState;
 	int totalPackages=0;
 	// simulation variables
 	BufferedImage droneImg;
 	int squareSize = 145;
 	int droneSize = 125;
+	int stateNum = 0;
 
 	Thread thread;
 	
@@ -74,8 +80,16 @@ public class App extends JComponent {
 
 					getEnvValueFromConsole();
 					updateInputsWithCurrentVal(inputs);
-					//printEnvValue();
+					printEnvValue();
+					System.out.println(stateNum);
 					executor.updateState(inputs);
+					
+					stateNum++;
+//					try {
+//						Thread.sleep(1000);
+//					} catch (InterruptedException e) {
+//						e.printStackTrace();
+//					}
 				}
 			}
 		});
@@ -110,7 +124,7 @@ public class App extends JComponent {
 						g.setColor(Color.red);
 						g.drawString("Waiting!", col*squareSize + 20, (row+1)*squareSize - 40);
 					}
-					if(pickUpThisStateFromHouse[houseNum]) {
+					if(pickUpThisState == (houseNum+1)) {
 						g.setColor(Color.green);
 						g.drawString("Picked Up!", col*squareSize + 20, (row+1)*squareSize - 20);
 					}					
@@ -134,6 +148,7 @@ public class App extends JComponent {
 		g.fillRect(col*squareSize, row*squareSize, squareSize, squareSize);
 		g.setColor(Color.black);
 		g.drawString("Warehouse", col*squareSize + 20, row*squareSize + 20);
+		
 		// paint warehouse details
 		row = 3;
 		col = 2;
@@ -141,7 +156,7 @@ public class App extends JComponent {
 			g.drawString("WH Details",col*squareSize + 20, row*squareSize + 20);
 			for(houseNum=0;houseNum<4;houseNum++) { 
 				String waiting = Boolean.parseBoolean(sysValues.get("waitingPackageInWarehouseToHouse"+houseNum)) ? "W" : "";
-				String pickedUp = pickUpThisStateFromWareHouse[houseNum] ? "PU" : "";
+				String pickedUp = pickUpThisState == (houseNum+5) ? "PU" : "";
 				g.drawString("H"+houseNum+": "+waiting+" "+pickedUp, col*squareSize + 20, row*squareSize + 20*(houseNum+2));
 			}			
 		}
@@ -155,6 +170,14 @@ public class App extends JComponent {
 		for(houseNum=0;houseNum<4;houseNum++) { 
 			g.drawString("To-H"+houseNum+": "+droneToHouseCap[houseNum], col*squareSize + 20, row*squareSize + 20*(houseNum+4));
 		}	
+		
+		// paint state details
+		row=0;
+		col=3;
+		g.drawString("State Details", col*squareSize + 20, row*squareSize + 20);
+		g.drawString("State #: "+stateNum, col*squareSize + 20, row*squareSize + 40);
+		g.drawString("PUTS: "+pickUpThisState, col*squareSize + 20, row*squareSize + 60);
+		g.drawString("DOTS: "+dropOffThisState, col*squareSize + 20, row*squareSize + 80);
 
 		// "paint drone"
 		g.drawImage(droneImg, this.drone[1]*squareSize, this.drone[0]*squareSize, droneSize, droneSize, null);
@@ -205,22 +228,25 @@ public class App extends JComponent {
 		drone[1] = Integer.parseInt(sysValues.get("drone[1]"));
 		droneToWarehouseCap = Integer.parseInt(sysValues.get("droneToWarehouseCap"));
 		for(int i=0; i<NUM_OF_HOUSES;i++) {
-			droneToHouseCap[i] = Integer.parseInt(sysValues.get("droneToHouseCap["+Integer.toString(i)+"]"));
-			pickUpThisStateFromWareHouse[i] = Boolean.parseBoolean(sysValues.get("pickUpThisStateFromWareHouse["+Integer.toString(i)+"]"));
-			pickUpThisStateFromHouse[i] = Boolean.parseBoolean(sysValues.get("pickUpThisStateFromHouse["+Integer.toString(i)+"]"));
+			droneToHouseCap[i] = Integer.parseInt(sysValues.get("droneToHouseCap"+Integer.toString(i)));
+//			pickUpThisStateFromWareHouse[i] = Boolean.parseBoolean(sysValues.get("pickUpThisStateFromWareHouse["+Integer.toString(i)+"]"));
+//			pickUpThisStateFromHouse[i] = Boolean.parseBoolean(sysValues.get("pickUpThisStateFromHouse["+Integer.toString(i)+"]"));
 		}	
 		totalPackages =Integer.parseInt(sysValues.get("totalPackages"));
+		pickUpThisState = Integer.parseInt(sysValues.get("pickUpThisState"));
+		dropOffThisState = Integer.parseInt(sysValues.get("dropOffThisState"));
+		
 	}
 	void printEnvValue() {
 		System.out.println("Envirenment varibales");
 		for(int i=0; i<NUM_OF_HOUSES;i++) {
 			System.out.print("  |  outHousePackages["+Integer.toString(i)+"]= ");
-			System.out.print(outHousePackages[i]);
+			System.out.print(inputs.get("outHousePackages["+i+"]"));
 		}
 		System.out.println();
 		for(int i=0; i<NUM_OF_HOUSES;i++) {
 			System.out.print("  |  outWarehousePackages["+Integer.toString(i)+"]= ");
-			System.out.print(outWarehousePackages[i]);
+			System.out.print(inputs.get("outWarehousePackages["+i+"]"));
 		}
 		System.out.println();
 	}
@@ -234,29 +260,35 @@ public class App extends JComponent {
 			System.out.print(droneToHouseCap[i]);
 		}
 		System.out.println();
-		for(int i=0; i<NUM_OF_HOUSES;i++) {
-			System.out.print("  |  pickUpThisStateFromWareHouse["+Integer.toString(i)+"]= ");
-			System.out.print(pickUpThisStateFromWareHouse[i]);
-		}
-		System.out.println();
-		for(int i=0; i<NUM_OF_HOUSES;i++) {
-			System.out.print("  |  pickUpThisStateFromHouse["+Integer.toString(i)+"]= ");
-			System.out.print(pickUpThisStateFromHouse[i]);
-		}	
+//		for(int i=0; i<NUM_OF_HOUSES;i++) {
+//			System.out.print("  |  pickUpThisStateFromWareHouse["+Integer.toString(i)+"]= ");
+//			System.out.print(pickUpThisStateFromWareHouse[i]);
+//		}
+//		System.out.println();
+//		for(int i=0; i<NUM_OF_HOUSES;i++) {
+//			System.out.print("  |  pickUpThisStateFromHouse["+Integer.toString(i)+"]= ");
+//			System.out.print(pickUpThisStateFromHouse[i]);
+//		}	
+		System.out.println("pickUpThisState = "+pickUpThisState);
 		System.out.println();
 	}
 	
 	public static void main(String[] args) {
 		// Frame init
 		JFrame frame = new JFrame("DeliveryDrone");
-		frame.setSize(594,617);
+		frame.setSize(894,617);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
+		frame.setLayout(new BorderLayout());
 		
 		App app = new App();
+		app.setPreferredSize(new Dimension(594,617));
+		frame.add(app,BorderLayout.WEST);
 		
-		frame.setContentPane(app);
+		JPanel panel = new MenuPanel(app.outHousePackages,app.outWarehousePackages);
+		frame.add(panel,BorderLayout.EAST);
+		
 		frame.setVisible(true);
 	}
 
