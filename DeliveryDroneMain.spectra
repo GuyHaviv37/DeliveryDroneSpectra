@@ -16,10 +16,10 @@ define
 define
 	atWarehouse := drone[0] = 3 & drone[1] = 3;
 	atChargingStation := drone[0] = 2 & drone[1] = 3;
-	atHouse0 := drone[0] = 0 & drone[1] = 0;
-	atHouse1 := drone[0] = 0 & drone[1] = 2;
-	atHouse2 := drone[0] = 2 & drone[1] = 0;
-	atHouse3 := drone[0] = 2 & drone[1] = 2;
+	atHouse1 := drone[0] = 0 & drone[1] = 0;
+	atHouse2 := drone[0] = 0 & drone[1] = 2;
+	atHouse3 := drone[0] = 2 & drone[1] = 0;
+	atHouse4 := drone[0] = 2 & drone[1] = 2;
 
 define
 	NUM_OF_HOUSES := 4;
@@ -71,32 +71,32 @@ counter droneToWarehouseCap(0..CAPACITY){
 }
 
 // counters for packages from Warehouse -> Houses
-counter droneToHouseCap0(0..CAPACITY){
-	droneToHouseCap0 = 0;
+counter droneToHouseCap1(0..CAPACITY){
+	droneToHouseCap1 = 0;
 	inc: pickUpThisState = 5;
 	dec: dropOffThisState = 1;
 	overflow:false;
 	underflow:false;
 }
 
-counter droneToHouseCap1(0..CAPACITY){
-	droneToHouseCap1 = 0;
+counter droneToHouseCap2(0..CAPACITY){
+	droneToHouseCap2 = 0;
 	inc: pickUpThisState = 6;
 	dec: dropOffThisState = 2;
 	overflow:false;
 	underflow:false;
 }
 
-counter droneToHouseCap2(0..CAPACITY){
-	droneToHouseCap2 = 0;
+counter droneToHouseCap3(0..CAPACITY){
+	droneToHouseCap3 = 0;
 	inc: pickUpThisState = 7;
 	dec: dropOffThisState = 3;
 	overflow:false;
 	underflow:false;
 }
 
-counter droneToHouseCap3(0..CAPACITY){
-	droneToHouseCap3 = 0;
+counter droneToHouseCap4(0..CAPACITY){
+	droneToHouseCap4 = 0;
 	inc: pickUpThisState = 8;
 	dec: dropOffThisState = 4;
 	overflow:false;
@@ -117,39 +117,39 @@ forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
 		outWarehousePackages[i] = false;
 		
 /* MONITORS TO WATCH PACKAGES WAIT TILL PICKED UP FROM OUT-HOUSE*/
-monitor boolean waitingPackageOutHouse0{
-	!waitingPackageOutHouse0;
-	G waitingPackageOutHouse0 = outHousePackages[0]  | PREV(waitingPackageOutHouse0);
-}
 monitor boolean waitingPackageOutHouse1{
 	!waitingPackageOutHouse1;
-	G waitingPackageOutHouse1 = outHousePackages[1]  | PREV(waitingPackageOutHouse1);
+	G waitingPackageOutHouse1 = outHousePackages[0]  | PREV(waitingPackageOutHouse1);
 }
 monitor boolean waitingPackageOutHouse2{
 	!waitingPackageOutHouse2;
-	G waitingPackageOutHouse2 = outHousePackages[2]  | PREV(waitingPackageOutHouse2);
+	G waitingPackageOutHouse2 = outHousePackages[1]  | PREV(waitingPackageOutHouse2);
 }
 monitor boolean waitingPackageOutHouse3{
 	!waitingPackageOutHouse3;
-	G waitingPackageOutHouse3 = outHousePackages[3]  | PREV(waitingPackageOutHouse3);
+	G waitingPackageOutHouse3 = outHousePackages[2]  | PREV(waitingPackageOutHouse3);
+}
+monitor boolean waitingPackageOutHouse4{
+	!waitingPackageOutHouse4;
+	G waitingPackageOutHouse4 = outHousePackages[3]  | PREV(waitingPackageOutHouse4);
 }
 
 /* MONITORS TO WATCH PACKAGES WAIT TILL PICKED UP FROM WAREHOUSE*/
-monitor boolean waitingPackageInWarehouseToHouse0{
-	!waitingPackageInWarehouseToHouse0;
-	G waitingPackageInWarehouseToHouse0 = outWarehousePackages[0] | PREV(waitingPackageInWarehouseToHouse0); 
-}
 monitor boolean waitingPackageInWarehouseToHouse1{
 	!waitingPackageInWarehouseToHouse1;
-	G waitingPackageInWarehouseToHouse1 = outWarehousePackages[1] | PREV(waitingPackageInWarehouseToHouse1); 
+	G waitingPackageInWarehouseToHouse1 = outWarehousePackages[0] | PREV(waitingPackageInWarehouseToHouse1); 
 }
 monitor boolean waitingPackageInWarehouseToHouse2{
 	!waitingPackageInWarehouseToHouse2;
-	G waitingPackageInWarehouseToHouse2 = outWarehousePackages[2] | PREV(waitingPackageInWarehouseToHouse2); 
+	G waitingPackageInWarehouseToHouse2 = outWarehousePackages[1] | PREV(waitingPackageInWarehouseToHouse2); 
 }
 monitor boolean waitingPackageInWarehouseToHouse3{
 	!waitingPackageInWarehouseToHouse3;
-	G waitingPackageInWarehouseToHouse3 = outWarehousePackages[3] | PREV(waitingPackageInWarehouseToHouse3); 
+	G waitingPackageInWarehouseToHouse3 = outWarehousePackages[2] | PREV(waitingPackageInWarehouseToHouse3); 
+}
+monitor boolean waitingPackageInWarehouseToHouse4{
+	!waitingPackageInWarehouseToHouse4;
+	G waitingPackageInWarehouseToHouse4 = outWarehousePackages[3] | PREV(waitingPackageInWarehouseToHouse4); 
 }
 
 // guarantees
@@ -170,38 +170,38 @@ gar droneAlwaysMoves:
 
 
 // guarantees when a pickup can be made + implications on monitor
-gar G pickUpThisState = 1 -> atHouse0 & waitingPackageOutHouse0 & roomForPickup & next(waitingPackageOutHouse0)=false;
-gar G pickUpThisState = 2 -> atHouse1 & waitingPackageOutHouse1 & roomForPickup & next(waitingPackageOutHouse1)=false;
-gar G pickUpThisState = 3 -> atHouse2 & waitingPackageOutHouse2 & roomForPickup & next(waitingPackageOutHouse2)=false;
-gar G pickUpThisState = 4 -> atHouse3 & waitingPackageOutHouse3 & roomForPickup & next(waitingPackageOutHouse3)=false;
+gar G pickUpThisState = 1 -> atHouse1 & waitingPackageOutHouse1 & roomForPickup & next(waitingPackageOutHouse1)=false;
+gar G pickUpThisState = 2 -> atHouse2 & waitingPackageOutHouse2 & roomForPickup & next(waitingPackageOutHouse2)=false;
+gar G pickUpThisState = 3 -> atHouse3 & waitingPackageOutHouse3 & roomForPickup & next(waitingPackageOutHouse3)=false;
+gar G pickUpThisState = 4 -> atHouse4 & waitingPackageOutHouse4 & roomForPickup & next(waitingPackageOutHouse4)=false;
 
-gar G pickUpThisState = 5 -> atWarehouse & waitingPackageInWarehouseToHouse0 & roomForPickup & next(waitingPackageInWarehouseToHouse0)=false;
-gar G pickUpThisState = 6 -> atWarehouse & waitingPackageInWarehouseToHouse1 & roomForPickup & next(waitingPackageInWarehouseToHouse1)=false;
-gar G pickUpThisState = 7 -> atWarehouse & waitingPackageInWarehouseToHouse2 & roomForPickup & next(waitingPackageInWarehouseToHouse2)=false;
-gar G pickUpThisState = 8 -> atWarehouse & waitingPackageInWarehouseToHouse3 & roomForPickup & next(waitingPackageInWarehouseToHouse3)=false;
+gar G pickUpThisState = 5 -> atWarehouse & waitingPackageInWarehouseToHouse1 & roomForPickup & next(waitingPackageInWarehouseToHouse1)=false;
+gar G pickUpThisState = 6 -> atWarehouse & waitingPackageInWarehouseToHouse2 & roomForPickup & next(waitingPackageInWarehouseToHouse2)=false;
+gar G pickUpThisState = 7 -> atWarehouse & waitingPackageInWarehouseToHouse3 & roomForPickup & next(waitingPackageInWarehouseToHouse3)=false;
+gar G pickUpThisState = 8 -> atWarehouse & waitingPackageInWarehouseToHouse4 & roomForPickup & next(waitingPackageInWarehouseToHouse4)=false;
 
 
 // always eventually pick up a waiting package	
-gar pRespondsToS(waitingPackageOutHouse0, pickUpThisState = 1);
-gar pRespondsToS(waitingPackageOutHouse1, pickUpThisState = 2);
-gar pRespondsToS(waitingPackageOutHouse2, pickUpThisState = 3);
-gar pRespondsToS(waitingPackageOutHouse3, pickUpThisState = 4);
-gar pRespondsToS(waitingPackageInWarehouseToHouse0, pickUpThisState = 5);
-gar pRespondsToS(waitingPackageInWarehouseToHouse1, pickUpThisState = 6);
-gar pRespondsToS(waitingPackageInWarehouseToHouse2, pickUpThisState = 7);
-gar pRespondsToS(waitingPackageInWarehouseToHouse3, pickUpThisState = 8);
+gar pRespondsToS(waitingPackageOutHouse1, pickUpThisState = 1);
+gar pRespondsToS(waitingPackageOutHouse2, pickUpThisState = 2);
+gar pRespondsToS(waitingPackageOutHouse3, pickUpThisState = 3);
+gar pRespondsToS(waitingPackageOutHouse4, pickUpThisState = 4);
+gar pRespondsToS(waitingPackageInWarehouseToHouse1, pickUpThisState = 5);
+gar pRespondsToS(waitingPackageInWarehouseToHouse2, pickUpThisState = 6);
+gar pRespondsToS(waitingPackageInWarehouseToHouse3, pickUpThisState = 7);
+gar pRespondsToS(waitingPackageInWarehouseToHouse4, pickUpThisState = 8);
 
 // guarantees when a drop-off can be made
-gar G dropOffThisState = 1 -> atHouse0 & droneToHouseCap0 > 0;
-gar G dropOffThisState = 2 -> atHouse1 & droneToHouseCap1 > 0;
-gar G dropOffThisState = 3 -> atHouse2 & droneToHouseCap2 > 0;
-gar G dropOffThisState = 4 -> atHouse3 & droneToHouseCap3 > 0;
+gar G dropOffThisState = 1 -> atHouse1 & droneToHouseCap1 > 0;
+gar G dropOffThisState = 2 -> atHouse2 & droneToHouseCap2 > 0;
+gar G dropOffThisState = 3 -> atHouse3 & droneToHouseCap3 > 0;
+gar G dropOffThisState = 4 -> atHouse4 & droneToHouseCap4 > 0;
 gar G dropOffThisState = 5 -> atWarehouse & droneToWarehouseCap > 0;
 
 // always eventually drop-off packages that are carried by the drone
-gar pRespondsToS(droneToHouseCap0 > 0,atHouse0);
 gar pRespondsToS(droneToHouseCap1 > 0,atHouse1);
 gar pRespondsToS(droneToHouseCap2 > 0,atHouse2);
 gar pRespondsToS(droneToHouseCap3 > 0,atHouse3);
+gar pRespondsToS(droneToHouseCap4 > 0,atHouse4);
 gar pRespondsToS(droneToWarehouseCap > 0,atWarehouse);
 
