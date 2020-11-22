@@ -25,7 +25,7 @@ public class MenuPanel extends JPanel{
 		gbc.weightx = 1;
 		gbc.weighty = 1;
 		gbc.anchor = GridBagConstraints.CENTER;
-		setPreferredSize(new Dimension(300,617));
+		setPreferredSize(new Dimension(300,600));
 		setBorder(BorderFactory.createLineBorder(new Color(0,0,0),1));
 		
 		// build menus

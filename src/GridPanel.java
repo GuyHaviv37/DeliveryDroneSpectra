@@ -42,14 +42,14 @@ public class GridPanel extends JPanel implements ActionListener{
 	
 	// BASIC SIMULATION VARIABLES
 	BufferedImage droneImg;
-	int squareSize = 145;
+	int squareSize = 150;
 	int droneSize = 125;
 
 	public GridPanel(MainFrame parentFrame) {
 		this.parentFrame = parentFrame;
 		
 		setBorder(BorderFactory.createLineBorder(new Color(0,0,0),1));
-		setPreferredSize(new Dimension(594,617));
+		setPreferredSize(new Dimension(594,600));
 		try {
 			droneImg = ImageIO.read(new File("img/drone.png"));
 		} catch (IOException e) {
@@ -85,7 +85,11 @@ public class GridPanel extends JPanel implements ActionListener{
 				if(pickUpThisState == (houseNum+1)) {
 					g.setColor(Color.green);
 					g.drawString("Picked Up!", col*squareSize + 20, (row+1)*squareSize - 20);
-				}					
+				}			
+				if(dropOffThisState == (houseNum+1)) {
+					g.setColor(Color.orange);
+					g.drawString("Drop-off!", col*squareSize + 20, (row+1)*squareSize - 5);
+				}
 				houseNum++;
 			}
 		}
@@ -105,10 +109,15 @@ public class GridPanel extends JPanel implements ActionListener{
 		g.fillRect(col*squareSize, row*squareSize, squareSize, squareSize);
 		g.setColor(Color.black);
 		g.drawString("Warehouse", col*squareSize + 20, row*squareSize + 20);
+		if(dropOffThisState == 5) {
+			g.setColor(Color.orange);
+			g.drawString("Drop-off!", col*squareSize + 20, (row+1)*squareSize - 5);
+		}
 		
 		// paint warehouse details
 		row = 3;
 		col = 2;
+		g.setColor(Color.black);
 		g.drawString("WH Details",col*squareSize + 20, row*squareSize + 20);
 		for(houseNum=0;houseNum<4;houseNum++) { 
 			String waiting = warehouseMonitors[houseNum] ? "W" : "";
