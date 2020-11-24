@@ -111,7 +111,6 @@ public class GridPanel extends JPanel implements ActionListener{
 		Color currentBatteryColor = batteryFilled > 0.6 ? Color.green : batteryFilled < 0.2 ? Color.red : Color.orange;
 		g.setColor(currentBatteryColor);
 		g.fillRect(col*squareSize + 15, (row+1)*squareSize - 40, Math.round((batteryFilled*(squareSize - 30)))+5, 20);
-		System.out.println(batteryFilled);
 		
 		// "paint warehouse"
 		g.setColor(Color.red);
