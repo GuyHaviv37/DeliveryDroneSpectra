@@ -41,7 +41,9 @@ public class DroneState {
 		sysValues.put("waitingPackageInWarehouseToHouse1", "false");
 		sysValues.put("waitingPackageInWarehouseToHouse2", "false");
 		sysValues.put("waitingPackageInWarehouseToHouse3", "false");
-		sysValues.put("waitingPackageInWarehouseToHouse4", "false");		
+		sysValues.put("waitingPackageInWarehouseToHouse4", "false");
+		// Energy
+		sysValues.put("energy", "0");
 	}
 	
 	public HashMap<String,String> getSysValues(){

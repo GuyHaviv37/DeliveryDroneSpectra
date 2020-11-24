@@ -18,6 +18,8 @@ import javax.swing.Timer;
 public class GridPanel extends JPanel implements ActionListener{
 	
 	private static final int NUM_OF_HOUSES = 4;
+	private static final int MAX_ENERGY = 7;
+	
 	private MainFrame parentFrame;
 	private DroneController controller = new DroneController();
 	// ENV in-house variables
@@ -33,6 +35,7 @@ public class GridPanel extends JPanel implements ActionListener{
 	private int droneToWarehouseCap;
 	private boolean[] houseMonitors = new boolean[NUM_OF_HOUSES];
 	private boolean[] warehouseMonitors = new boolean[NUM_OF_HOUSES];
+	private int energy = 0;
 	
 	// AUX
 	private Timer timer;
@@ -101,6 +104,14 @@ public class GridPanel extends JPanel implements ActionListener{
 		g.fillRect(col*squareSize, row*squareSize, squareSize, squareSize);
 		g.setColor(Color.black);
 		g.drawString("Charging Station", col*squareSize + 20, row*squareSize + 20);
+		//-- paint charging bar
+		g.setColor(Color.black);
+		g.drawRect(col*squareSize + 15, (row+1)*squareSize - 40, squareSize - 30 , 20);
+		float batteryFilled = 1 - (this.energy / (float)MAX_ENERGY);
+		Color currentBatteryColor = batteryFilled > 0.6 ? Color.green : batteryFilled < 0.2 ? Color.red : Color.orange;
+		g.setColor(currentBatteryColor);
+		g.fillRect(col*squareSize + 15, (row+1)*squareSize - 40, Math.round((batteryFilled*(squareSize - 30)))+5, 20);
+		System.out.println(batteryFilled);
 		
 		// "paint warehouse"
 		g.setColor(Color.red);
@@ -208,6 +219,8 @@ public class GridPanel extends JPanel implements ActionListener{
 		for(i=0;i<NUM_OF_HOUSES;i++) {
 			this.warehouseMonitors[i] = Boolean.parseBoolean(controller.getSysVar("waitingPackageInWarehouseToHouse"+(i+1)));
 		}
+		// Energy
+		this.energy = Integer.parseInt(controller.getSysVar("energy"));
 		
 	}
 
