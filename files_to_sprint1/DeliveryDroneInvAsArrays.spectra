@@ -1,0 +1,185 @@
+import "./imports/DwyerPatterns.spectra"
+
+spec DeliveryDroneMain
+
+// types
+
+type Cord = Int(0..GRID_DIM);
+// House[0] = In , House[1] = Out
+
+// Defines
+// drone[0] is row , drone[1] is column
+// Specify locations of warehouse, charging station and houses on the grid
+define
+	GRID_DIM := 3; //actually 3+1
+	
+define
+	atWarehouse := drone[0] = 3 & drone[1] = 3;
+	atChargingStation := drone[0] = 2 & drone[1] = 3;
+	atHouse0 := drone[0] = 0 & drone[1] = 0;
+	atHouse1 := drone[0] = 0 & drone[1] = 2;
+	atHouse2 := drone[0] = 2 & drone[1] = 0;
+	atHouse3 := drone[0] = 2 & drone[1] = 2;
+
+define
+	NUM_OF_HOUSES := 4;
+	NUM_OF_HOUSES_MINUS_ONE := 3;
+
+define CAPACITY := 2;
+
+define 
+	packagePicked := pickUpThisState > 0;
+define
+	packageDelivered := ((droneToHouseCap[0] > 0) & atHouse0) |
+						((droneToHouseCap[1] > 0) & atHouse1) |
+						((droneToHouseCap[2] > 0) & atHouse2) |
+						((droneToHouseCap[3] > 0) & atHouse3) |
+						((droneToWarehouseCap > 0) & atWarehouse);
+
+define roomForPickup := totalPackages < CAPACITY;
+
+//predicates
+predicate moveDir(Cord pos):
+  pos+1 = next(pos) |
+  pos   = next(pos) |
+  pos-1 = next(pos); 
+  
+// env variables
+env boolean[NUM_OF_HOUSES] outHousePackages;
+env boolean[NUM_OF_HOUSES] outWarehousePackages;
+
+
+// sys variables
+sys Cord[2] drone;
+sys Int(0..CAPACITY)[NUM_OF_HOUSES] droneToHouseCap;
+sys Int(0..CAPACITY) droneToWarehouseCap;
+sys Int(0..8) pickUpThisState;
+// 0 - no pickup , 1-4 house pickups by # , 5-8 warehouse pickup to house (#-5)
+
+counter totalPackages(0..CAPACITY) {
+	totalPackages = 0;
+	inc: packagePicked;
+	dec: packageDelivered;
+	overflow:false;
+	underflow:false;
+}
+
+
+// assumptions
+// Init houses output to be empty at start of the simulation
+asm initHousesEmpty:
+forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
+		outHousePackages[i] = false;
+
+// assumptions
+// Init houses output to be empty at start of the simulation
+asm initWarehouseEmpty:
+forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
+		outWarehousePackages[i] = false;
+		
+/* MONITORS TO WATCH PACKAGES WAIT TILL PICKED UP FROM OUT-HOUSE*/
+monitor boolean waitingPackageOutHouse0{
+	!waitingPackageOutHouse0;
+	G waitingPackageOutHouse0 = outHousePackages[0]  | PREV(waitingPackageOutHouse0);
+}
+monitor boolean waitingPackageOutHouse1{
+	!waitingPackageOutHouse1;
+	G waitingPackageOutHouse1 = outHousePackages[1]  | PREV(waitingPackageOutHouse1);
+}
+monitor boolean waitingPackageOutHouse2{
+	!waitingPackageOutHouse2;
+	G waitingPackageOutHouse2 = outHousePackages[2]  | PREV(waitingPackageOutHouse2);
+}
+monitor boolean waitingPackageOutHouse3{
+	!waitingPackageOutHouse3;
+	G waitingPackageOutHouse3 = outHousePackages[3]  | PREV(waitingPackageOutHouse3);
+}
+
+/* MONITORS TO WATCH PACKAGES WAIT TILL PICKED UP FROM WAREHOUSE*/
+monitor boolean waitingPackageInWarehouseToHouse0{
+	!waitingPackageInWarehouseToHouse0;
+	G waitingPackageInWarehouseToHouse0 = outWarehousePackages[0] | PREV(waitingPackageInWarehouseToHouse0); 
+}
+monitor boolean waitingPackageInWarehouseToHouse1{
+	!waitingPackageInWarehouseToHouse1;
+	G waitingPackageInWarehouseToHouse1 = outWarehousePackages[1] | PREV(waitingPackageInWarehouseToHouse1); 
+}
+monitor boolean waitingPackageInWarehouseToHouse2{
+	!waitingPackageInWarehouseToHouse2;
+	G waitingPackageInWarehouseToHouse2 = outWarehousePackages[2] | PREV(waitingPackageInWarehouseToHouse2); 
+}
+monitor boolean waitingPackageInWarehouseToHouse3{
+	!waitingPackageInWarehouseToHouse3;
+	G waitingPackageInWarehouseToHouse3 = outWarehousePackages[3] | PREV(waitingPackageInWarehouseToHouse3); 
+}
+
+// guarantees
+
+// Init location of drone at the start of the simulation
+gar startAtChargingStation:
+	atChargingStation;
+
+// Init droneToHouseCap, pickUpThisState
+gar initArrays:
+	forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
+		droneToHouseCap[i] = 0;
+gar initPickUpThisState:
+	pickUpThisState = 0;
+gar droneToWarehouseCap = 0;	
+	
+// Ensure at every step drone has to decide if to make a move in both row and col directions
+gar droneAlwaysMoves:
+	G moveDir(drone[0]) & moveDir(drone[1]);
+
+
+//cannot pick up from house only if it is not athouse and there is not a waiting package there or there's no room in the drone
+gar G pickUpThisState = 1 -> atHouse0 & waitingPackageOutHouse0 & roomForPickup & next(waitingPackageOutHouse0)=false;
+gar G pickUpThisState = 2 -> atHouse1 & waitingPackageOutHouse1 & roomForPickup & next(waitingPackageOutHouse1)=false;
+gar G pickUpThisState = 3 -> atHouse2 & waitingPackageOutHouse2 & roomForPickup & next(waitingPackageOutHouse2)=false;
+gar G pickUpThisState = 4 -> atHouse3 & waitingPackageOutHouse3 & roomForPickup & next(waitingPackageOutHouse3)=false;
+
+//cannot pick up from warehouse if it is not atWarehouse or there is no a waiting package there or there's no room in the drone
+gar G pickUpThisState = 5 -> atWarehouse & waitingPackageInWarehouseToHouse0 & roomForPickup & next(waitingPackageInWarehouseToHouse0)=false;
+gar G pickUpThisState = 6 -> atWarehouse & waitingPackageInWarehouseToHouse1 & roomForPickup & next(waitingPackageInWarehouseToHouse1)=false;
+gar G pickUpThisState = 7 -> atWarehouse & waitingPackageInWarehouseToHouse2 & roomForPickup & next(waitingPackageInWarehouseToHouse2)=false;
+gar G pickUpThisState = 8 -> atWarehouse & waitingPackageInWarehouseToHouse3 & roomForPickup & next(waitingPackageInWarehouseToHouse3)=false;
+
+
+// always eventually pick up a waiting package	
+gar pRespondsToS(waitingPackageOutHouse0, pickUpThisState = 1);
+gar pRespondsToS(waitingPackageOutHouse1, pickUpThisState = 2);
+gar pRespondsToS(waitingPackageOutHouse2, pickUpThisState = 3);
+gar pRespondsToS(waitingPackageOutHouse3, pickUpThisState = 4);
+gar pRespondsToS(waitingPackageInWarehouseToHouse0, pickUpThisState = 5);
+gar pRespondsToS(waitingPackageInWarehouseToHouse1, pickUpThisState = 6);
+gar pRespondsToS(waitingPackageInWarehouseToHouse2, pickUpThisState = 7);
+gar pRespondsToS(waitingPackageInWarehouseToHouse3, pickUpThisState = 8);
+
+
+// always eventually drop-off packages that are carried by the drone
+gar pRespondsToS(droneToHouseCap[0] > 0,atHouse0);
+gar pRespondsToS(droneToHouseCap[1] > 0,atHouse1);
+gar pRespondsToS(droneToHouseCap[2] > 0,atHouse2);
+gar pRespondsToS(droneToHouseCap[3] > 0,atHouse3);
+gar pRespondsToS(droneToWarehouseCap > 0,atWarehouse);
+
+/* INVENTORY */
+
+// positive changes in inventory happen only on pickup
+gar positiveInvChangeOnlyOnPickupFromWarehouse:
+	G forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE).
+		(next(droneToHouseCap[i]) = droneToHouseCap[i] + 1) iff pickUpThisState = (i+1);
+
+gar positiveInvChangeOnlyOnPickupFromHouse:
+	G (next(droneToWarehouseCap) = droneToWarehouseCap + 1) iff (pickUpThisState >= 5 & pickUpThisState <= 8);
+
+// negative changes in inventory happen only on drop-off
+gar G (next(droneToHouseCap[0]) = droneToHouseCap[0] - 1) iff (droneToHouseCap[0] > 0) & atHouse0;
+gar G (next(droneToHouseCap[1]) = droneToHouseCap[1] - 1) iff (droneToHouseCap[1] > 0) & atHouse1; 
+gar G (next(droneToHouseCap[2]) = droneToHouseCap[2] - 1) iff (droneToHouseCap[2] > 0) & atHouse2; 
+gar G (next(droneToHouseCap[3]) = droneToHouseCap[3] - 1) iff (droneToHouseCap[3] > 0) & atHouse3; 
+
+gar G (next(droneToWarehouseCap) = droneToWarehouseCap -1) iff (droneToWarehouseCap > 0) & atWarehouse;
+// drop-off policy can be changed later :
+	// NOW : drop-off if available
+	// stay put until all packages dropped
