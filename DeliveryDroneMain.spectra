@@ -25,7 +25,7 @@ define
 	NUM_OF_HOUSES := 4;
 	NUM_OF_HOUSES_MINUS_ONE := 3;
 
-define CAPACITY := 2;
+define CAPACITY := 4;
 
 define 
 	packagePicked := pickUpThisState > 0;
@@ -33,6 +33,8 @@ define
 	packageDelivered := dropOffThisState > 0;
 
 define roomForPickup := totalPackages < CAPACITY;
+
+define MAX_ENERGY:= 7;
 
 //predicates
 predicate moveDir(Cord pos):
@@ -156,7 +158,7 @@ monitor boolean waitingPackageInWarehouseToHouse4{
 
 // Init location of drone at the start of the simulation
 gar startAtChargingStation:
-	atChargingStation;
+	atWarehouse;
 
 // Init pickup/dropoff states
 gar initPickUpThisState:
@@ -205,3 +207,11 @@ gar pRespondsToS(droneToHouseCap3 > 0,atHouse3);
 gar pRespondsToS(droneToHouseCap4 > 0,atHouse4);
 gar pRespondsToS(droneToWarehouseCap > 0,atWarehouse);
 
+
+counter energy (0..MAX_ENERGY){
+	energy=0;
+	inc: packagePicked;
+	reset: atChargingStation;
+	overflow: false;
+}
+gar G energy <= MAX_ENERGY;
