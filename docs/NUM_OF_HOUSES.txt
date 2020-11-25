@@ -1,4 +1,0 @@
-All locations of NUM_OF_HOUSES constant:
-ManualMenuPanel
-DroneState
-GridPanel

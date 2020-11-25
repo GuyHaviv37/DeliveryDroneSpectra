@@ -1,6 +1,28 @@
 Tasks:
 
+Done:
 Front-end:
-- Add random requests
+* Implemented a grid panel that represent the current state of the simulation.
+* Implemented a menu that support manual input entry for the environment variables.
 
-Back-end:
+Specification:
+* Create the basic Drone mechanism : Request Delivery, Pickup , Drop-off packages from/to houses and warehouse.
+* Implemented a capacity and inventory manangement system
+* Variant (MustDropoff) : implemented a controller that must drop-off all items for a destination upon entering that location.
+
+-------------------
+Left To Do (Sprint 2):
+Front-end:
+* Implement a "Charging bar" that shows the drone's battery status.
+* Implement both new environment variables - 'Strong Winds' & 'Flock of Birds'.
+** As a visual effect.
+** As an option of input at manual menu.
+* Improve visual styling.
+* Add to manual menu the ability to request heavy packages.
+
+Specification:
+* Implement a 'Charging' mechanism: 
+s.t. the drone can make an at most X amount of pickups without being charged (returning to the charging station)
+* Implement packages of different size (light/heavy packages) + the implications on the inventory system.
+* Implement 'Strong Winds' environment - forbids drone's movement diagonally.
+* (New - was not in proposal) Implement 'Flock of birds' - resricts drone's movement from specific "street" on the grid.
