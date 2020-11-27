@@ -18,11 +18,17 @@ Front-end:
 ** As a visual effect.
 ** As an option of input at manual menu.
 * Improve visual styling.
-* Add to manual menu the ability to request heavy packages.
+* Add to manual menu the ability to enable 'Priority Mode'.
 
 Specification:
 * Implement a 'Charging' mechanism: 
 s.t. the drone can make an at most X amount of pickups without being charged (returning to the charging station)
-* Implement packages of different size (light/heavy packages) + the implications on the inventory system.
+
+* Implement 'Priority Mode' - an environment variable that when is true (i.e. 'Priority Mode' is on) we change our pickup policy:
+** The drone proiritize picking up packages from Warehouse over Houses.
+** Nonetheless, The drone can pick up at most PRIORITY_CAP number of packages from Houses. This can be parameterized.
+*** This was intended to prevent house package starvation.
+** When a package is picked up from the Warehouse the # of packages that can be picked up from Houses is reset.
+
 * Implement 'Strong Winds' environment - forbids drone's movement diagonally.
 * (New - was not in proposal) Implement 'Flock of birds' - resricts drone's movement from specific "street" on the grid.
