@@ -4,7 +4,7 @@ spec DeliveryDroneMain
 
 // types
 type houseOptions = { EMPTY , SMALL };
-type warehouseOptions = { EMPTY , SMALL };
+type warehouseOptions = { EMPTY , PRIORITY , SMALL };
 type Cord = Int(0..GRID_DIM);
 
 // Defines
@@ -28,16 +28,19 @@ define
 define CAPACITY := 4;
 
 define 
-	housePickedup := pickUpThisState > 0 & pickUpThisState <5;
-	warehousePickedup := pickUpThisState > 4 & pickUpThisState <9;
-	packagePicked := pickUpThisState >0;  
+	smallPackagePicked := pickUpThisState > 0 & pickUpThisState <9;
+	priorityPackagePicked := pickUpThisState >=9;
+	packPicked := pickUpThisState >0; 
 	
+define priorityWaiting := waitingPriorityPackageInWarehouseToHouse1 | 
+						waitingPriorityPackageInWarehouseToHouse2 | 
+						waitingPriorityPackageInWarehouseToHouse3 | 
+						waitingPriorityPackageInWarehouseToHouse4;
 define
-	packageDelivered := dropOffThisState >0; 
+	smallPackageDelivered := dropOffThisState >0;
+	//think about make the drone drop off priority package a soon as it can
 
-define roomForPickup := totalPackagesOnDrone + 1 <= CAPACITY; 
-
-define packageWaitingInWarehouse := waitingPackageInWarehouseToHouse1 | waitingPackageInWarehouseToHouse2 |waitingPackageInWarehouseToHouse3 | waitingPackageInWarehouseToHouse4;
+define roomForSmallPickup := totalSmallPackages + 1 <= CAPACITY;
 
 define MAX_ENERGY:= 7;
 
@@ -50,17 +53,17 @@ predicate moveDir(Cord pos):
 // env variables
 env houseOptions[NUM_OF_HOUSES] outHousePackages;
 env warehouseOptions[NUM_OF_HOUSES] outWarehousePackages;
-env boolean priorityMode;
 
 
 // sys variables
 sys Cord[2] drone;
-sys Int(0..8) pickUpThisState;
+sys Int(0..12) pickUpThisState;
 // 0 - no pickup , 1-4 house small pickups by # , 
-// 5-8 warehouse  pickup to house (#-4)
+// 5-8 warehouse regular pickup to house (#-4), 9-12 warehouse priority big pickup to house (#-8)
 
 sys Int(0..5) dropOffThisState;
 // 0 - no drop-off , 1-4 house drop-offs by #, 5 - warehouse drop-off 
+
 
 // assumptions
 // Init houses output to be empty at start of the simulation
@@ -73,13 +76,12 @@ forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
 asm initWarehouseEmpty:
 forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
 		outWarehousePackages[i] = EMPTY;
-asm priorityMode=false;
 		
 /* INVENTORY */
-counter totalPackagesOnDrone(0..CAPACITY){ 
-	totalPackagesOnDrone =0;
-	inc: packagePicked;
-	dec: packageDelivered;
+counter totalSmallPackages(0..CAPACITY){
+	totalSmallPackages =0;
+	inc: packPicked;
+	dec: smallPackageDelivered;
 	overflow:false;
 	underflow:false;
 }
@@ -96,7 +98,7 @@ counter droneToWarehouseCap(0..CAPACITY){
 // counters for packages from Warehouse -> Houses
 counter droneToHouseCap1(0..CAPACITY){
 	droneToHouseCap1 = 0;
-	inc: pickUpThisState =5;
+	inc: pickUpThisState = 9 | pickUpThisState =5;
 	dec: dropOffThisState = 1;
 	overflow:false;
 	underflow:false;
@@ -104,7 +106,7 @@ counter droneToHouseCap1(0..CAPACITY){
 
 counter droneToHouseCap2(0..CAPACITY){
 	droneToHouseCap2 = 0;
-	inc: pickUpThisState =6;
+	inc: pickUpThisState = 10 | pickUpThisState =6;
 	dec: dropOffThisState = 2;
 	overflow:false;
 	underflow:false;
@@ -112,7 +114,7 @@ counter droneToHouseCap2(0..CAPACITY){
 
 counter droneToHouseCap3(0..CAPACITY){
 	droneToHouseCap3 = 0;
-	inc: pickUpThisState = 7;
+	inc: pickUpThisState = 11 | pickUpThisState = 7;
 	dec: dropOffThisState = 3;
 	overflow:false;
 	underflow:false;
@@ -120,7 +122,7 @@ counter droneToHouseCap3(0..CAPACITY){
 
 counter droneToHouseCap4(0..CAPACITY){
 	droneToHouseCap4 = 0;
-	inc: pickUpThisState = 8;
+	inc: pickUpThisState = 12 | pickUpThisState = 8;
 	dec: dropOffThisState = 4;
 	overflow:false;
 	underflow:false;
@@ -162,6 +164,23 @@ monitor boolean waitingPackageInWarehouseToHouse4{
 	!waitingPackageInWarehouseToHouse4;
 	G waitingPackageInWarehouseToHouse4 = (outWarehousePackages[3] = SMALL) | PREV(waitingPackageInWarehouseToHouse4); 
 }
+/* MONITORS TO WATCH PRIORITY PACKAGES WAIT TILL PICKED UP FROM WAREHOUSE*/
+monitor boolean waitingPriorityPackageInWarehouseToHouse1{
+	!waitingPriorityPackageInWarehouseToHouse1;
+	G waitingPriorityPackageInWarehouseToHouse1 = (outWarehousePackages[0] = PRIORITY) | PREV(waitingPriorityPackageInWarehouseToHouse1); 
+}
+monitor boolean waitingPriorityPackageInWarehouseToHouse2{
+	!waitingPriorityPackageInWarehouseToHouse2;
+	G waitingPriorityPackageInWarehouseToHouse2 = (outWarehousePackages[1] = PRIORITY) | PREV(waitingPriorityPackageInWarehouseToHouse2); 
+}
+monitor boolean waitingPriorityPackageInWarehouseToHouse3{
+	!waitingPriorityPackageInWarehouseToHouse3;
+	G waitingPriorityPackageInWarehouseToHouse3 = (outWarehousePackages[2] = PRIORITY) | PREV(waitingPriorityPackageInWarehouseToHouse3); 
+}
+monitor boolean waitingPriorityPackageInWarehouseToHouse4{
+	!waitingPriorityPackageInWarehouseToHouse4;
+	G waitingPriorityPackageInWarehouseToHouse4 = (outWarehousePackages[3] = PRIORITY) | PREV(waitingPriorityPackageInWarehouseToHouse4); 
+}
 
 // guarantees
 
@@ -179,25 +198,30 @@ gar initDropOffThisState:
 gar droneAlwaysMoves:
 	G moveDir(drone[0]) & moveDir(drone[1]);
 
+
 // guarantees when a pickup can be made + implications on monitor
-gar G pickUpThisState = 1 -> atHouse1 & waitingPackageOutHouse1 & roomForPickup & next(waitingPackageOutHouse1)=false;
-gar G pickUpThisState = 2 -> atHouse2 & waitingPackageOutHouse2 & roomForPickup & next(waitingPackageOutHouse2)=false;
-gar G pickUpThisState = 3 -> atHouse3 & waitingPackageOutHouse3 & roomForPickup & next(waitingPackageOutHouse3)=false;
-gar G pickUpThisState = 4 -> atHouse4 & waitingPackageOutHouse4 & roomForPickup & next(waitingPackageOutHouse4)=false ;
+gar G pickUpThisState = 1 -> atHouse1 & waitingPackageOutHouse1 & roomForSmallPickup & next(waitingPackageOutHouse1)=false;
+gar G pickUpThisState = 2 -> atHouse2 & waitingPackageOutHouse2 & roomForSmallPickup & next(waitingPackageOutHouse2)=false;
+gar G pickUpThisState = 3 -> atHouse3 & waitingPackageOutHouse3 & roomForSmallPickup & next(waitingPackageOutHouse3)=false;
+gar G pickUpThisState = 4 -> atHouse4 & waitingPackageOutHouse4 & roomForSmallPickup & next(waitingPackageOutHouse4)=false ;
 
-gar G pickUpThisState = 5 -> atWarehouse & waitingPackageInWarehouseToHouse1 & roomForPickup & next(waitingPackageInWarehouseToHouse1)=false;
-gar G pickUpThisState = 6 -> atWarehouse & waitingPackageInWarehouseToHouse2 & roomForPickup & next(waitingPackageInWarehouseToHouse2)=false;
-gar G pickUpThisState = 7 -> atWarehouse & waitingPackageInWarehouseToHouse3 & roomForPickup & next(waitingPackageInWarehouseToHouse3)=false ;
-gar G pickUpThisState = 8 -> atWarehouse & waitingPackageInWarehouseToHouse4 & roomForPickup & next(waitingPackageInWarehouseToHouse4)=false;
+gar G pickUpThisState = 5 -> atWarehouse & waitingPackageInWarehouseToHouse1 & roomForSmallPickup & next(waitingPackageInWarehouseToHouse1)=false;
+gar G pickUpThisState = 6 -> atWarehouse & waitingPackageInWarehouseToHouse2 & roomForSmallPickup & next(waitingPackageInWarehouseToHouse2)=false;
+gar G pickUpThisState = 7 -> atWarehouse & waitingPackageInWarehouseToHouse3 & roomForSmallPickup & next(waitingPackageInWarehouseToHouse3)=false ;
+gar G pickUpThisState = 8 -> atWarehouse & waitingPackageInWarehouseToHouse4 & roomForSmallPickup & next(waitingPackageInWarehouseToHouse4)=false;
 
+gar G pickUpThisState = 9 -> atWarehouse & waitingPriorityPackageInWarehouseToHouse1 & roomForSmallPickup & next(waitingPriorityPackageInWarehouseToHouse1)=false;
+gar G pickUpThisState = 10 -> atWarehouse & waitingPriorityPackageInWarehouseToHouse2 & roomForSmallPickup & next(waitingPriorityPackageInWarehouseToHouse2)=false;
+gar G pickUpThisState = 11 -> atWarehouse & waitingPriorityPackageInWarehouseToHouse3 & roomForSmallPickup & next(waitingPriorityPackageInWarehouseToHouse3)=false;
+gar G pickUpThisState = 12 -> atWarehouse & waitingPriorityPackageInWarehouseToHouse4 & roomForSmallPickup & next(waitingPriorityPackageInWarehouseToHouse4)=false;
 
-counter priority(0..1){
-	priority=0; 
-	inc: housePickedup & priorityMode & packageWaitingInWarehouse;
-	reset: warehousePickedup;
+counter howManyRegularPickedWhilePriorityWaiting(0..5){
+	howManyRegularPickedWhilePriorityWaiting=0; 
+	inc: smallPackagePicked & priorityWaiting;
+	reset: priorityPackagePicked;
 	overflow: false; 
 }
-gar G priority <= 1;
+gar G howManyRegularPickedWhilePriorityWaiting <= 5;
 
 // always eventually pick up a waiting package	
 gar pRespondsToS(waitingPackageOutHouse1, pickUpThisState = 1);
@@ -208,6 +232,10 @@ gar pRespondsToS(waitingPackageInWarehouseToHouse1, pickUpThisState = 5);
 gar pRespondsToS(waitingPackageInWarehouseToHouse2, pickUpThisState = 6);
 gar pRespondsToS(waitingPackageInWarehouseToHouse3, pickUpThisState = 7);
 gar pRespondsToS(waitingPackageInWarehouseToHouse4, pickUpThisState = 8);
+gar pRespondsToS(waitingPriorityPackageInWarehouseToHouse1, pickUpThisState = 9);
+gar pRespondsToS(waitingPriorityPackageInWarehouseToHouse2, pickUpThisState = 10);
+gar pRespondsToS(waitingPriorityPackageInWarehouseToHouse3, pickUpThisState = 11);
+gar pRespondsToS(waitingPriorityPackageInWarehouseToHouse4, pickUpThisState = 12);
 
 
 // guarantees when a drop-off can be made
@@ -227,7 +255,7 @@ gar pRespondsToS(droneToWarehouseCap > 0,atWarehouse);
 
 counter energy (0..MAX_ENERGY){
 	energy=0;
-	inc: housePickedup | warehousePickedup;
+	inc: smallPackagePicked | priorityPackagePicked;
 	reset: atChargingStation;
 	overflow: false;
 }
