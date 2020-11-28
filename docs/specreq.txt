@@ -3,7 +3,7 @@ Assumptions:
 * At initial state - there are no package delivery requests (from all houses and the warehouse)
 
 Monitors:
-* After a request, the packages is waiting to be picked up , untill the drone actually picks it up.
+* After a request, the packages is waiting to be picked up , until the drone actually picks it up.
 ** There is an implicit assumption made, that every request for (src,dest) is made when there is a waiting package of type (src,dest),
 the packages are "aggregated" - i.e they are now considered as ONE package waiting to be picked up.
 

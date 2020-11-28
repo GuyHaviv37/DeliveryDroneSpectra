@@ -6,7 +6,7 @@ This guarantee did not behave as expected, the packages was waiting an extra sta
 e.g. if a package was waiting and at this state was picked up, it was still waiting in the following state, only after that it was reset.
 
 * DeliveryDroneInvAsArrays:
-** In the specification we had a different implemention of the inventory system.
+** In the specification we had a different implementation of the inventory system.
 Instead of counters we managed the inventory as int arrays of system variables.
 We try to guarantee the expected behavior with guarantees such as:
 * For maintaing changes :
