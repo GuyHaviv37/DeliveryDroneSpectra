@@ -1,0 +1,28 @@
+Assumptions:
+
+* At initial state - there are no package delivery requests (from all houses and the warehouse)
+
+Monitors:
+* After a request, the packages is waiting to be picked up , until the drone actually picks it up.
+** There is an implicit assumption made, that every request for (src,dest) is made when there is a waiting package of type (src,dest),
+the packages are "aggregated" - i.e they are now considered as ONE package waiting to be picked up.
+
+Guarantees:
+
+* At initial state - drone starts at Charging Station location.
+* At initial state - the drone does not pick-up or drop-off any package.
+* At each state the drone must make a mobility decision , i.e. whether to move a cell (and to which one) or stay put.
+
+REQUESTS / PICKUP / DROP-OFF MECHANISM
+* A package (src,dest) is PICKED-UP only if the drone is at (src), there is a packages waiting at (src) and there's room in the drone's inventory.
+* A packaged being picked up also guarantees that there is no longer a package waiting at (src) , unless another request was instantly made.
+* The system guarantee that for each waiting package, the drone will respond with a pickup of that package.
+* A package (src,dest) is DROPPED-OFF only if the drone is at (dest) and there is a packaged intended for (dest) at the drone's inventory.
+* The system guarantee that while there are packages intended for (dest) at the drone's inventory,
+the drone will respond by going to (dest)'s location.
+
+INVENTORY MANAGEMENT:
+The entire inventory management is implemented with counters:
+*totalPackages - # of packages on the drone , incremented at pickup and decremented at drop-off (of any package)
+*(dest)Capacity - # of packages on the drone -intended for (dest)- . incremented when picking up a package to (dest)
+and decremented at drop-off.
