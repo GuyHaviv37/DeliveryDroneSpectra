@@ -21,12 +21,15 @@ public class ManualMenuPanel extends JPanel implements ActionListener{
 	private JToggleButton houseBtn;
 	private JToggleButton warehouseBtn;
 	private JButton addBtn;
+	private JButton priorityBtn;
 	private JLabel mainHeader;
+	private JLabel priorityHeader;
 	private JComboBox<String> selectionList;
 	private DefaultComboBoxModel<String> houseList;
 	private DefaultComboBoxModel<String> warehouseList;
 	
 	private int selection = 1;
+	private boolean isPriorityMode = false;
 	
 	// listeners
 	private MenuListener menuListener;
@@ -44,7 +47,7 @@ public class ManualMenuPanel extends JPanel implements ActionListener{
 		gbc.anchor = GridBagConstraints.CENTER;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		
-		setPreferredSize(new Dimension(250,200));
+		setPreferredSize(new Dimension(250,300));
 		
 		ActionListener buttonListener = new ActionListener() {
 
@@ -56,6 +59,12 @@ public class ManualMenuPanel extends JPanel implements ActionListener{
 					creationListener.addRequest(selection);
 					//reset selection list
 					selectionList.setSelectedIndex(0);
+				} else if (target == priorityBtn) {
+					isPriorityMode = !isPriorityMode;
+					String newText = "Turn Priority Mode ";
+					newText += isPriorityMode ? "OFF" : "ON";
+					priorityBtn.setText(newText);
+					creationListener.togglePriority(isPriorityMode);
 				}
 			}			
 		};
@@ -132,6 +141,16 @@ public class ManualMenuPanel extends JPanel implements ActionListener{
 		this.addBtn = new JButton("Add request");
 		this.addBtn.addActionListener(buttonListener);
 		add(this.addBtn,gbc);
+		gbc.gridy++;
+		
+		this.priorityHeader = new JLabel("Toggle Priority Mode");
+		gbc.gridwidth = 2;
+		add(this.priorityHeader,gbc);
+		gbc.gridy++;
+		
+		this.priorityBtn = new JButton("Turn Priority Mode ON");
+		this.priorityBtn.addActionListener(buttonListener);
+		add(this.priorityBtn,gbc);
 		
 	}
 

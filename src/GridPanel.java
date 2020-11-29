@@ -19,12 +19,15 @@ public class GridPanel extends JPanel implements ActionListener{
 	
 	private static final int NUM_OF_HOUSES = 4;
 	private static final int MAX_ENERGY = 7;
+	private static final int MAX_CAPACITY = 4;
+	private static final int MAX_PRIORITY_CAP = 1;
 	
 	private MainFrame parentFrame;
 	private DroneController controller = new DroneController();
 	// ENV in-house variables
-	private boolean[] houseRequests = new boolean[NUM_OF_HOUSES];
-	private boolean[] warehouseRequests = new boolean[NUM_OF_HOUSES];
+	private PackageType[] houseRequests = new PackageType[NUM_OF_HOUSES];
+	private PackageType[] warehouseRequests = new PackageType[NUM_OF_HOUSES];
+	private boolean priorityMode = false;
 	
 	// SYS in-house variables
 	private int[] drone = new int[]{2,3};
@@ -36,6 +39,7 @@ public class GridPanel extends JPanel implements ActionListener{
 	private boolean[] houseMonitors = new boolean[NUM_OF_HOUSES];
 	private boolean[] warehouseMonitors = new boolean[NUM_OF_HOUSES];
 	private int energy = 0;
+	private int priorityCap = 0;
 	
 	// AUX
 	private Timer timer;
@@ -50,6 +54,7 @@ public class GridPanel extends JPanel implements ActionListener{
 
 	public GridPanel(MainFrame parentFrame) {
 		this.parentFrame = parentFrame;
+		initEnvVars();
 		
 		setBorder(BorderFactory.createLineBorder(new Color(0,0,0),1));
 		setPreferredSize(new Dimension(594,600));
@@ -64,6 +69,7 @@ public class GridPanel extends JPanel implements ActionListener{
 		this.timer.start();
 	}
 	
+
 	@Override 
 	public void paintComponent(Graphics g){
 		int row;
@@ -139,7 +145,7 @@ public class GridPanel extends JPanel implements ActionListener{
 		row = 3;
 		col = 0;
 		g.drawString("Drone Details", col*squareSize + 20, row*squareSize + 20);
-		g.drawString("Total: "+totalPackages, col*squareSize + 20, row*squareSize + 40);
+		g.drawString("Total: "+totalPackages+"/"+MAX_CAPACITY, col*squareSize + 20, row*squareSize + 40);
 		g.drawString("To-WH: "+droneToWarehouseCap, col*squareSize + 20, row*squareSize + 60);
 		for(houseNum=0;houseNum<4;houseNum++) { 
 			g.drawString("To-H"+(houseNum+1)+": "+droneToHouseCap[houseNum], col*squareSize + 20, row*squareSize + 20*(houseNum+4));
@@ -152,18 +158,30 @@ public class GridPanel extends JPanel implements ActionListener{
 		g.drawString("State #: "+stateNum, col*squareSize + 20, row*squareSize + 40);
 		g.drawString("PUTS: "+pickUpThisState, col*squareSize + 20, row*squareSize + 60);
 		g.drawString("DOTS: "+dropOffThisState, col*squareSize + 20, row*squareSize + 80);
+		g.drawString("Priority Mode:", col*squareSize + 20, row*squareSize + 100);
+		String priorityModeString = priorityMode ? "ON" : "OFF";
+		g.drawString(priorityModeString+" "+priorityCap+"/"+MAX_PRIORITY_CAP, col*squareSize + 20, row*squareSize + 120);
 		
 		// "paint drone"
 		g.drawImage(droneImg, this.drone[1]*squareSize, this.drone[0]*squareSize, droneSize, droneSize, null);
 	}
+	
+	/* HANDLE USER EVENTS*/
 
 	public void addPickupRequest(int requestNumber) {
 		if(requestNumber >= 1 && requestNumber <= 4) {
-			this.houseRequests[requestNumber-1] = true;
+			this.houseRequests[requestNumber-1] = PackageType.SMALL;
 		} else if (requestNumber >= 5 && requestNumber <= 8) {
-			this.warehouseRequests[requestNumber-5] = true;
+			this.warehouseRequests[requestNumber-5] = PackageType.SMALL;
 		}
-		updateRequests();
+		updateEnvironment();
+		getNewState();
+		repaint();
+	}
+	
+	public void togglePriority(boolean newPriority) {
+		this.priorityMode = newPriority;
+		updateEnvironment();
 		getNewState();
 		repaint();
 	}
@@ -175,7 +193,7 @@ public class GridPanel extends JPanel implements ActionListener{
 	// * get new state from the controller
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		updateRequests();
+		updateEnvironment();
 		repaint();
 		// When we have animation we will check that no animation is running before getting new state
 		getNewState();
@@ -184,15 +202,24 @@ public class GridPanel extends JPanel implements ActionListener{
 	
 	private void updateRequests() {
 		for(int i=0;i<houseRequests.length;i++) {
-			controller.setEnvVar("outHousePackages["+i+"]",Boolean.toString(houseRequests[i]));
+			controller.setEnvVar("outHousePackages["+i+"]",houseRequests[i].name());
 		}
 		for(int j=0;j<warehouseRequests.length;j++) {
-			controller.setEnvVar("outWarehousePackages["+j+"]",Boolean.toString(warehouseRequests[j]));
+			controller.setEnvVar("outWarehousePackages["+j+"]",warehouseRequests[j].name());
 		}
 		for(int k=0;k<NUM_OF_HOUSES;k++) {
-			houseRequests[k] = false;
-			warehouseRequests[k] = false;
+			houseRequests[k] = PackageType.EMPTY;
+			warehouseRequests[k] = PackageType.EMPTY;
 		}
+	}
+	
+	private void updatePriority() {
+		controller.setEnvVar("priorityMode", Boolean.toString(this.priorityMode));
+	}
+	
+	private void updateEnvironment() {
+		updateRequests();
+		updatePriority();
 	}
 
 	private void getNewState() {
@@ -220,8 +247,23 @@ public class GridPanel extends JPanel implements ActionListener{
 		}
 		// Energy
 		this.energy = Integer.parseInt(controller.getSysVar("energy"));
+		// Priority
+		this.priorityCap = Integer.parseInt(controller.getSysVar("priorityCap"));
 		
 	}
+	
+	private void initEnvVars() {
+		for(int i=0;i<houseRequests.length;i++) {
+			houseRequests[i] = PackageType.EMPTY;
+			warehouseRequests[i] = PackageType.EMPTY;
+		}
+	}
+	
+	enum PackageType {
+		EMPTY,SMALL
+	}
+
+
 
 
 	

@@ -20,6 +20,11 @@ public class MainFrame extends JFrame{
 			public void addRequest(int requestNumber) {
 				gridPanel.addPickupRequest(requestNumber);
 			}
+
+			@Override
+			public void togglePriority(boolean newPriority) {
+				gridPanel.togglePriority(newPriority);
+			}
 			
 			// add scenario
 			// add other environment variables such as winds or rain.

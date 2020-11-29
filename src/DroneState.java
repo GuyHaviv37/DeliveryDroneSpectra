@@ -14,8 +14,9 @@ public class DroneState {
 	
 	private void initEnvValues() {
 		for(int i=0;i<NUM_OF_HOUSES;i++) {
-			envValues.put("outHousePackages["+i+"]", "false");
-			envValues.put("outWarehousePackages["+i+"]", "false");
+			envValues.put("outHousePackages["+i+"]", "EMPTY");
+			envValues.put("outWarehousePackages["+i+"]", "EMPTY");
+			envValues.put("priorityMode", "false");
 		}
 	}
 	
@@ -44,6 +45,8 @@ public class DroneState {
 		sysValues.put("waitingPackageInWarehouseToHouse4", "false");
 		// Energy
 		sysValues.put("energy", "0");
+		// Priority
+		sysValues.put("priorityCap", "0");
 	}
 	
 	public HashMap<String,String> getSysValues(){

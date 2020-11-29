@@ -35,7 +35,7 @@ define
 define
 	packageDelivered := dropOffThisState >0; 
 
-define roomForPickup := totalPackagesOnDrone + 1 <= CAPACITY; 
+define roomForPickup := totalPackages + 1 <= CAPACITY; 
 
 define packageWaitingInWarehouse := waitingPackageInWarehouseToHouse1 | waitingPackageInWarehouseToHouse2 |waitingPackageInWarehouseToHouse3 | waitingPackageInWarehouseToHouse4;
 
@@ -76,8 +76,8 @@ forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
 asm priorityMode=false;
 		
 /* INVENTORY */
-counter totalPackagesOnDrone(0..CAPACITY){ 
-	totalPackagesOnDrone =0;
+counter totalPackages(0..CAPACITY){ 
+	totalPackages =0;
 	inc: packagePicked;
 	dec: packageDelivered;
 	overflow:false;
@@ -163,7 +163,7 @@ monitor boolean waitingPackageInWarehouseToHouse4{
 	G waitingPackageInWarehouseToHouse4 = (outWarehousePackages[3] = SMALL) | PREV(waitingPackageInWarehouseToHouse4); 
 }
 
-// guarantees
+// PICKUP , DROP-OFF LOGIC
 
 // Init location of drone at the start of the simulation
 gar startAtChargingStation:
@@ -191,14 +191,6 @@ gar G pickUpThisState = 7 -> atWarehouse & waitingPackageInWarehouseToHouse3 & r
 gar G pickUpThisState = 8 -> atWarehouse & waitingPackageInWarehouseToHouse4 & roomForPickup & next(waitingPackageInWarehouseToHouse4)=false;
 
 
-counter priority(0..1){
-	priority=0; 
-	inc: housePickedup & priorityMode & packageWaitingInWarehouse;
-	reset: warehousePickedup;
-	overflow: false; 
-}
-gar G priority <= 1;
-
 // always eventually pick up a waiting package	
 gar pRespondsToS(waitingPackageOutHouse1, pickUpThisState = 1);
 gar pRespondsToS(waitingPackageOutHouse2, pickUpThisState = 2);
@@ -224,6 +216,16 @@ gar pRespondsToS(droneToHouseCap3 > 0,atHouse3);
 gar pRespondsToS(droneToHouseCap4 > 0,atHouse4);
 gar pRespondsToS(droneToWarehouseCap > 0,atWarehouse);
 
+/* PRIORITY LOGIC */
+counter priorityCap(0..1){
+	priorityCap=0; 
+	inc: housePickedup & priorityMode & packageWaitingInWarehouse;
+	reset: warehousePickedup;
+	overflow: false; 
+}
+gar G priorityCap <= 1;
+
+/* ENERGY LOGIC  */
 
 counter energy (0..MAX_ENERGY){
 	energy=0;
