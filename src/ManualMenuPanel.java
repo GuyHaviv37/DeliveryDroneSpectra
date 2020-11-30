@@ -1,3 +1,5 @@
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -5,6 +7,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -21,15 +24,22 @@ public class ManualMenuPanel extends JPanel implements ActionListener{
 	private JToggleButton houseBtn;
 	private JToggleButton warehouseBtn;
 	private JButton addBtn;
-	private JButton priorityBtn;
+	private JToggleButton priorityOnBtn;
+	private JToggleButton priorityOffBtn;
+	private JToggleButton windsOnBtn;
+	private JToggleButton windsOffBtn;
+//	private JButton priorityBtn;
+//	private JButton windsBtn;
 	private JLabel mainHeader;
 	private JLabel priorityHeader;
+	private JLabel windsHeader;
 	private JComboBox<String> selectionList;
 	private DefaultComboBoxModel<String> houseList;
 	private DefaultComboBoxModel<String> warehouseList;
 	
 	private int selection = 1;
 	private boolean isPriorityMode = false;
+	private boolean isWindsMode = false;
 	
 	// listeners
 	private MenuListener menuListener;
@@ -47,7 +57,7 @@ public class ManualMenuPanel extends JPanel implements ActionListener{
 		gbc.anchor = GridBagConstraints.CENTER;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		
-		setPreferredSize(new Dimension(250,300));
+		setPreferredSize(new Dimension(250,320));
 		
 		ActionListener buttonListener = new ActionListener() {
 
@@ -59,13 +69,7 @@ public class ManualMenuPanel extends JPanel implements ActionListener{
 					creationListener.addRequest(selection);
 					//reset selection list
 					selectionList.setSelectedIndex(0);
-				} else if (target == priorityBtn) {
-					isPriorityMode = !isPriorityMode;
-					String newText = "Turn Priority Mode ";
-					newText += isPriorityMode ? "OFF" : "ON";
-					priorityBtn.setText(newText);
-					creationListener.togglePriority(isPriorityMode);
-				}
+				} 
 			}			
 		};
 		
@@ -143,14 +147,48 @@ public class ManualMenuPanel extends JPanel implements ActionListener{
 		add(this.addBtn,gbc);
 		gbc.gridy++;
 		
+		//priority & winds btn
 		this.priorityHeader = new JLabel("Toggle Priority Mode");
-		gbc.gridwidth = 2;
 		add(this.priorityHeader,gbc);
+		
+		// toggle priority
+		this.priorityOnBtn = new JToggleButton("ON");
+		this.priorityOnBtn.addActionListener(this);
+		this.priorityOffBtn = new JToggleButton("OFF");
+		this.priorityOffBtn.addActionListener(this);
+		this.priorityOffBtn.setSelected(true);
+		ButtonGroup priorityGrp = new ButtonGroup();
+		gbc.gridwidth=1;
+		gbc.gridy++;
+		gbc.insets = new Insets(20,0,0,0);
+		priorityGrp.add(priorityOnBtn);
+		priorityGrp.add(priorityOffBtn);
+		add(priorityOnBtn,gbc);
+		gbc.gridx++;
+		add(priorityOffBtn,gbc);
+		gbc.gridx = 0;
 		gbc.gridy++;
 		
-		this.priorityBtn = new JButton("Turn Priority Mode ON");
-		this.priorityBtn.addActionListener(buttonListener);
-		add(this.priorityBtn,gbc);
+		this.windsHeader = new JLabel("Toggle Winds");
+		add(this.windsHeader,gbc);
+		
+		// toggle winds
+		this.windsOnBtn = new JToggleButton("ON");
+		this.windsOnBtn.addActionListener(this);
+		this.windsOffBtn = new JToggleButton("OFF");
+		this.windsOffBtn.addActionListener(this);
+		this.windsOffBtn.setSelected(true);
+		ButtonGroup windsGrp = new ButtonGroup();
+		gbc.gridwidth=1;
+		gbc.gridy++;
+		gbc.insets = new Insets(20,0,0,0);
+		windsGrp.add(windsOnBtn);
+		windsGrp.add(windsOffBtn);
+		add(windsOnBtn,gbc);
+		gbc.gridx++;
+		add(windsOffBtn,gbc);
+		gbc.gridx = 0;
+		gbc.gridy++;
 		
 	}
 
@@ -164,7 +202,15 @@ public class ManualMenuPanel extends JPanel implements ActionListener{
 		} else if (target == warehouseBtn){
 			this.selectionList.setModel(this.warehouseList);
 			this.selectionList.setSelectedIndex(0);			
+		} else if (target == priorityOnBtn || target == priorityOffBtn) {
+			isPriorityMode = !isPriorityMode;
+			creationListener.togglePriority(isPriorityMode);
 		}
+		else if (target == windsOnBtn || target == windsOffBtn) {
+			isWindsMode = !isWindsMode;
+			creationListener.toggleWinds(isWindsMode);
+		}
+		// add listener for winds toggle.
 	}
 	
 	public void setMenuListener(MenuListener menuListener) {

@@ -28,6 +28,7 @@ public class GridPanel extends JPanel implements ActionListener{
 	private PackageType[] houseRequests = new PackageType[NUM_OF_HOUSES];
 	private PackageType[] warehouseRequests = new PackageType[NUM_OF_HOUSES];
 	private boolean priorityMode = false;
+	private boolean windsMode = false;
 	
 	// SYS in-house variables
 	private int[] drone = new int[]{2,3};
@@ -48,18 +49,22 @@ public class GridPanel extends JPanel implements ActionListener{
 	// SCENARIO QUEUE
 	
 	// BASIC SIMULATION VARIABLES
+	int[][] houseLocations = new int[][]{{0,0},{0,2},{2,0},{2,2}};
 	BufferedImage droneImg;
+	BufferedImage houseImg;
 	int squareSize = 150;
+	int houseSize = 125;
 	int droneSize = 125;
 
 	public GridPanel(MainFrame parentFrame) {
 		this.parentFrame = parentFrame;
 		initEnvVars();
-		
+				
 		setBorder(BorderFactory.createLineBorder(new Color(0,0,0),1));
 		setPreferredSize(new Dimension(594,600));
 		try {
 			droneImg = ImageIO.read(new File("img/drone.png"));
+			houseImg = ImageIO.read(new File("img/house_victorian.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -81,26 +86,28 @@ public class GridPanel extends JPanel implements ActionListener{
 		
 		// "paint houses"
 		int houseNum = 0;
-		for(row=0;row<=2;row+=2) {
-			for(col=0;col<=2;col+=2) {
-				g.setColor(new Color(50,60,210));
-				g.fillRect(col*squareSize, row*squareSize, squareSize, squareSize);
-				g.setColor(Color.black);
-				g.drawString("House"+(houseNum+1), col*squareSize + 20, row*squareSize + 20);
-				if(houseMonitors[houseNum]){
-					g.setColor(Color.red);
-					g.drawString("Waiting!", col*squareSize + 20, (row+1)*squareSize - 40);
-				}
-				if(pickUpThisState == (houseNum+1)) {
-					g.setColor(Color.green);
-					g.drawString("Picked Up!", col*squareSize + 20, (row+1)*squareSize - 20);
-				}			
-				if(dropOffThisState == (houseNum+1)) {
-					g.setColor(Color.orange);
-					g.drawString("Drop-off!", col*squareSize + 20, (row+1)*squareSize - 5);
-				}
-				houseNum++;
+		for(int[] location : houseLocations) {
+			row = location[0];
+			col = location[1];
+			//g.setColor(new Color(50,60,210));
+			//g.fillRect(col*squareSize, row*squareSize, squareSize, squareSize);
+			g.drawImage(houseImg, col*squareSize+10, row*squareSize+10, houseSize, houseSize, null);
+
+			//g.setColor(Color.black);
+			//g.drawString("House"+(houseNum+1), col*squareSize + 20, row*squareSize + 20);
+			if(houseMonitors[houseNum]){
+				g.setColor(Color.red);
+				g.drawString("Waiting!", col*squareSize + 20, (row+1)*squareSize - 40);
 			}
+			if(pickUpThisState == (houseNum+1)) {
+				g.setColor(Color.green);
+				g.drawString("Picked Up!", col*squareSize + 20, (row+1)*squareSize - 20);
+			}			
+			if(dropOffThisState == (houseNum+1)) {
+				g.setColor(Color.orange);
+				g.drawString("Drop-off!", col*squareSize + 20, (row+1)*squareSize - 5);
+			}
+			houseNum++;
 		}
 		
 		//"paint charging station"
@@ -161,6 +168,7 @@ public class GridPanel extends JPanel implements ActionListener{
 		g.drawString("Priority Mode:", col*squareSize + 20, row*squareSize + 100);
 		String priorityModeString = priorityMode ? "ON" : "OFF";
 		g.drawString(priorityModeString+" "+priorityCap+"/"+MAX_PRIORITY_CAP, col*squareSize + 20, row*squareSize + 120);
+		g.drawString("Winds: "+(windsMode ? "ON" : "OFF"), col*squareSize + 20, row*squareSize + 140);
 		
 		// "paint drone"
 		g.drawImage(droneImg, this.drone[1]*squareSize, this.drone[0]*squareSize, droneSize, droneSize, null);
@@ -181,6 +189,13 @@ public class GridPanel extends JPanel implements ActionListener{
 	
 	public void togglePriority(boolean newPriority) {
 		this.priorityMode = newPriority;
+		updateEnvironment();
+		getNewState();
+		repaint();
+	}
+	
+	public void toggleWinds(boolean newWinds) {
+		this.windsMode = newWinds;
 		updateEnvironment();
 		getNewState();
 		repaint();
@@ -217,9 +232,14 @@ public class GridPanel extends JPanel implements ActionListener{
 		controller.setEnvVar("priorityMode", Boolean.toString(this.priorityMode));
 	}
 	
+	private void updateWinds() {
+		controller.setEnvVar("windsMode", Boolean.toString(this.windsMode));
+	}
+	
 	private void updateEnvironment() {
 		updateRequests();
 		updatePriority();
+		updateWinds();
 	}
 
 	private void getNewState() {

@@ -16,8 +16,9 @@ public class DroneState {
 		for(int i=0;i<NUM_OF_HOUSES;i++) {
 			envValues.put("outHousePackages["+i+"]", "EMPTY");
 			envValues.put("outWarehousePackages["+i+"]", "EMPTY");
-			envValues.put("priorityMode", "false");
 		}
+		envValues.put("priorityMode", "false");
+		envValues.put("windsMode", "false");
 	}
 	
 	private void initSysValues() {

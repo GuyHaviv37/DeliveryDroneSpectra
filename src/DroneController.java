@@ -13,9 +13,6 @@ public class DroneController {
 		Map<String,String> inputs = new HashMap<>();
 		for(Map.Entry<String,String> e : droneState.getEnvValues().entrySet()) {
 			inputs.put(e.getKey(), e.getValue());
-			if(e.getKey().equals("priorityMode")){
-				System.out.println("PM :"+e.getValue());
-			}
 		}
 		try {
 			executor = new ControllerExecutor(new BasicJitController(),"out");

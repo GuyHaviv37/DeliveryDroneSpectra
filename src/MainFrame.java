@@ -25,6 +25,11 @@ public class MainFrame extends JFrame{
 			public void togglePriority(boolean newPriority) {
 				gridPanel.togglePriority(newPriority);
 			}
+
+			@Override
+			public void toggleWinds(boolean newWinds) {
+				gridPanel.toggleWinds(newWinds);
+			}
 			
 			// add scenario
 			// add other environment variables such as winds or rain.
