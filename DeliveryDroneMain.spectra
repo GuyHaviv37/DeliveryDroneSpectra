@@ -44,13 +44,16 @@ define MAX_ENERGY:= 7;
 //predicates
 predicate moveDir(Cord pos):
   pos+1 = next(pos) |
-  pos   = next(pos) |
   pos-1 = next(pos); 
+  
+predicate notMoveDir(Cord pos): 
+  pos   = next(pos);
   
 // env variables
 env houseOptions[NUM_OF_HOUSES] outHousePackages;
 env warehouseOptions[NUM_OF_HOUSES] outWarehousePackages;
 env boolean priorityMode;
+env boolean windsMode;
 
 
 // sys variables
@@ -74,6 +77,7 @@ asm initWarehouseEmpty:
 forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
 		outWarehousePackages[i] = EMPTY;
 asm priorityMode=false;
+asm windsMode=false;
 		
 /* INVENTORY */
 counter totalPackages(0..CAPACITY){ 
@@ -176,8 +180,11 @@ gar initDropOffThisState:
 	dropOffThisState = 0;
 	
 // Ensure at every step drone has to decide if to make a move in both row and col directions
-gar droneAlwaysMoves:
-	G moveDir(drone[0]) & moveDir(drone[1]);
+gar droneMovesWithoutWind:
+	G moveDir(drone[0]) & moveDir(drone[1]) -> !windsMode;
+gar droneMoves:
+	G moveDir(drone[0]) & moveDir(drone[1]) | (notMoveDir(drone[0]) & moveDir(drone[1])) | (moveDir(drone[0]) & notMoveDir(drone[1])) | (notMoveDir(drone[0]) & notMoveDir(drone[1]));
+
 
 // guarantees when a pickup can be made + implications on monitor
 gar G pickUpThisState = 1 -> atHouse1 & waitingPackageOutHouse1 & roomForPickup & next(waitingPackageOutHouse1)=false;
