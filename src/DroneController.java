@@ -31,7 +31,6 @@ public class DroneController {
 			}
 			// Update executor state
 			executor.updateState(inputs);
-			System.out.println("Updated state");
 			// Update system variables from new state
 			for(Map.Entry<String,String> e : executor.getCurrOutputs().entrySet()) {
 				droneState.setSysVar(e.getKey(), e.getValue());

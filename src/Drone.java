@@ -86,9 +86,6 @@ public class Drone {
 	}
 	
 	public void setNewDestination(int newRow,int newCol) {
-		System.out.println("Change of destination:");
-		System.out.println("Old: "+location[0]+","+location[1]);
-		System.out.println("New: "+newRow+","+newCol);
 		calcDirection(newRow,newCol);
 		this.location[0] = newRow;
 		this.location[1] = newCol;

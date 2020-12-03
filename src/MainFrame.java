@@ -39,10 +39,7 @@ public class MainFrame extends JFrame{
 		add(this.gridPanel,BorderLayout.WEST);
 		add(this.menuPanel,BorderLayout.EAST);
 		
-		// size could get parameterized
-		// grid cells are 145x145 of 4x4 grid
-		// drone size is 125x125
-		setSize(900,600);
+		setSize(900,700);
 		setResizable(false);
 		pack();
 		setLocationRelativeTo(null);

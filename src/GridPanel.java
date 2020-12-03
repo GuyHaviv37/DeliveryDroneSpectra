@@ -31,7 +31,6 @@ public class GridPanel extends JPanel implements ActionListener{
 	private boolean windsMode = false;
 	
 	// SYS in-house variables
-//	private int[] drone = new int[]{2,3};
 	private Drone drone;
 	
 	private int pickUpThisState = 0;
@@ -47,16 +46,18 @@ public class GridPanel extends JPanel implements ActionListener{
 	// AUX
 	private Timer timer;
 	private int stateNum = 0;
-	// pauseTimers for animations;
 	// SCENARIO QUEUE
 	
 	// BASIC SIMULATION VARIABLES
 	int[][] houseLocations = new int[][]{{0,0},{0,2},{2,0},{2,2}};
 	BufferedImage houseImg;
+	BufferedImage lightningImg;
+	BufferedImage greenLightImg;
+	BufferedImage redLightImg;
 	int squareSize = 150;
 	int houseSize = 125;
-//	BufferedImage droneImg;
-//	int droneSize = 125;
+	int lightningSize = 25;
+	int lightControlSize = 15;
 
 	public GridPanel(MainFrame parentFrame) {
 		this.parentFrame = parentFrame;
@@ -64,10 +65,12 @@ public class GridPanel extends JPanel implements ActionListener{
 		initRequests();
 				
 		setBorder(BorderFactory.createLineBorder(new Color(0,0,0),1));
-		setPreferredSize(new Dimension(594,600));
+		setPreferredSize(new Dimension(594,700));
 		try {
-//			droneImg = ImageIO.read(new File("img/drone.png"));
-			houseImg = ImageIO.read(new File("img/house_victorian.png"));
+			houseImg = ImageIO.read(new File("img/house_small.png"));
+			lightningImg = ImageIO.read(new File("img/lightning.png"));
+			redLightImg = ImageIO.read(new File("img/RED.png"));
+			greenLightImg = ImageIO.read(new File("img/GREEN.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -81,81 +84,16 @@ public class GridPanel extends JPanel implements ActionListener{
 
 	@Override 
 	public void paintComponent(Graphics g){
-		int row;
-		int col;
-		g.setFont(new Font("MV Boli",Font.BOLD,14));
-		// fill "grass" background
-		g.setColor(new Color(50,160,70));
-		g.fillRect(0, 0, 594, 617);
+		int row,col;
+		paintBackground(g);
+		paintControlPanel(g);
+		paintHouses(g);
+		paintChargingStation(g);
+		paintWarehouse(g);
+		paintWarehouseBoard(g);
 		
-		// "paint houses"
-		int houseNum = 0;
-		for(int[] location : houseLocations) {
-			row = location[0];
-			col = location[1];
-			//g.setColor(new Color(50,60,210));
-			//g.fillRect(col*squareSize, row*squareSize, squareSize, squareSize);
-			g.drawImage(houseImg, col*squareSize+10, row*squareSize+10, houseSize, houseSize, null);
 
-			//g.setColor(Color.black);
-			//g.drawString("House"+(houseNum+1), col*squareSize + 20, row*squareSize + 20);
-			if(houseMonitors[houseNum]){
-				g.setColor(Color.red);
-				g.drawString("Waiting!", col*squareSize + 20, (row+1)*squareSize - 40);
-			}
-			if(drone.isStocking()) {
-				if(pickUpThisState == (houseNum+1)) {
-					g.setColor(Color.green);
-					g.drawString("Picked Up!", col*squareSize + 20, (row+1)*squareSize - 20);
-				}			
-				if(dropOffThisState == (houseNum+1)) {
-					g.setColor(Color.orange);
-					g.drawString("Drop-off!", col*squareSize + 20, (row+1)*squareSize - 5);
-				}								
-			}
-			houseNum++;
-		}
-		
-		//"paint charging station"
-		g.setColor(Color.yellow);
-		row = 2;
-		col = 3;
-		g.fillRect(col*squareSize, row*squareSize, squareSize, squareSize);
-		g.setColor(Color.black);
-		g.drawString("Charging Station", col*squareSize + 20, row*squareSize + 20);
-		//-- paint charging bar
-		g.setColor(Color.black);
-		g.drawRect(col*squareSize + 15, (row+1)*squareSize - 40, squareSize - 30 , 20);
-		float batteryFilled = 1 - (this.energy / (float)MAX_ENERGY);
-		Color currentBatteryColor = batteryFilled > 0.6 ? Color.green : batteryFilled < 0.2 ? Color.red : Color.orange;
-		g.setColor(currentBatteryColor);
-		g.fillRect(col*squareSize + 15, (row+1)*squareSize - 40, Math.round((batteryFilled*(squareSize - 30)))+5, 20);
-		
-		// "paint warehouse"
-		g.setColor(Color.red);
-		row = 3;
-		col = 3;
-		g.fillRect(col*squareSize, row*squareSize, squareSize, squareSize);
-		g.setColor(Color.black);
-		g.drawString("Warehouse", col*squareSize + 20, row*squareSize + 20);
-		if(drone.isStocking()) {
-			if(dropOffThisState == 5) {
-				g.setColor(Color.orange);
-				g.drawString("Drop-off!", col*squareSize + 20, (row+1)*squareSize - 5);
-			}			
-		}
-		
-		// paint warehouse details
-		row = 3;
-		col = 2;
-		g.setColor(Color.black);
-		g.drawString("WH Details",col*squareSize + 20, row*squareSize + 20);
-		for(houseNum=0;houseNum<4;houseNum++) { 
-			String waiting = warehouseMonitors[houseNum] ? "W" : "";
-			String pickedUp = pickUpThisState == (houseNum+5) ? "PU" : "";
-			g.drawString("H"+(houseNum+1)+": "+waiting+" "+pickedUp, col*squareSize + 20, row*squareSize + 20*(houseNum+2));
-		}	
-		
+		int houseNum;
 		//paint drone details
 		row = 3;
 		col = 0;
@@ -171,18 +109,139 @@ public class GridPanel extends JPanel implements ActionListener{
 		col=3;
 		g.drawString("State Details", col*squareSize + 20, row*squareSize + 20);
 		g.drawString("State #: "+stateNum, col*squareSize + 20, row*squareSize + 40);
-		g.drawString("PUTS: "+pickUpThisState, col*squareSize + 20, row*squareSize + 60);
-		g.drawString("DOTS: "+dropOffThisState, col*squareSize + 20, row*squareSize + 80);
-		g.drawString("Priority Mode:", col*squareSize + 20, row*squareSize + 100);
-		String priorityModeString = priorityMode ? "ON" : "OFF";
-		g.drawString(priorityModeString+" "+priorityCap+"/"+MAX_PRIORITY_CAP, col*squareSize + 20, row*squareSize + 120);
-		g.drawString("Winds: "+(windsMode ? "ON" : "OFF"), col*squareSize + 20, row*squareSize + 140);
+		//g.drawString("PUTS: "+pickUpThisState, col*squareSize + 20, row*squareSize + 60);
+		//g.drawString("DOTS: "+dropOffThisState, col*squareSize + 20, row*squareSize + 80);
 		
-		// TODO - paint drone by it's new x,y coordinates
-//		g.drawImage(droneImg, this.drone[1]*squareSize, this.drone[0]*squareSize, droneSize, droneSize, null);
+		
+		// paint drone by it's new x,y coordinates
 		g.drawImage(drone.getImage(),drone.getX(),drone.getY(),drone.getSize(),drone.getSize(),null);
 	}
 	
+	private void paintBackground(Graphics g) {
+		// fill "grass" background
+		g.setColor(new Color(50,160,70));
+		g.fillRect(0, 0, 600, 600);
+	}
+	
+	private void paintControlPanel(Graphics g) {
+		int row,col;
+		int paddingWide = 10;
+		Color lightPrimary = new Color(167, 184, 212);
+		Color primary = new Color(99, 118, 150);
+		Color darkPrimary = new Color(59, 74, 99);
+		// 700 is height of the grid
+		// fill "CONTROL PANEL"
+		g.setFont(new Font("MV Boli",Font.BOLD,14));
+		// Border
+		g.setColor(Color.BLACK);
+		g.drawLine(0, 600, 594, 600);
+		// Background
+		g.setColor(darkPrimary);
+		g.fillRect(0, 600, 594, 100);
+		g.setColor(primary);
+		g.fillRect(10, 610, 574, 80);
+
+		
+		
+		// paint environment toggles
+		g.setColor(Color.BLACK);
+		col = 0;
+		row = 4;
+		g.drawString("Priority Mode:", col*squareSize + paddingWide, row*squareSize + 40);
+		g.drawImage(priorityMode ? greenLightImg : redLightImg,(col+1)*squareSize - 20,row*squareSize + 30,lightControlSize,lightControlSize,null);
+		g.drawString("Winds-Control: ", col*squareSize + paddingWide, row*squareSize + 60);
+		g.drawImage(windsMode ? greenLightImg : redLightImg,(col+1)*squareSize - 20,row*squareSize + 50,lightControlSize,lightControlSize,null);
+		// paint charging bar
+		col = 3;
+		row = 4;
+		g.drawString("Battery: ", col*squareSize + 40, row*squareSize + 35);
+		g.drawImage(lightningImg,col*squareSize + 15,row*squareSize + 20,lightningSize,lightningSize,null);
+		g.drawRect(col*squareSize + paddingWide, row*squareSize + 60, squareSize - 35 , 20);
+		float batteryFilled = 1 - (this.energy / (float)MAX_ENERGY);
+		Color currentBatteryColor = batteryFilled > 0.6 ? Color.green : batteryFilled < 0.2 ? Color.red : Color.orange;
+		g.setColor(currentBatteryColor);
+		g.fillRect(col*squareSize + paddingWide, row*squareSize + 60, Math.round((batteryFilled*(squareSize - 35)))+5, 20);
+		
+	}
+	
+	private void paintHouses(Graphics g) {
+		int row,col;
+		g.setFont(new Font("MV Boli",Font.BOLD,14));
+
+		// "paint houses"
+		int houseNum = 0;
+		for(int[] location : houseLocations) {
+			row = location[0];
+			col = location[1];
+			g.drawImage(houseImg, col*squareSize+10, row*squareSize+10, houseSize, houseSize, null);
+
+			//g.setColor(Color.black);
+			//g.drawString("House"+(houseNum+1), col*squareSize + 20, row*squareSize + 20);
+			// TODO - add house numbers (to images?)
+			if(houseMonitors[houseNum]){
+				g.setColor(Color.red);
+				g.drawString("Waiting!", col*squareSize + 20, (row+1)*squareSize - 40);
+			}
+			if(drone.isStocking()) {
+				if(pickUpThisState == (houseNum+1)) {
+					g.setColor(Color.green);
+					g.drawString("Picked Up!", col*squareSize + 20, (row+1)*squareSize - 20);
+				}			
+				if(dropOffThisState == (houseNum+1)) {
+					g.setColor(Color.orange);
+					g.drawString("Drop-off!", col*squareSize + 20, (row+1)*squareSize - 5);
+				}								
+			}
+			houseNum++;
+		}		
+	}
+
+	private void paintChargingStation(Graphics g) {
+		int row,col;
+		//"paint charging station"
+		g.setColor(Color.yellow);
+		row = 2;
+		col = 3;
+		g.fillRect(col*squareSize, row*squareSize, squareSize, squareSize);
+		g.setColor(Color.black);
+		g.drawString("Charging Station", col*squareSize + 20, row*squareSize + 20);		
+	}
+
+	private void paintWarehouse(Graphics g) {
+		int row,col;
+		// "paint warehouse"
+		g.setColor(Color.red);
+		row = 3;
+		col = 3;
+		g.fillRect(col*squareSize, row*squareSize, squareSize, squareSize);
+		g.setColor(Color.black);
+		g.drawString("Warehouse", col*squareSize + 20, row*squareSize + 20);
+		if(drone.isStocking()) {
+			if(dropOffThisState == 5) {
+				g.setColor(Color.orange);
+				g.drawString("Drop-off!", col*squareSize + 20, (row+1)*squareSize - 5);
+			}			
+		}		
+	}
+	
+	private void paintWarehouseBoard(Graphics g) {
+		int houseNum,row,col;
+		// paint warehouse details
+		row = 3;
+		col = 2;
+		g.setColor(Color.black);
+		g.drawString("WH Details",col*squareSize + 20, row*squareSize + 20);
+		for(houseNum=0;houseNum<4;houseNum++) { 
+			String waiting = warehouseMonitors[houseNum] ? "W" : "";
+			String pickedUp = pickUpThisState == (houseNum+5) && drone.isStocking() ? "PU" : "";
+			g.drawString("H"+(houseNum+1)+": "+waiting+" "+pickedUp, col*squareSize + 20, row*squareSize + 20*(houseNum+2));
+		}	
+	}
+
+
+
+
+
 	/* HANDLE USER EVENTS*/
 
 	public void addPickupRequest(int requestNumber) {
@@ -213,14 +272,14 @@ public class GridPanel extends JPanel implements ActionListener{
 	// this is what the timer will generate at each delay
 	// General approach:
 	// * update all environment variables
+	// * Update Drone
 	// * paint component
-	// * get new state from the controller
+	// * get new state from the controller, if needed
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		updateEnvironment();
 		updateDrone();
 		repaint();
-		//System.out.println(drone.toString());
 		// When we have animation we will check that no animation is running before getting new state
 		if(!(drone.isMoving() || drone.isStocking())) {
 			getNewState();			
@@ -251,7 +310,6 @@ public class GridPanel extends JPanel implements ActionListener{
 			// drone is IDLE (standing and done stocking), need to calculate new animation
 			int newRow = Integer.parseInt(controller.getSysVar("drone[0]"));
 			int newCol = Integer.parseInt(controller.getSysVar("drone[1]"));
-			System.out.println("SysVars: "+newRow+","+newCol);
 			drone.setNewDestination(newRow, newCol);
 			// THERES NO STOCKING WHILE MOVING
 			drone.toggleMoving(true,false);
@@ -260,7 +318,7 @@ public class GridPanel extends JPanel implements ActionListener{
 
 
 	private void updateRequests() {
-		// I assume that resetting a true package is ok, since we aggregate them anyways
+		// I assume that resetting a true package as true is ok, since we aggregate them anyways
 		for(int i=0;i<houseRequests.length;i++) {
 			controller.setEnvVar("outHousePackages["+i+"]",houseRequests[i].name());
 		}
@@ -287,9 +345,8 @@ public class GridPanel extends JPanel implements ActionListener{
 		int i;
 		controller.updateState();
 		// make updates to all GUI components field variables that needs changing.
-		//drone
-//		this.drone[0] = Integer.parseInt(controller.getSysVar("drone[0]"));
-//		this.drone[1] = Integer.parseInt(controller.getSysVar("drone[1]"));
+		// Drone is updated on the updateDrone method
+		
 		// PUTS , DOTS
 		this.pickUpThisState = Integer.parseInt(controller.getSysVar("pickUpThisState"));
 		this.dropOffThisState = Integer.parseInt(controller.getSysVar("dropOffThisState"));
@@ -311,6 +368,7 @@ public class GridPanel extends JPanel implements ActionListener{
 		// Priority
 		this.priorityCap = Integer.parseInt(controller.getSysVar("priorityCap"));
 		
+		// After every new state reset the requests env. variables
 		initRequests();
 		
 	}
