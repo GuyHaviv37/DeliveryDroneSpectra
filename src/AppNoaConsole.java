@@ -24,6 +24,10 @@ public class AppNoaConsole extends JComponent {
 	String[] outHousePackages = new String[NUM_OF_HOUSES];
 	String[] outWarehousePackages= new String[NUM_OF_HOUSES];
 	boolean priorityMode =false;
+	boolean envelopeMode1 =false;
+	boolean envelopeMode2 =false;
+	boolean envelopeMode3 =false;
+	boolean envelopeMode4 =false;
 	//sys
 	int[] drone= new int[2];
 	int pickUpThisState;
@@ -48,11 +52,14 @@ public class AppNoaConsole extends JComponent {
 			String warehousePackages_console = reader.readLine();   
 			System.out.println("enter 1 if priority mode");
 			String getPriority = reader.readLine();
-			
+			System.out.println("enter 1 if envelope mode");
+			String getEnvelope = reader.readLine();
+
 			String[] split_houses = outHousePackages_console.split(" ");
 			String[] split_warehouse = warehousePackages_console.split(" ");
 			String[] split_priority = getPriority.split(" ");
-			
+			String[] split_envelope = getEnvelope.split(" ");
+
 			initAllArraysToEmpty();
 			for(int i=0; i<split_houses.length;i++) {
 				outHousePackages[Integer.parseInt(split_houses[i])]="SMALL";
@@ -60,7 +67,7 @@ public class AppNoaConsole extends JComponent {
 			for(int i=0; i<split_warehouse.length;i++) {
 				outWarehousePackages[Integer.parseInt(split_warehouse[i])]="SMALL";
 			}
-			
+
 			if(split_priority.length>0) {
 				if(Integer.parseInt(split_priority[0])==1) {
 					priorityMode =true;
@@ -70,7 +77,22 @@ public class AppNoaConsole extends JComponent {
 				}
 				System.out.println("parse priority mode " + split_priority[0]+ " " + priorityMode);
 			}
-			
+			for(int i=0; i<split_envelope.length;i++) {
+				if(Integer.parseInt(split_envelope[i])==1) {
+					envelopeMode1 =true;
+				}
+				if(Integer.parseInt(split_envelope[i])==2) {
+					envelopeMode2 =true;
+				}
+				if(Integer.parseInt(split_envelope[i])==3) {
+					envelopeMode3 =true;
+				}
+				if(Integer.parseInt(split_envelope[i])==4) {
+					envelopeMode4 =true;
+				}
+				
+			}
+
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -84,6 +106,10 @@ public class AppNoaConsole extends JComponent {
 			inputs.put(outHouse,outHousePackages[i]);
 			inputs.put(outWarehouse,outWarehousePackages[i]);
 			inputs.put("priorityMode",String.valueOf(priorityMode));
+			inputs.put("envelopeMode1",String.valueOf(envelopeMode1));
+			inputs.put("envelopeMode2",String.valueOf(envelopeMode2));
+			inputs.put("envelopeMode3",String.valueOf(envelopeMode3));
+			inputs.put("envelopeMode4",String.valueOf(envelopeMode4));
 		}
 	}
 	void updateSysVaribleValue(Map<String, String> sysValues) {
@@ -100,19 +126,24 @@ public class AppNoaConsole extends JComponent {
 		System.out.println("********************Envirenment varibales*******************");
 		for(int i=0; i<NUM_OF_HOUSES;i++) {
 			if(outHousePackages[i] != "EMPTY") {
-				System.out.print("  |  outHousePackages["+Integer.toString(i)+"]= ");
+				System.out.print(" | outHousePackages["+Integer.toString(i)+"]= ");
 				System.out.print(outHousePackages[i]);
 			}
 		}
 		System.out.println();
 		for(int i=0; i<NUM_OF_HOUSES;i++) {
 			if(outWarehousePackages[i] != "EMPTY") {
-				System.out.print("  |  outWarehousePackages["+Integer.toString(i)+"]= ");
+				System.out.print(" | outWarehousePackages["+Integer.toString(i)+"]= ");
 				System.out.print(outWarehousePackages[i]);
 			}
 		}
 		System.out.println();
 		System.out.println("priority mode = " + priorityMode);
+		System.out.println();
+		System.out.println("envelopemode1 = " + envelopeMode1);
+		System.out.println("envelopemode2 = " + envelopeMode2);
+		System.out.println("envelopemode3 = " + envelopeMode3);
+		System.out.println("envelopemode4 = " + envelopeMode4);
 		System.out.println();
 	}
 	void printSysValue(Map<String, String> sysValues) {
@@ -127,7 +158,7 @@ public class AppNoaConsole extends JComponent {
 		if(pickUpThisState>0) {
 			System.out.println("pickUpThisState= " + pickUpThisState);
 		}
-		System.out.println("priority counter= " +sysValues.get("priority") );
+		System.out.println("priority counter= " +sysValues.get("priorityCap") );
 		System.out.println("energy counter= " +sysValues.get("energy") );
 		System.out.println("*************************dron capacity*************************");
 		System.out.println("droneTWHCap= "+ sysValues.get("droneToWarehouseCap"));
@@ -145,6 +176,14 @@ public class AppNoaConsole extends JComponent {
 		System.out.println("waitingHouse2= "+ sysValues.get("waitingPackageOutHouse2"));
 		System.out.println("waitingHouse3= "+ sysValues.get("waitingPackageOutHouse3"));
 		System.out.println("waitingHouse4= "+ sysValues.get("waitingPackageOutHouse4"));
+		System.out.println("*************************drone inventory #*************************");
+		System.out.println("total packages= "+ sysValues.get("totalPackages"));
+		System.out.println("total envelope= "+ sysValues.get("totalEnvelopesToWH"));
+		System.out.println("to WH package= "+ sysValues.get("droneToWarehouseCap"));
+		System.out.println("to HW1= "+ sysValues.get("droneToHouseCap1"));
+		System.out.println("to HW2= "+ sysValues.get("droneToHouseCap2"));
+		System.out.println("to HW3= "+ sysValues.get("droneToHouseCap3"));
+		System.out.println("to HW4= "+ sysValues.get("droneToHouseCap4"));
 		System.out.println("*******************END STATE**********************");
 	}
 	public AppNoaConsole() {
