@@ -25,8 +25,8 @@ public class GridPanel extends JPanel implements ActionListener{
 	private MainFrame parentFrame;
 	private DroneController controller = new DroneController();
 	// ENV in-house variables
-	private PackageType[] houseRequests = new PackageType[NUM_OF_HOUSES];
-	private PackageType[] warehouseRequests = new PackageType[NUM_OF_HOUSES];
+	private boolean[] houseRequests = new boolean[NUM_OF_HOUSES];
+	private boolean[] warehouseRequests = new boolean[NUM_OF_HOUSES];
 	private boolean priorityMode = false;
 	private boolean windsMode = false;
 	
@@ -50,12 +50,23 @@ public class GridPanel extends JPanel implements ActionListener{
 	
 	// BASIC SIMULATION VARIABLES
 	int[][] houseLocations = new int[][]{{0,0},{0,2},{2,0},{2,2}};
+	BufferedImage backgroundImg;
 	BufferedImage houseImg;
+	BufferedImage warehouseImg;
+	BufferedImage chargingStationImg;
+	
+	BufferedImage packageImg;
+
 	BufferedImage lightningImg;
 	BufferedImage greenLightImg;
 	BufferedImage redLightImg;
+	
+	int gridSize = 600;
 	int squareSize = 150;
-	int houseSize = 125;
+	int chargingStationSize = 125;
+	int packageSize_Big = 50;
+	int packageSize_Small = 20;
+//	int houseSize = 125;
 	int lightningSize = 25;
 	int lightControlSize = 15;
 
@@ -67,7 +78,13 @@ public class GridPanel extends JPanel implements ActionListener{
 		setBorder(BorderFactory.createLineBorder(new Color(0,0,0),1));
 		setPreferredSize(new Dimension(594,700));
 		try {
-			houseImg = ImageIO.read(new File("img/house_small.png"));
+			backgroundImg = ImageIO.read(new File("img/background.jpeg"));
+			houseImg = ImageIO.read(new File("img/house_without_number.png"));
+			warehouseImg = ImageIO.read(new File("img/warehouse.jpeg"));
+			chargingStationImg = ImageIO.read(new File("img/charging_station.jpeg"));
+			
+			packageImg = ImageIO.read(new File("img/package_small.jpeg"));
+			
 			lightningImg = ImageIO.read(new File("img/lightning.png"));
 			redLightImg = ImageIO.read(new File("img/RED.png"));
 			greenLightImg = ImageIO.read(new File("img/GREEN.png"));
@@ -119,8 +136,9 @@ public class GridPanel extends JPanel implements ActionListener{
 	
 	private void paintBackground(Graphics g) {
 		// fill "grass" background
-		g.setColor(new Color(50,160,70));
-		g.fillRect(0, 0, 600, 600);
+//		g.setColor(new Color(50,160,70));
+//		g.fillRect(0, 0, 600, 600);
+		g.drawImage(this.backgroundImg, 0,0,gridSize,gridSize,null);
 	}
 	
 	private void paintControlPanel(Graphics g) {
@@ -173,14 +191,15 @@ public class GridPanel extends JPanel implements ActionListener{
 		for(int[] location : houseLocations) {
 			row = location[0];
 			col = location[1];
-			g.drawImage(houseImg, col*squareSize+10, row*squareSize+10, houseSize, houseSize, null);
-
+			g.drawImage(houseImg, col*squareSize, row*squareSize, squareSize, squareSize, null);
+			
 			//g.setColor(Color.black);
 			//g.drawString("House"+(houseNum+1), col*squareSize + 20, row*squareSize + 20);
 			// TODO - add house numbers (to images?)
 			if(houseMonitors[houseNum]){
-				g.setColor(Color.red);
-				g.drawString("Waiting!", col*squareSize + 20, (row+1)*squareSize - 40);
+//				g.setColor(Color.red);
+//				g.drawString("Waiting!", col*squareSize + 20, (row+1)*squareSize - 40);
+				g.drawImage(packageImg,col*squareSize + 10,(row+1)*squareSize - 60, packageSize_Big, packageSize_Big, null);
 			}
 			if(drone.isStocking()) {
 				if(pickUpThisState == (houseNum+1)) {
@@ -199,23 +218,25 @@ public class GridPanel extends JPanel implements ActionListener{
 	private void paintChargingStation(Graphics g) {
 		int row,col;
 		//"paint charging station"
-		g.setColor(Color.yellow);
 		row = 2;
 		col = 3;
-		g.fillRect(col*squareSize, row*squareSize, squareSize, squareSize);
-		g.setColor(Color.black);
-		g.drawString("Charging Station", col*squareSize + 20, row*squareSize + 20);		
+//		g.setColor(Color.yellow);
+//		g.fillRect(col*squareSize, row*squareSize, squareSize, squareSize);
+//		g.setColor(Color.black);
+//		g.drawString("Charging Station", col*squareSize + 20, row*squareSize + 20);	
+		g.drawImage(chargingStationImg, col*squareSize + 25, row*squareSize + 25, chargingStationSize, chargingStationSize, null);
 	}
 
 	private void paintWarehouse(Graphics g) {
 		int row,col;
 		// "paint warehouse"
-		g.setColor(Color.red);
 		row = 3;
 		col = 3;
-		g.fillRect(col*squareSize, row*squareSize, squareSize, squareSize);
-		g.setColor(Color.black);
-		g.drawString("Warehouse", col*squareSize + 20, row*squareSize + 20);
+//		g.setColor(Color.red);
+//		g.fillRect(col*squareSize, row*squareSize, squareSize, squareSize);
+//		g.setColor(Color.black);
+//		g.drawString("Warehouse", col*squareSize + 20, row*squareSize + 20);
+		g.drawImage(warehouseImg, col*squareSize, row*squareSize, squareSize, squareSize, null);
 		if(drone.isStocking()) {
 			if(dropOffThisState == 5) {
 				g.setColor(Color.orange);
@@ -228,13 +249,17 @@ public class GridPanel extends JPanel implements ActionListener{
 		int houseNum,row,col;
 		// paint warehouse details
 		row = 3;
-		col = 2;
-		g.setColor(Color.black);
-		g.drawString("WH Details",col*squareSize + 20, row*squareSize + 20);
+		col = 3;
+		g.setColor(Color.white);
+		//g.drawString("WH Details",col*squareSize + 20, row*squareSize + 20);
 		for(houseNum=0;houseNum<4;houseNum++) { 
-			String waiting = warehouseMonitors[houseNum] ? "W" : "";
-			String pickedUp = pickUpThisState == (houseNum+5) && drone.isStocking() ? "PU" : "";
-			g.drawString("H"+(houseNum+1)+": "+waiting+" "+pickedUp, col*squareSize + 20, row*squareSize + 20*(houseNum+2));
+			//String waiting = warehouseMonitors[houseNum] ? "W" : "";
+			//String pickedUp = pickUpThisState == (houseNum+5) && drone.isStocking() ? "PU" : "";
+			//g.drawString("H"+(houseNum+1)+": "+waiting+" "+pickedUp, col*squareSize + 20, row*squareSize + 20*(houseNum+2));
+			g.drawString("H"+(houseNum+1)+":", col*squareSize + 15,row*squareSize + 20*(houseNum+2));
+			if(warehouseMonitors[houseNum]) {
+				g.drawImage(packageImg, col*squareSize + 45, row*squareSize + 20*(houseNum+1), packageSize_Small, packageSize_Small, null);
+			}
 		}	
 	}
 
@@ -246,9 +271,9 @@ public class GridPanel extends JPanel implements ActionListener{
 
 	public void addPickupRequest(int requestNumber) {
 		if(requestNumber >= 1 && requestNumber <= 4) {
-			this.houseRequests[requestNumber-1] = PackageType.SMALL;
+			this.houseRequests[requestNumber-1] = true;
 		} else if (requestNumber >= 5 && requestNumber <= 8) {
-			this.warehouseRequests[requestNumber-5] = PackageType.SMALL;
+			this.warehouseRequests[requestNumber-5] = true;
 		}
 		updateEnvironment();
 		//getNewState();
@@ -293,7 +318,7 @@ public class GridPanel extends JPanel implements ActionListener{
 				drone.move();
 			} else {
 				// Drone should halt
-				if(pickUpThisState > 0 || dropOffThisState > 0) {
+				if(pickUpThisState > 0 || dropOffThisState > 0 || drone.isCharging()) {
 					// MOVING SHOULD BE FALSE , STOCKING SHOULD BE TRUE
 					drone.toggleMoving(false, true);					
 				} else {
@@ -320,10 +345,10 @@ public class GridPanel extends JPanel implements ActionListener{
 	private void updateRequests() {
 		// I assume that resetting a true package as true is ok, since we aggregate them anyways
 		for(int i=0;i<houseRequests.length;i++) {
-			controller.setEnvVar("outHousePackages["+i+"]",houseRequests[i].name());
+			controller.setEnvVar("outHousePackages["+i+"]",Boolean.toString(houseRequests[i]));
 		}
 		for(int j=0;j<warehouseRequests.length;j++) {
-			controller.setEnvVar("outWarehousePackages["+j+"]",warehouseRequests[j].name());
+			controller.setEnvVar("outWarehousePackages["+j+"]",Boolean.toString(warehouseRequests[j]));
 		}
 	}
 	
@@ -375,14 +400,14 @@ public class GridPanel extends JPanel implements ActionListener{
 	
 	private void initRequests() {
 		for(int i=0;i<houseRequests.length;i++) {
-			houseRequests[i] = PackageType.EMPTY;
-			warehouseRequests[i] = PackageType.EMPTY;
+			houseRequests[i] = false;
+			warehouseRequests[i] = false;
 		}
 	}
 	
-	enum PackageType {
-		EMPTY,SMALL
-	}
+//	enum PackageType {
+//		EMPTY,SMALL
+//	}
 
 
 

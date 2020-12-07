@@ -173,6 +173,10 @@ public class Drone {
 				+ ", stopPosition=" + Arrays.toString(stopPosition) + ", direction=" + direction + "]";
 	}
 
+	public boolean isCharging() {
+		return this.location[0] == 2 && this.location[1] == 3;
+	}
+
 
 
 }
