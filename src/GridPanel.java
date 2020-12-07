@@ -108,27 +108,13 @@ public class GridPanel extends JPanel implements ActionListener{
 		paintChargingStation(g);
 		paintWarehouse(g);
 		paintWarehouseBoard(g);
-		
 
-		int houseNum;
-		//paint drone details
-		row = 3;
-		col = 0;
-		g.drawString("Drone Details", col*squareSize + 20, row*squareSize + 20);
-		g.drawString("Total: "+totalPackages+"/"+MAX_CAPACITY, col*squareSize + 20, row*squareSize + 40);
-		g.drawString("To-WH: "+droneToWarehouseCap, col*squareSize + 20, row*squareSize + 60);
-		for(houseNum=0;houseNum<4;houseNum++) { 
-			g.drawString("To-H"+(houseNum+1)+": "+droneToHouseCap[houseNum], col*squareSize + 20, row*squareSize + 20*(houseNum+4));
-		}
-		
 		// paint state details
+		g.setColor(Color.black);
 		row=0;
 		col=3;
 		g.drawString("State Details", col*squareSize + 20, row*squareSize + 20);
 		g.drawString("State #: "+stateNum, col*squareSize + 20, row*squareSize + 40);
-		//g.drawString("PUTS: "+pickUpThisState, col*squareSize + 20, row*squareSize + 60);
-		//g.drawString("DOTS: "+dropOffThisState, col*squareSize + 20, row*squareSize + 80);
-		
 		
 		// paint drone by it's new x,y coordinates
 		g.drawImage(drone.getImage(),drone.getX(),drone.getY(),drone.getSize(),drone.getSize(),null);
@@ -148,6 +134,7 @@ public class GridPanel extends JPanel implements ActionListener{
 		Color primary = new Color(99, 118, 150);
 		Color darkPrimary = new Color(59, 74, 99);
 		// 700 is height of the grid
+		int stringRow1 = 25,stringRow2 = 45,stringRow3 = 65,stringRow4;
 		// fill "CONTROL PANEL"
 		g.setFont(new Font("MV Boli",Font.BOLD,14));
 		// Border
@@ -159,19 +146,33 @@ public class GridPanel extends JPanel implements ActionListener{
 		g.setColor(primary);
 		g.fillRect(10, 610, 574, 80);
 
-		
-		
 		// paint environment toggles
 		g.setColor(Color.BLACK);
 		col = 0;
 		row = 4;
-		g.drawString("Priority Mode:", col*squareSize + paddingWide, row*squareSize + 40);
-		g.drawImage(priorityMode ? greenLightImg : redLightImg,(col+1)*squareSize - 20,row*squareSize + 30,lightControlSize,lightControlSize,null);
-		g.drawString("Winds-Control: ", col*squareSize + paddingWide, row*squareSize + 60);
-		g.drawImage(windsMode ? greenLightImg : redLightImg,(col+1)*squareSize - 20,row*squareSize + 50,lightControlSize,lightControlSize,null);
+		g.drawString("Priority Mode:", col*squareSize + paddingWide, row*squareSize + stringRow2);
+		g.drawImage(priorityMode ? greenLightImg : redLightImg,(col+1)*squareSize - 30,row*squareSize + stringRow2 -12,lightControlSize,lightControlSize,null);
+		g.drawString("Winds-Control: ", col*squareSize + paddingWide, row*squareSize + stringRow3);
+		g.drawImage(windsMode ? greenLightImg : redLightImg,(col+1)*squareSize - 30,row*squareSize + stringRow3 -12,lightControlSize,lightControlSize,null);
+		
+		int houseNum;
+		//paint drone details
+		col = 1;
+		g.drawString("Inventory:", col*squareSize + paddingWide, row*squareSize + stringRow1);
+		g.drawString("Total:"+totalPackages+"/"+MAX_CAPACITY, col*squareSize + paddingWide, row*squareSize + stringRow2);
+		g.drawString("To-WH:"+droneToWarehouseCap, col*squareSize + paddingWide, row*squareSize + stringRow3);
+		for(houseNum=0;houseNum<4;houseNum++) { 
+			int gapWide, gapHigh;
+			gapWide = houseNum < 2 ? 80 : 150;
+			gapHigh = houseNum % 2 == 0 ? stringRow2 : stringRow3;
+			g.drawString("To-H"+(houseNum+1)+":"+droneToHouseCap[houseNum],col*squareSize+paddingWide+gapWide,row*squareSize+gapHigh);
+		}
+		
+		//g.drawString("PUTS: "+pickUpThisState, col*squareSize + 20, row*squareSize + 60);
+		//g.drawString("DOTS: "+dropOffThisState, col*squareSize + 20, row*squareSize + 80);
+		
 		// paint charging bar
 		col = 3;
-		row = 4;
 		g.drawString("Battery: ", col*squareSize + 40, row*squareSize + 35);
 		g.drawImage(lightningImg,col*squareSize + 15,row*squareSize + 20,lightningSize,lightningSize,null);
 		g.drawRect(col*squareSize + paddingWide, row*squareSize + 60, squareSize - 35 , 20);
@@ -203,12 +204,13 @@ public class GridPanel extends JPanel implements ActionListener{
 			}
 			if(drone.isStocking()) {
 				if(pickUpThisState == (houseNum+1)) {
-					g.setColor(Color.green);
-					g.drawString("Picked Up!", col*squareSize + 20, (row+1)*squareSize - 20);
+//					g.setColor(Color.green);
+//					g.drawString("Picked Up!", col*squareSize + 20, (row+1)*squareSize - 20);
 				}			
 				if(dropOffThisState == (houseNum+1)) {
-					g.setColor(Color.orange);
-					g.drawString("Drop-off!", col*squareSize + 20, (row+1)*squareSize - 5);
+//					g.setColor(Color.orange);
+//					g.drawString("Drop-off!", col*squareSize + 20, (row+1)*squareSize - 5);
+					g.drawImage(packageImg, (col+1)*squareSize - (packageSize_Big+10),(row+1)*squareSize - 60, packageSize_Big, packageSize_Big, null);
 				}								
 			}
 			houseNum++;
@@ -239,8 +241,9 @@ public class GridPanel extends JPanel implements ActionListener{
 		g.drawImage(warehouseImg, col*squareSize, row*squareSize, squareSize, squareSize, null);
 		if(drone.isStocking()) {
 			if(dropOffThisState == 5) {
-				g.setColor(Color.orange);
-				g.drawString("Drop-off!", col*squareSize + 20, (row+1)*squareSize - 5);
+//				g.setColor(Color.orange);
+//				g.drawString("Drop-off!", col*squareSize + 20, (row+1)*squareSize - 5);
+				g.drawImage(packageImg, (col+1)*squareSize - (packageSize_Big+10),(row+1)*squareSize - 60, packageSize_Big, packageSize_Big, null);
 			}			
 		}		
 	}
@@ -251,14 +254,10 @@ public class GridPanel extends JPanel implements ActionListener{
 		row = 3;
 		col = 3;
 		g.setColor(Color.white);
-		//g.drawString("WH Details",col*squareSize + 20, row*squareSize + 20);
 		for(houseNum=0;houseNum<4;houseNum++) { 
-			//String waiting = warehouseMonitors[houseNum] ? "W" : "";
-			//String pickedUp = pickUpThisState == (houseNum+5) && drone.isStocking() ? "PU" : "";
-			//g.drawString("H"+(houseNum+1)+": "+waiting+" "+pickedUp, col*squareSize + 20, row*squareSize + 20*(houseNum+2));
 			g.drawString("H"+(houseNum+1)+":", col*squareSize + 15,row*squareSize + 20*(houseNum+2));
 			if(warehouseMonitors[houseNum]) {
-				g.drawImage(packageImg, col*squareSize + 45, row*squareSize + 20*(houseNum+1), packageSize_Small, packageSize_Small, null);
+				g.drawImage(packageImg, col*squareSize + 45, row*squareSize + 20*(houseNum+2)-15, packageSize_Small, packageSize_Small, null);
 			}
 		}	
 	}
