@@ -78,12 +78,12 @@ public class GridPanel extends JPanel implements ActionListener{
 		setBorder(BorderFactory.createLineBorder(new Color(0,0,0),1));
 		setPreferredSize(new Dimension(594,700));
 		try {
-			backgroundImg = ImageIO.read(new File("img/background.jpeg"));
-			houseImg = ImageIO.read(new File("img/house_without_number.png"));
-			warehouseImg = ImageIO.read(new File("img/warehouse.jpeg"));
-			chargingStationImg = ImageIO.read(new File("img/charging_station.jpeg"));
+			backgroundImg = ImageIO.read(new File("img/background_grass.jpeg"));
+			houseImg = ImageIO.read(new File("img/orange_house_gray.png"));
+			warehouseImg = ImageIO.read(new File("img/warehouse.png"));
+			chargingStationImg = ImageIO.read(new File("img/charging_station.png"));
 			
-			packageImg = ImageIO.read(new File("img/package_small.jpeg"));
+			packageImg = ImageIO.read(new File("img/package_bright_color.png"));
 			
 			lightningImg = ImageIO.read(new File("img/lightning.png"));
 			redLightImg = ImageIO.read(new File("img/RED.png"));
