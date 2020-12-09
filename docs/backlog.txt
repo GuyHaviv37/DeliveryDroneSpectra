@@ -4,31 +4,42 @@ Done:
 Front-end:
 * Implemented a grid panel that represent the current state of the simulation.
 * Implemented a menu that support manual input entry for the environment variables.
+* Implement a "Charging bar" that shows the drone's battery status.
+* Implement a new environment variables - 'Strong Winds'.
+** As a visual effect.
+** As an option of input at manual menu.
+* Improve visual styling.
+* Add to manual menu the ability to enable 'Priority Mode'.
+* Add to the Grid a "Control Panel" that summarize all the information about the drone's state.
 
 Specification:
 * Create the basic Drone mechanism : Request Delivery, Pickup , Drop-off packages from/to houses and warehouse.
 * Implemented a capacity and inventory management system
 * Variant (MustDropoff) : implemented a controller that must drop-off all items for a destination upon entering that location.
-
--------------------
-Left To Do (Sprint 2):
-Front-end:
-* Implement a "Charging bar" that shows the drone's battery status.
-* Implement both new environment variables - 'Strong Winds' & 'Flock of Birds'.
-** As a visual effect.
-** As an option of input at manual menu.
-* Improve visual styling.
-* Add to manual menu the ability to enable 'Priority Mode'.
-
-Specification:
 * Implement a 'Charging' mechanism: 
 s.t. the drone can make an at most X amount of pickups without being charged (returning to the charging station)
-
 * Implement 'Priority Mode' - an environment variable that when is true (i.e. 'Priority Mode' is on) we change our pickup policy:
 ** The drone prioritize picking up packages from Warehouse over Houses.
 ** Nonetheless, The drone can pick up at most PRIORITY_CAP number of packages from Houses. This can be parameterized.
 *** This was intended to prevent house package starvation.
-** When a package is picked up from the Warehouse the # of packages that can be picked up from Houses is reset.
-
+** When a package is picked up from the Warehouse, the # of packages that can be picked up from Houses is reset.
 * Implement 'Strong Winds' environment - forbids drone's movement diagonally.
-* (New - was not in proposal) Implement 'Flock of birds' - restricts drone's movement from specific "street" on the grid.
+
+
+-------------------
+Left To Do (Sprint 3):
+Front-end:
+* Add support for envelopes feature (see Specification)
+** Menu support - request envelope delivery
+** Grid support - show details on the drone control panel.
+* Add Automate Mode
+* Start working on Scenarios
+
+Specification:
+* Add a new kind of "packages" - 'envelopes'
+** Have their own inventory on the drone (do not count as same as packages).
+** Do not count as 'energy-wasters' (does not cost energy on pickup).
+** This is only implemented from Houses.
+*** A house can request a delivery to either a package OR an envelope (only the last request will made will be satisfied). 
+
+

@@ -1,6 +1,7 @@
 Assumptions:
 
-* At initial state - there are no package delivery requests (from all houses and the warehouse)
+* At initial state - there are no package delivery requests (from all houses and the warehouse).
+* At initial state - Priority Mode and Winds Mode are off.
 
 Monitors:
 * After a request, the packages is waiting to be picked up , until the drone actually picks it up.
@@ -26,3 +27,14 @@ The entire inventory management is implemented with counters:
 *totalPackages - # of packages on the drone , incremented at pickup and decremented at drop-off (of any package)
 *(dest)Capacity - # of packages on the drone -intended for (dest)- . incremented when picking up a package to (dest)
 and decremented at drop-off.
+
+WINDS LOGIC:
+* The drone can only move sideways when the winds env variable is true
+
+PRIORITY HANDLING:
+* When the priority mode env variable is true:
+The drone can pick up at most PRIORITY_CAP number of packages from Houses before it makes a Warehouse pickup.
+
+BATTERY & ENERGY:
+* The drone can make at most MAX_ENERGY pickups before it passes through the Charging Station.
+

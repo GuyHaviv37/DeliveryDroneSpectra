@@ -24,6 +24,7 @@ define
 	NUM_OF_HOUSES_MINUS_ONE := 3;
 
 define CAPACITY := 4;
+define PRIORITY_CAP := 1;
 
 define 
 	housePickedup := pickUpThisState > 0 & pickUpThisState <5;
@@ -213,13 +214,13 @@ gar droneMovesWithWind:
 /* ================================== PRIORITY LOGIC ======================================== */	
 env boolean priorityMode;
 asm priorityMode=false;
-counter priorityCap(0..1){
+counter priorityCap(0..PRIORITY_CAP){
 	priorityCap=0; 
 	inc: housePickedup & priorityMode & packageWaitingInWarehouse;
 	reset: warehousePickedup;
 	overflow: false; 
 }
-gar G priorityCap <= 1;
+gar G priorityCap <= PRIORITY_CAP;
 
 /*==================================== ENERGY LOGIC  ======================================= */
 define MAX_ENERGY:= 7;

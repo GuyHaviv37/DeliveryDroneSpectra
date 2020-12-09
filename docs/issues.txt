@@ -1,24 +1,7 @@
-We encounted 2 issues in this sprint , both implemented a system that did not match our requirements (although both are realizable):
-* DeliveryDroneMonitorsNext :
-** Here we implemented to monitors of waiting packages, with this global guarantee:
-G next(waitingPackageOutHouse0) = outHousePackages[0]  | waitingPackageOutHouse0;
-This guarantee did not behave as expected, the packages was waiting an extra state then expected.
-e.g. if a package was waiting and at this state was picked up, it was still waiting in the following state, only after that it was reset.
-
-* DeliveryDroneInvAsArrays:
-** In the specification we had a different implementation of the inventory system.
-Instead of counters we managed the inventory as int arrays of system variables.
-We try to guarantee the expected behavior with guarantees such as:
-* For maintaing changes :
-** positiveInvChangeOnlyOnPickupFromWarehouse , positiveInvChangeOnlyOnPickupFromHouse
-* For changing :
-gar G (next(droneToHouseCap[0]) = droneToHouseCap[0] - 1) iff (droneToHouseCap[0] > 0) & atHouse0;
-gar G (next(droneToHouseCap[1]) = droneToHouseCap[1] - 1) iff (droneToHouseCap[1] > 0) & atHouse1; 
-gar G (next(droneToHouseCap[2]) = droneToHouseCap[2] - 1) iff (droneToHouseCap[2] > 0) & atHouse2; 
-gar G (next(droneToHouseCap[3]) = droneToHouseCap[3] - 1) iff (droneToHouseCap[3] > 0) & atHouse3; 
-
-gar G (next(droneToWarehouseCap) = droneToWarehouseCap -1) iff (droneToWarehouseCap > 0) & atWarehouse;
-
-All of the above did not behave as expected as inventory was changing at a seemingly random behavior,
-e.g without any relation to drone's location, waiting status, pickups etc.
-
+We encounted only one main issue on this sprint.
+While working on the 'Priority Mode' feature, we tried to added the priority as a new package type.
+We thought that this could be done with a new array of env variables (priority requests) that will be monitored
+(same as regular ones). This can be viewed at the DeliveryDronePriority-CannotComput.spectra file.
+Although, the addition of the new variables together with the new monitors and auxiliary guarantees,
+the specification became really hard to compute (together with the other new features it took a lot of time).
+So we dealed with it by making a new implementation that can be viewed at the Main specification.

@@ -1,1 +1,7 @@
-First sprint
+From First Sprint:
+
+* Implement a Charging Station and Energy feature.
+* Implement a new environment variables - 'Strong Winds'.
+* Improve visual styling.
+* Added 'Priority Mode'.
+* Added "Control Panel" that summarize all the information about the drone's state.
