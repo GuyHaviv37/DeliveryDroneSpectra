@@ -48,10 +48,7 @@ predicate notMoveDir(Cord pos):
 /* ======================================== ENV VARIABLS ==============================================*/
 env boolean[NUM_OF_HOUSES] outHousePackages;
 env boolean[NUM_OF_HOUSES] outWarehousePackages;
-env boolean envelopeMode1;
-env boolean envelopeMode2;
-env boolean envelopeMode3;
-env boolean envelopeMode4;
+env boolean[NUM_OF_HOUSES] envelopeMode;
 
 /* ======================================== SYSTEM VARIABLS ==============================================*/
 sys Cord[2] drone;
@@ -69,16 +66,15 @@ asm initWarehouseEmpty:
 forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
 		outWarehousePackages[i] = false;
 
-asm envelopeMode1=false; 
-asm envelopeMode2=false; 
-asm envelopeMode3=false; 
-asm envelopeMode4=false; 
+asm initEnvelopeModeOff:
+forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
+		envelopeMode[i] = false;
 
 /* ======================================== INVENTORY ==============================================*/
 //all packages on the drone
 counter totalPackages(0..PACKAGE_CAPACITY){ 
 	totalPackages =0;
-	inc: (pickUpThisState=1 & !envelopeMode1)| (pickUpThisState=2 & !envelopeMode2)|(pickUpThisState=3 & !envelopeMode3)|(pickUpThisState=4 & !envelopeMode4) | warehousePickedup;
+	inc: (pickUpThisState=1 & !envelopeMode[0])| (pickUpThisState=2 & !envelopeMode[1])|(pickUpThisState=3 & !envelopeMode[2])|(pickUpThisState=4 & !envelopeMode[3]) | warehousePickedup;
 	dec: packageDelivered;
 	overflow:false;
 	underflow:false;
@@ -86,7 +82,7 @@ counter totalPackages(0..PACKAGE_CAPACITY){
 // counter for envelopes from Houses -> Warehouse
 counter totalEnvelopesToWH(0..ENVELOPE_CAPACITY){ 
 	totalEnvelopesToWH =0;
-	inc: (pickUpThisState=1 & envelopeMode1)| (pickUpThisState=2 & envelopeMode2)|(pickUpThisState=3 & envelopeMode3)|(pickUpThisState=4 & envelopeMode4) ;
+	inc: (pickUpThisState=1 & envelopeMode[0])| (pickUpThisState=2 & envelopeMode[1])|(pickUpThisState=3 & envelopeMode[2])|(pickUpThisState=4 & envelopeMode[3]) ;
 	dec: envelopeDelivered;
 	overflow:false;
 	underflow:false;
@@ -94,7 +90,7 @@ counter totalEnvelopesToWH(0..ENVELOPE_CAPACITY){
 // counter for packages from Houses -> Warehouse
 counter droneToWarehouseCap(0..PACKAGE_CAPACITY){
 	droneToWarehouseCap = 0;
-	inc: (pickUpThisState=1 & !envelopeMode1)| (pickUpThisState=2 & !envelopeMode2)|(pickUpThisState=3 & !envelopeMode3)|(pickUpThisState=4 & !envelopeMode4) ;
+	inc: (pickUpThisState=1 & !envelopeMode[0])| (pickUpThisState=2 & !envelopeMode[1])|(pickUpThisState=3 & !envelopeMode[2])|(pickUpThisState=4 & !envelopeMode[3]) ;
 	dec: dropOffThisState =5;
 	overflow:false;
 	underflow:false;
@@ -183,10 +179,10 @@ gar droneMoves:
 // ================================== PICKUP , DROP-OFF LOGIC ======================================
 
 // guarantees when a pickup can be made + implications on monitor
-gar G pickUpThisState = 1 -> atHouse1 & waitingPackageOutHouse1 & ((!envelopeMode1 & roomForPickupPackage) |(envelopeMode1 & roomForPickupEnvelope)) & next(waitingPackageOutHouse1)=false;
-gar G pickUpThisState = 2 -> atHouse2 & waitingPackageOutHouse2 & ((!envelopeMode2 & roomForPickupPackage) |(envelopeMode2 & roomForPickupEnvelope)) & next(waitingPackageOutHouse2)=false;
-gar G pickUpThisState = 3 -> atHouse3 & waitingPackageOutHouse3 & ((!envelopeMode3 & roomForPickupPackage) |(envelopeMode3 & roomForPickupEnvelope)) & next(waitingPackageOutHouse3)=false;
-gar G pickUpThisState = 4 -> atHouse4 & waitingPackageOutHouse4 & ((!envelopeMode4 & roomForPickupPackage) |(envelopeMode4 & roomForPickupEnvelope)) & next(waitingPackageOutHouse4)=false ;
+gar G pickUpThisState = 1 -> atHouse1 & waitingPackageOutHouse1 & ((!envelopeMode[0] & roomForPickupPackage) |(envelopeMode[0] & roomForPickupEnvelope)) & next(waitingPackageOutHouse1)=false;
+gar G pickUpThisState = 2 -> atHouse2 & waitingPackageOutHouse2 & ((!envelopeMode[1] & roomForPickupPackage) |(envelopeMode[1] & roomForPickupEnvelope)) & next(waitingPackageOutHouse2)=false;
+gar G pickUpThisState = 3 -> atHouse3 & waitingPackageOutHouse3 & ((!envelopeMode[2] & roomForPickupPackage) |(envelopeMode[2] & roomForPickupEnvelope)) & next(waitingPackageOutHouse3)=false;
+gar G pickUpThisState = 4 -> atHouse4 & waitingPackageOutHouse4 & ((!envelopeMode[3] & roomForPickupPackage) |(envelopeMode[3] & roomForPickupEnvelope)) & next(waitingPackageOutHouse4)=false ;
 
 gar G pickUpThisState = 5 -> atWarehouse & waitingPackageInWarehouseToHouse1 & roomForPickupPackage & next(waitingPackageInWarehouseToHouse1)=false;
 gar G pickUpThisState = 6 -> atWarehouse & waitingPackageInWarehouseToHouse2 & roomForPickupPackage & next(waitingPackageInWarehouseToHouse2)=false;
@@ -245,7 +241,7 @@ define MAX_ENERGY:= 7;
 
 counter energy (0..MAX_ENERGY){
 	energy=0;
-	inc: (pickUpThisState=1 & !envelopeMode1)| (pickUpThisState=2 & !envelopeMode2)|(pickUpThisState=3 & !envelopeMode3)|(pickUpThisState=4 & !envelopeMode4)  | warehousePickedup;
+	inc: (pickUpThisState=1 & !envelopeMode[0])| (pickUpThisState=2 & !envelopeMode[1])|(pickUpThisState=3 & !envelopeMode[2])|(pickUpThisState=4 & !envelopeMode[3])  | warehousePickedup;
 	reset: atChargingStation;
 	overflow: false;
 }
