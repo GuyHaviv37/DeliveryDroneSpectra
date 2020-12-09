@@ -1,3 +1,4 @@
+package deliveryDrone;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,31 +9,31 @@ import tau.smlab.syntech.controller.jit.BasicJitController;
 public class DroneController {
 	DroneState droneState = new DroneState();
 	ControllerExecutor executor;
-	
+
 	public DroneController() {
-		Map<String,String> inputs = new HashMap<>();
-		for(Map.Entry<String,String> e : droneState.getEnvValues().entrySet()) {
+		Map<String, String> inputs = new HashMap<>();
+		for (Map.Entry<String, String> e : droneState.getEnvValues().entrySet()) {
 			inputs.put(e.getKey(), e.getValue());
 		}
 		try {
-			executor = new ControllerExecutor(new BasicJitController(),"out");
+			executor = new ControllerExecutor(new BasicJitController(), "out");
 			executor.initState(inputs);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 	}
-	
+
 	public void updateState() {
-		Map<String,String> inputs = new HashMap<>();
+		Map<String, String> inputs = new HashMap<>();
 		try {
 			// Update inputs from environment variables
-			for(Map.Entry<String,String> e : droneState.getEnvValues().entrySet()) {
+			for (Map.Entry<String, String> e : droneState.getEnvValues().entrySet()) {
 				inputs.put(e.getKey(), e.getValue());
 			}
 			// Update executor state
 			executor.updateState(inputs);
 			// Update system variables from new state
-			for(Map.Entry<String,String> e : executor.getCurrOutputs().entrySet()) {
+			for (Map.Entry<String, String> e : executor.getCurrOutputs().entrySet()) {
 				droneState.setSysVar(e.getKey(), e.getValue());
 			}
 		} catch (Exception e) {
@@ -43,7 +44,7 @@ public class DroneController {
 	public String getEnvVar(String key) {
 		return this.droneState.getEnvVar(key);
 	}
-	
+
 	public void setEnvVar(String key, String value) {
 		this.droneState.setEnvVar(key, value);
 	}
