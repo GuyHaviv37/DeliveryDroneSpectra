@@ -13,7 +13,7 @@ define
 // Specify locations of warehouse, charging station and houses on the grid	
 define
 	atWarehouse := drone[0] = 3 & drone[1] = 3;
-	atChargingStation := drone[0] = 3 & drone[1] = 2;
+	atChargingStation := drone[0] = 2 & drone[1] = 3;
 	atHouse1 := drone[0] = 0 & drone[1] = 0;
 	atHouse2 := drone[0] = 0 & drone[1] = 2;
 	atHouse3 := drone[0] = 2 & drone[1] = 0;
