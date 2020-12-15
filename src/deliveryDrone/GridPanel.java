@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -17,7 +18,7 @@ import javax.swing.Timer;
 @SuppressWarnings("serial")
 public class GridPanel extends JPanel implements ActionListener {
 
-	private static final int NUM_OF_HOUSES = 4;
+	public static final int NUM_OF_HOUSES = 4;
 	private static final int MAX_ENERGY = 7;
 	private static final int MAX_CAPACITY = 4;
 	private static final int MAX_PRIORITY_CAP = 1;
@@ -309,6 +310,7 @@ public class GridPanel extends JPanel implements ActionListener {
 	// * get new state from the controller, if needed
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		//updateDemo(); 
 		updateEnvironment();
 		updateDrone();
 		repaint();
@@ -319,7 +321,24 @@ public class GridPanel extends JPanel implements ActionListener {
 			stateNum++;
 		}
 	}
-
+	
+	// need the variable isDemo from the menu panel!!!
+	private void updateDemo() {
+		//if(this.isDemo) {
+			Random rand = new Random();
+			for(int i = 0; i < this.houseRequests.length; i++) {
+				double precentHouse = rand.nextDouble();
+				double precentWarehouse = rand.nextDouble();
+				this.houseRequests[i]= (precentHouse < 0.3) ? true : false;
+				this.warehouseRequests[i]= (precentWarehouse < 0.3) ? true : false;
+			}
+			double precentWind = rand.nextDouble();
+			double precentPriority = rand.nextDouble();
+			this.windsMode= (precentWind < 0.25) ? true : false;
+			this.priorityMode= (precentPriority < 0.2) ? true : false;
+		//}
+	}
+	
 	private void updateDrone() {
 		if (drone.isMoving()) {
 			if (!drone.shouldMakeStop()) {

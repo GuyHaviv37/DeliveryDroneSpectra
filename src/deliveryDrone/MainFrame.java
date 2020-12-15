@@ -33,8 +33,7 @@ public class MainFrame extends JFrame {
 			}
 
 			// add scenario
-			// add other environment variables such as winds or rain.
-
+			// add demo mode
 		});
 
 		add(this.gridPanel, BorderLayout.WEST);
