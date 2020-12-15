@@ -27,6 +27,7 @@ public class GridPanel extends JPanel implements ActionListener {
 	// ENV in-house variables
 	private boolean[] houseRequests = new boolean[NUM_OF_HOUSES];
 	private boolean[] warehouseRequests = new boolean[NUM_OF_HOUSES];
+	private boolean[] envelopeMode = new boolean[NUM_OF_HOUSES];
 	private boolean priorityMode = false;
 	private boolean windsMode = false;
 
@@ -221,6 +222,7 @@ public class GridPanel extends JPanel implements ActionListener {
 			g.drawString("" + (houseNum + 1), (col + 1) * squareSize - 15, row * squareSize + 45);
 
 			if (houseMonitors[houseNum]) {
+				// add check if to show envelope (envelopeMode is on) or pacakge (it's off)
 				g.drawImage(packageImg_TWH, col * squareSize + 10, (row + 1) * squareSize - 60, packageSize_Big,
 						packageSize_Big, null);
 			}
