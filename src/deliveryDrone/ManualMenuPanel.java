@@ -29,8 +29,6 @@ public class ManualMenuPanel extends JPanel implements ActionListener {
 	private JToggleButton priorityOffBtn;
 	private JToggleButton windsOnBtn;
 	private JToggleButton windsOffBtn;
-//	private JButton priorityBtn;
-//	private JButton windsBtn;
 	private JLabel mainHeader;
 	private JLabel priorityHeader;
 	private JLabel windsHeader;
@@ -43,7 +41,7 @@ public class ManualMenuPanel extends JPanel implements ActionListener {
 	private boolean isWindsMode = false;
 
 	// listeners
-	private MenuListener menuListener;
+	private MenuListener menuListener; // maybe redundant
 	private CreationListener creationListener;
 
 	public ManualMenuPanel() {
@@ -222,7 +220,6 @@ public class ManualMenuPanel extends JPanel implements ActionListener {
 			isWindsMode = !isWindsMode;
 			creationListener.toggleWinds(isWindsMode);
 		}
-		// add listener for winds toggle.
 	}
 
 	public void setMenuListener(MenuListener menuListener) {

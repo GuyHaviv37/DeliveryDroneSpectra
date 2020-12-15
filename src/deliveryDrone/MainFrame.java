@@ -31,9 +31,13 @@ public class MainFrame extends JFrame {
 			public void toggleWinds(boolean newWinds) {
 				gridPanel.toggleWinds(newWinds);
 			}
+			
+			@Override
+			public void toggleDemo(boolean isDemo) {
+				gridPanel.toggleDemo(isDemo);
+			}
 
 			// add scenario
-			// add demo mode
 		});
 
 		add(this.gridPanel, BorderLayout.WEST);

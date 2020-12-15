@@ -7,4 +7,6 @@ public interface CreationListener {
 	public void togglePriority(boolean newPriority);
 
 	public void toggleWinds(boolean newWinds);
+	
+	public void toggleDemo(boolean isDemo);
 }

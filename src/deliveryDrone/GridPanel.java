@@ -50,7 +50,9 @@ public class GridPanel extends JPanel implements ActionListener {
 	// AUX
 	private Timer timer;
 	private int stateNum = 0;
-	// SCENARIO QUEUE
+	
+	// SCENARIO , DEMO VARIABLES
+	private boolean isDemo;
 
 	// SIMULATION VARIABLES
 	int[][] houseLocations = new int[][] { { 0, 0 }, { 0, 2 }, { 2, 0 }, { 2, 2 } };
@@ -157,16 +159,18 @@ public class GridPanel extends JPanel implements ActionListener {
 		g.fillRect(10, 610, 574, 80);
 
 		// paint environment toggles
+		boolean controllerPriorityMode = Boolean.parseBoolean(controller.getEnvVar("priorityMode"));
+		boolean controllerWindsMode = Boolean.parseBoolean(controller.getEnvVar("windsMode"));
 		g.setColor(Color.BLACK);
 		col = 0;
 		row = 4;
 		g.drawString("Priority Mode:", col * squareSize + paddingWide, row * squareSize + stringRow1);
-		g.drawImage(priorityMode ? greenLightImg : redLightImg, (col + 1) * squareSize - 30,
+		g.drawImage(controllerPriorityMode ? greenLightImg : redLightImg, (col + 1) * squareSize - 30,
 				row * squareSize + stringRow1 - 12, lightControlSize, lightControlSize, null);
 		g.drawString("Priority Cap: " + priorityCap + "/" + MAX_PRIORITY_CAP, col * squareSize + paddingWide,
 				row * squareSize + stringRow2);
 		g.drawString("Winds-Control: ", col * squareSize + paddingWide, row * squareSize + stringRow3);
-		g.drawImage(windsMode ? greenLightImg : redLightImg, (col + 1) * squareSize - 30,
+		g.drawImage(controllerWindsMode ? greenLightImg : redLightImg, (col + 1) * squareSize - 30,
 				row * squareSize + stringRow3 - 12, lightControlSize, lightControlSize, null);
 		g.drawString("Stocking:", col * squareSize + paddingWide, row * squareSize + stringRow4);
 		if (drone.isStocking()) {
@@ -310,6 +314,20 @@ public class GridPanel extends JPanel implements ActionListener {
 		// getNewState();
 		repaint();
 	}
+	
+	public void toggleDemo(boolean isDemo) {
+		if(isDemo) {
+			/* wait until animation is over and get New state.
+			* this will ensure that no request added before Demo was played will be missed
+			* between the demo click and the randomization of the new requests.
+			* getNewState();
+			*/
+			this.isDemo = true;
+		} else {
+			this.isDemo = false;
+		}
+		System.out.println("Toggled DemoMode: "+(this.isDemo ? "ON" : "OFF"));
+	}
 
 	// this is what the timer will generate at each delay
 	// General approach:
@@ -319,7 +337,7 @@ public class GridPanel extends JPanel implements ActionListener {
 	// * get new state from the controller, if needed
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		//updateDemo(); 
+		updateDemo(); 
 		updateEnvironment();
 		updateDrone();
 		repaint();
@@ -333,7 +351,7 @@ public class GridPanel extends JPanel implements ActionListener {
 	
 	// need the variable isDemo from the menu panel!!!
 	private void updateDemo() {
-		//if(this.isDemo) {
+		if(this.isDemo) {
 			Random rand = new Random();
 			for(int i = 0; i < this.houseRequests.length; i++) {
 				double precentHouse = rand.nextDouble();
@@ -345,7 +363,7 @@ public class GridPanel extends JPanel implements ActionListener {
 			double precentPriority = rand.nextDouble();
 			this.windsMode= (precentWind < 0.25) ? true : false;
 			this.priorityMode= (precentPriority < 0.2) ? true : false;
-		//}
+		}
 	}
 	
 	private void updateDrone() {
