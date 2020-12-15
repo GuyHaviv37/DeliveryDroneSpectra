@@ -20,9 +20,9 @@ public class GridPanel extends JPanel implements ActionListener {
 
 	public static final int NUM_OF_HOUSES = 4;
 	private static final int MAX_ENERGY = 7;
-	private static final int MAX_CAPACITY = 4;
+	private static final int MAX_CAPACITY = 2;
 	private static final int MAX_PRIORITY_CAP = 1;
-	private static final int MAX_ENVELOPES = 10;
+	private static final int MAX_ENVELOPES = 6;
 
 	private MainFrame parentFrame;
 	private DroneController controller = new DroneController();
@@ -356,13 +356,18 @@ public class GridPanel extends JPanel implements ActionListener {
 			for(int i = 0; i < this.houseRequests.length; i++) {
 				double precentHouse = rand.nextDouble();
 				double precentWarehouse = rand.nextDouble();
-				this.houseRequests[i]= (precentHouse < 0.3) ? true : false;
-				this.warehouseRequests[i]= (precentWarehouse < 0.3) ? true : false;
+				boolean before= this.houseRequests[i];
+				this.houseRequests[i]= (precentHouse < 0.025) ? true : false;
+				if(this.houseRequests[i] && !before) {
+					double precentEnvelope = rand.nextDouble();
+					this.envelopeRequests[i]= (precentEnvelope < 0.2) ? !this.envelopeRequests[i] : this.envelopeRequests[i];
+				}
+				this.warehouseRequests[i]= (precentWarehouse < 0.025) ? true : false;
 			}
 			double precentWind = rand.nextDouble();
 			double precentPriority = rand.nextDouble();
-			this.windsMode= (precentWind < 0.25) ? true : false;
-			this.priorityMode= (precentPriority < 0.2) ? true : false;
+			this.windsMode= (precentWind < 0.002) ? !this.windsMode : this.windsMode;
+			this.priorityMode= (precentPriority < 0.002) ? !this.priorityMode : this.priorityMode;
 		}
 	}
 	

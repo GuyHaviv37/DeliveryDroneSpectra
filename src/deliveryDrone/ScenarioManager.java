@@ -65,8 +65,8 @@ public class ScenarioManager {
 		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.ONE,stepNumber++, house, warehouse) {
 
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, boolean[] houseMonitors, boolean[] warehouseMonitors) {
-				if(warehouseMonitors[3] == false) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+				if(pickUpThisState == 8) {
 					System.out.println("scenario #1 - step #0 is finished");
 					return true;
 				}
@@ -78,8 +78,8 @@ public class ScenarioManager {
 		ScenarioStep scenarioStep1 = new ScenarioStep(ScenarioNumber.ONE,stepNumber++, house, warehouse) {
 
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, boolean[] houseMonitors, boolean[] warehouseMonitors) {
-				if(droneToHouseCap[3] == 0) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+				if(dropOffThisState == 4) {
 					System.out.println("scenario #1 - final step (step #1) is finished");
 					return true;
 				}

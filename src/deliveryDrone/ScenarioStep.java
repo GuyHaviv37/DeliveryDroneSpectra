@@ -69,5 +69,5 @@ abstract class ScenarioStep {
 	 * each step defines it's own finishing state in order to let the scheduler know 
 	 * when this step is finished and it can run the next step of the played scenario.
 	 */
-	public abstract boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, boolean[] houseMonitors, boolean[] warehouseMonitors);
+	public abstract boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState);
 }

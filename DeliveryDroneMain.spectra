@@ -21,8 +21,8 @@ define
 	NUM_OF_HOUSES := 4;
 	NUM_OF_HOUSES_MINUS_ONE := 3;
 
-define PACKAGE_CAPACITY := 4; 
-define ENVELOPE_CAPACITY := 10;
+define PACKAGE_CAPACITY := 2; 
+define ENVELOPE_CAPACITY := 6;
 
 define 
 	housePickedup := pickUpThisState > 0 & pickUpThisState <5 ;
