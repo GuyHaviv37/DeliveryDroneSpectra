@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Queue;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -52,7 +53,8 @@ public class GridPanel extends JPanel implements ActionListener {
 	private int stateNum = 0;
 	
 	// SCENARIO , DEMO VARIABLES
-	private boolean isDemo;
+	private DemoMode isDemo;
+	private Queue<ScenarioStep> currentScenario;
 
 	// SIMULATION VARIABLES
 	int[][] houseLocations = new int[][] { { 0, 0 }, { 0, 2 }, { 2, 0 }, { 2, 2 } };
@@ -322,11 +324,17 @@ public class GridPanel extends JPanel implements ActionListener {
 			* between the demo click and the randomization of the new requests.
 			* getNewState();
 			*/
-			this.isDemo = true;
+			this.isDemo = DemoMode.WAITING;
+			//this.parentFrame.updateButtonsEnabled(false);
+			this.parentFrame.enableDemoBtn(false);
 		} else {
-			this.isDemo = false;
+			this.isDemo = DemoMode.IDLE;
+			this.parentFrame.updateButtonsEnabled(true);
 		}
-		System.out.println("Toggled DemoMode: "+(this.isDemo ? "ON" : "OFF"));
+	}
+	
+	public void createScenario(int scenarioNumber) {
+		this.currentScenario = ScenarioManager.getScenario(scenarioNumber);
 	}
 
 	// this is what the timer will generate at each delay
@@ -349,9 +357,9 @@ public class GridPanel extends JPanel implements ActionListener {
 		}
 	}
 	
-	// need the variable isDemo from the menu panel!!!
 	private void updateDemo() {
-		if(this.isDemo) {
+		// could consider inserting guaranteed randomized choice every X time.
+		if(this.isDemo == DemoMode.RUNNING) {
 			Random rand = new Random();
 			for(int i = 0; i < this.houseRequests.length; i++) {
 				double precentHouse = rand.nextDouble();
@@ -368,6 +376,10 @@ public class GridPanel extends JPanel implements ActionListener {
 			double precentPriority = rand.nextDouble();
 			this.windsMode= (precentWind < 0.002) ? !this.windsMode : this.windsMode;
 			this.priorityMode= (precentPriority < 0.002) ? !this.priorityMode : this.priorityMode;
+		} else if (this.isDemo == DemoMode.WAITING) {
+			// TODO - check that all cleared (or not)
+			this.isDemo = DemoMode.RUNNING;
+			this.parentFrame.enableDemoBtn(true);
 		}
 	}
 	
@@ -470,4 +482,8 @@ public class GridPanel extends JPanel implements ActionListener {
 		}
 	}
 
+}
+
+enum DemoMode{
+	IDLE,WAITING,RUNNING;
 }

@@ -9,4 +9,6 @@ public interface CreationListener {
 	public void toggleWinds(boolean newWinds);
 	
 	public void toggleDemo(boolean isDemo);
+	
+	public void createScenario(int scenarioNumber);
 }

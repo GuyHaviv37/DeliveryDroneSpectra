@@ -249,4 +249,15 @@ public class ManualMenuPanel extends JPanel implements ActionListener {
 		return res;
 	}
 
+	public void setButtonsEnabled(boolean enabled) {
+		this.houseBtn.setEnabled(enabled);
+		this.warehouseBtn.setEnabled(enabled);
+		this.selectionList.setEnabled(enabled);
+		this.addBtn.setEnabled(enabled);
+		this.priorityOnBtn.setEnabled(enabled);
+		this.priorityOffBtn.setEnabled(enabled);
+		this.windsOnBtn.setEnabled(enabled);
+		this.windsOffBtn.setEnabled(enabled);
+	}
+
 }

@@ -37,7 +37,11 @@ public class MainFrame extends JFrame {
 				gridPanel.toggleDemo(isDemo);
 			}
 
-			// add scenario
+			@Override
+			public void createScenario(int scenarioNumber) {
+				if(scenarioNumber > 0) gridPanel.createScenario(scenarioNumber);
+			}
+
 		});
 
 		add(this.gridPanel, BorderLayout.WEST);
@@ -51,5 +55,13 @@ public class MainFrame extends JFrame {
 		setVisible(true);
 
 		// junction project added up cleanup of gridPanel.
+	}
+
+	public void updateButtonsEnabled(boolean b) {
+		this.menuPanel.updateButtonsEnabled(b);
+	}
+
+	public void enableDemoBtn(boolean b) {
+		this.menuPanel.enableDemoBtn(b);
 	}
 }

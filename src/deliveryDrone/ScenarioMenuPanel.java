@@ -93,14 +93,28 @@ public class ScenarioMenuPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		JButton target = (JButton) e.getSource();
 		if (target == runScenarioBtn) {
-			// create scenario
-			System.out.println("Create scenario "+selection);
+			creationListener.createScenario(selection);
+			menuListener.updateButtonsEnabled(false);
 		} else if (target == demoBtn) {
 			// toggle demoMode
 			this.isDemo = !this.isDemo;
 			this.demoBtn.setText((this.isDemo ? "Stop" : "Run")+" Demo");
 			creationListener.toggleDemo(this.isDemo);
-			// menuListener stuff
+			menuListener.updateButtonsEnabled(!this.isDemo); // if demo runs make disabled.
+		}
+	}
+
+	public void setDemoBtnEnabled(boolean isEnabled) {
+		this.demoBtn.setEnabled(isEnabled);
+	}
+
+	public void setButtonsEnabled(boolean enabled) {
+		this.selectionList.setEnabled(enabled);
+		if(this.selectionList.getSelectedIndex() != 0) {
+			this.runScenarioBtn.setEnabled(enabled);
+		}
+		if(!this.isDemo) {
+			this.demoBtn.setEnabled(enabled);
 		}
 	}
 

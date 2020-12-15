@@ -47,7 +47,14 @@ public class MenuPanel extends JPanel {
 
 		// add event listener to all of the child menus - manual and scenario
 		MenuListener menuListener = new MenuListener() {
-			// not really relevent rn, as all menu stylings are always enabled
+
+			@Override
+			public void updateButtonsEnabled(boolean enabled) {
+				manualMenu.setButtonsEnabled(enabled);
+				scenarioMenu.setButtonsEnabled(enabled);
+			}
+			
+			
 		};
 
 		this.manualMenu.setMenuListener(menuListener);
@@ -57,6 +64,17 @@ public class MenuPanel extends JPanel {
 	public void setCreationListener(CreationListener creationListener) {
 		this.manualMenu.setCreationListener(creationListener);
 		this.scenarioMenu.setCreationListener(creationListener);
+	}
+
+	public void updateButtonsEnabled(boolean isEnabled) {
+		if(isEnabled) {
+			manualMenu.setButtonsEnabled(true);
+			scenarioMenu.setButtonsEnabled(true);
+		}
+	}
+	
+	public void enableDemoBtn(boolean isEnabled) {
+		scenarioMenu.setDemoBtnEnabled(isEnabled);
 	}
 
 }
