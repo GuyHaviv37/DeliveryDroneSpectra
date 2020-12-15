@@ -246,3 +246,22 @@ counter energy (0..MAX_ENERGY){
 	overflow: false;
 }
 gar G energy <= MAX_ENERGY;
+
+/*================================ MUST DROP OFF LOGIC  =================================== */
+
+define stay :=  next(drone[0]) = drone[0] & next(drone[1])= drone[1];
+
+// guarantees when a drop-off can be made- drop off
+gar G dropOffThisState = 1 iff atHouse1 & droneToHouseCap1 > 0;
+gar G dropOffThisState = 2 iff atHouse2 & droneToHouseCap2 > 0;
+gar G dropOffThisState = 3 iff atHouse3 & droneToHouseCap3 > 0;
+gar G dropOffThisState = 4 iff atHouse4 & droneToHouseCap4 > 0;
+gar G dropOffThisState = 5 iff atWarehouse & droneToWarehouseCap > 0;
+gar G dropOffThisState = 6 iff atWarehouse & totalEnvelopesToWH > 0;
+
+// drone have to drope-off all packages before leaving the house/warehouse
+gar G atHouse1 & droneToHouseCap1 > 1 | 
+	atHouse2 & droneToHouseCap2 > 1 | 
+	atHouse3 & droneToHouseCap3 > 1 | 
+	atHouse4 & droneToHouseCap4 > 1 |
+	atWarehouse & droneToWarehouseCap > 1 | atWarehouse & totalEnvelopesToWH > 1 -> stay;
