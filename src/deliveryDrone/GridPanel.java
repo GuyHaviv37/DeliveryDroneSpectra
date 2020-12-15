@@ -22,13 +22,14 @@ public class GridPanel extends JPanel implements ActionListener {
 	private static final int MAX_ENERGY = 7;
 	private static final int MAX_CAPACITY = 4;
 	private static final int MAX_PRIORITY_CAP = 1;
+	private static final int MAX_ENVELOPES = 10;
 
 	private MainFrame parentFrame;
 	private DroneController controller = new DroneController();
 	// ENV in-house variables
 	private boolean[] houseRequests = new boolean[NUM_OF_HOUSES];
 	private boolean[] warehouseRequests = new boolean[NUM_OF_HOUSES];
-	private boolean[] envelopeMode = new boolean[NUM_OF_HOUSES];
+	private boolean[] envelopeRequests = new boolean[NUM_OF_HOUSES];
 	private boolean priorityMode = false;
 	private boolean windsMode = false;
 
@@ -40,6 +41,7 @@ public class GridPanel extends JPanel implements ActionListener {
 	private int totalPackages = 0;
 	private int[] droneToHouseCap = new int[NUM_OF_HOUSES];
 	private int droneToWarehouseCap;
+	private int totalEnvelopes;
 	private boolean[] houseMonitors = new boolean[NUM_OF_HOUSES];
 	private boolean[] warehouseMonitors = new boolean[NUM_OF_HOUSES];
 	private int energy = 0;
@@ -61,6 +63,7 @@ public class GridPanel extends JPanel implements ActionListener {
 
 	BufferedImage packageImg_TH;
 	BufferedImage packageImg_TWH;
+	BufferedImage envelopeImg;
 
 	BufferedImage lightningImg;
 	BufferedImage greenLightImg;
@@ -94,6 +97,7 @@ public class GridPanel extends JPanel implements ActionListener {
 
 			packageImg_TWH = ImageIO.read(new File("img/package_small.png"));
 			packageImg_TH = ImageIO.read(new File("img/package_bright_color.png"));
+			envelopeImg = ImageIO.read(new File("img/envelopes_red_blue.png"));
 
 			lightningImg = ImageIO.read(new File("img/lightning.png"));
 			redLightImg = ImageIO.read(new File("img/RED_LED.png"));
@@ -179,7 +183,7 @@ public class GridPanel extends JPanel implements ActionListener {
 		int houseNum;
 		// paint drone details
 		col = 1;
-		g.drawString("Inventory:", col * squareSize + paddingWide, row * squareSize + stringRow1);
+		g.drawString("Package Inventory:", col * squareSize + paddingWide, row * squareSize + stringRow1);
 		g.drawString("Total:" + totalPackages + "/" + MAX_CAPACITY, col * squareSize + paddingWide,
 				row * squareSize + stringRow2);
 		g.drawString("To-WH:" + droneToWarehouseCap, col * squareSize + paddingWide, row * squareSize + stringRow3);
@@ -190,11 +194,7 @@ public class GridPanel extends JPanel implements ActionListener {
 			g.drawString("To-H" + (houseNum + 1) + ":" + droneToHouseCap[houseNum],
 					col * squareSize + paddingWide + gapWide, row * squareSize + gapHigh);
 		}
-
-		// g.drawString("PUTS: "+pickUpThisState, col*squareSize + 20, row*squareSize +
-		// 60);
-		// g.drawString("DOTS: "+dropOffThisState, col*squareSize + 20, row*squareSize +
-		// 80);
+		g.drawString("Envelopes: "+totalEnvelopes+"/"+MAX_ENVELOPES, col * squareSize + paddingWide, row * squareSize + stringRow4);
 
 		// paint charging bar
 		col = 3;
@@ -223,8 +223,8 @@ public class GridPanel extends JPanel implements ActionListener {
 			g.drawString("" + (houseNum + 1), (col + 1) * squareSize - 15, row * squareSize + 45);
 
 			if (houseMonitors[houseNum]) {
-				// add check if to show envelope (envelopeMode is on) or pacakge (it's off)
-				g.drawImage(packageImg_TWH, col * squareSize + 10, (row + 1) * squareSize - 60, packageSize_Big,
+				BufferedImage waitingImg = envelopeRequests[houseNum] ? envelopeImg : packageImg_TWH;
+				g.drawImage(waitingImg, col * squareSize + 10, (row + 1) * squareSize - 60, packageSize_Big,
 						packageSize_Big, null);
 			}
 			if (drone.isStocking()) {
@@ -256,6 +256,9 @@ public class GridPanel extends JPanel implements ActionListener {
 			if (dropOffThisState == 5) {
 				g.drawImage(packageImg_TWH, (col + 1) * squareSize - (packageSize_Big + 10),
 						(row + 1) * squareSize - 60, packageSize_Big, packageSize_Big, null);
+			} else if (dropOffThisState == 6) {
+				g.drawImage(envelopeImg, (col + 1) * squareSize - (packageSize_Big + 10),
+						(row + 1) * squareSize - 60, packageSize_Big, packageSize_Big, null);
 			}
 		}
 	}
@@ -282,8 +285,12 @@ public class GridPanel extends JPanel implements ActionListener {
 	public void addPickupRequest(int requestNumber) {
 		if (requestNumber >= 1 && requestNumber <= 4) {
 			this.houseRequests[requestNumber - 1] = true;
+			this.envelopeRequests[requestNumber - 1] = false;
 		} else if (requestNumber >= 5 && requestNumber <= 8) {
 			this.warehouseRequests[requestNumber - 5] = true;
+		} else if (requestNumber >= 9 && requestNumber <= 12) {
+			this.houseRequests[requestNumber - 9] = true;
+			this.envelopeRequests[requestNumber - 9] = true;
 		}
 		updateEnvironment();
 		// getNewState();
@@ -379,6 +386,9 @@ public class GridPanel extends JPanel implements ActionListener {
 		for (int j = 0; j < warehouseRequests.length; j++) {
 			controller.setEnvVar("outWarehousePackages[" + j + "]", Boolean.toString(warehouseRequests[j]));
 		}
+		for (int k = 0; k < envelopeRequests.length; k++) {
+			controller.setEnvVar("envelopeRequests["+k+"]", Boolean.toString(envelopeRequests[k]));
+		}
 	}
 
 	private void updatePriority() {
@@ -404,12 +414,13 @@ public class GridPanel extends JPanel implements ActionListener {
 		// PUTS , DOTS
 		this.pickUpThisState = Integer.parseInt(controller.getSysVar("pickUpThisState"));
 		this.dropOffThisState = Integer.parseInt(controller.getSysVar("dropOffThisState"));
-		// Inventory counters
+		// Inventory, Envelopes counters
 		this.totalPackages = Integer.parseInt(controller.getSysVar("totalPackages"));
 		for (i = 0; i < NUM_OF_HOUSES; i++) {
 			this.droneToHouseCap[i] = Integer.parseInt(controller.getSysVar("droneToHouseCap" + (i + 1)));
 		}
 		this.droneToWarehouseCap = Integer.parseInt(controller.getSysVar("droneToWarehouseCap"));
+		this.totalEnvelopes = Integer.parseInt(controller.getSysVar("totalEnvelopesToWH"));
 		// Monitors
 		for (i = 0; i < NUM_OF_HOUSES; i++) {
 			this.houseMonitors[i] = Boolean.parseBoolean(controller.getSysVar("waitingPackageOutHouse" + (i + 1)));
@@ -432,6 +443,7 @@ public class GridPanel extends JPanel implements ActionListener {
 		for (int i = 0; i < houseRequests.length; i++) {
 			houseRequests[i] = false;
 			warehouseRequests[i] = false;
+			// envelopes are not reset since they works as toggles
 		}
 	}
 

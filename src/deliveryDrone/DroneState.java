@@ -18,6 +18,7 @@ public class DroneState {
 		for (int i = 0; i < NUM_OF_HOUSES; i++) {
 			envValues.put("outHousePackages[" + i + "]", "false");
 			envValues.put("outWarehousePackages[" + i + "]", "false");
+			envValues.put("envelopeRequests["+i+"]","false");
 		}
 		envValues.put("priorityMode", "false");
 		envValues.put("windsMode", "false");
@@ -37,6 +38,8 @@ public class DroneState {
 		sysValues.put("droneToHouseCap2", "0");
 		sysValues.put("droneToHouseCap3", "0");
 		sysValues.put("droneToHouseCap4", "0");
+		// Envelopes counter
+		sysValues.put("totalEnvelopesToWH","0");
 		// Monitors
 		sysValues.put("waitingPackageOutHouse1", "false");
 		sysValues.put("waitingPackageOutHouse2", "false");
@@ -46,9 +49,9 @@ public class DroneState {
 		sysValues.put("waitingPackageInWarehouseToHouse2", "false");
 		sysValues.put("waitingPackageInWarehouseToHouse3", "false");
 		sysValues.put("waitingPackageInWarehouseToHouse4", "false");
-		// Energy - TODO
+		// Energy 
 		sysValues.put("energy", "0");
-		// Priority - TODO
+		// Priority
 		sysValues.put("priorityCap", "0");
 	}
 

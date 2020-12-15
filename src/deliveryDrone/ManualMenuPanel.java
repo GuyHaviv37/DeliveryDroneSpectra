@@ -110,29 +110,41 @@ public class ManualMenuPanel extends JPanel implements ActionListener {
 				// Notice that this structure for the event handler is FIXED with the number of
 				// houses
 				switch (str) {
-				case "Send from house 1":
+				case "Send package from house 1":
 					selection = 1;
 					break;
-				case "Send from house 2":
+				case "Send package from house 2":
 					selection = 2;
 					break;
-				case "Send from house 3":
+				case "Send package from house 3":
 					selection = 3;
 					break;
-				case "Send from house 4":
+				case "Send package from house 4":
 					selection = 4;
 					break;
-				case "Send to house 1":
+				case "Send package to house 1":
 					selection = 5;
 					break;
-				case "Send to house 2":
+				case "Send package to house 2":
 					selection = 6;
 					break;
-				case "Send to house 3":
+				case "Send package to house 3":
 					selection = 7;
 					break;
-				case "Send to house 4":
+				case "Send package to house 4":
 					selection = 8;
+					break;
+				case "Send envelope from house 1":
+					selection = 9;
+					break;
+				case "Send envelope from house 2":
+					selection = 10;
+					break;
+				case "Send envelope from house 3":
+					selection = 11;
+					break;
+				case "Send envelope from house 4":
+					selection = 12;
 					break;
 				}
 			}
@@ -224,15 +236,18 @@ public class ManualMenuPanel extends JPanel implements ActionListener {
 	private String[] generateWarehouseRequests() {
 		String[] res = new String[NUM_OF_HOUSES];
 		for (int i = 0; i < NUM_OF_HOUSES; i++) {
-			res[i] = "Send to house " + (i + 1);
+			res[i] = "Send package to house " + (i + 1);
 		}
 		return res;
 	}
 
 	private String[] generateHouseRequests() {
-		String[] res = new String[NUM_OF_HOUSES];
+		String[] res = new String[NUM_OF_HOUSES*2];
 		for (int i = 0; i < NUM_OF_HOUSES; i++) {
-			res[i] = "Send from house " + (i + 1);
+			res[i] = "Send package from house " + (i + 1);
+		}
+		for (int i = 0; i < NUM_OF_HOUSES; i++) {
+			res[i+4] = "Send envelope from house " + (i + 1);
 		}
 		return res;
 	}
