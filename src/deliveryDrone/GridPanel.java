@@ -8,6 +8,8 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 
@@ -346,6 +348,7 @@ public class GridPanel extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		updateDemo(); 
+		updateScenario();
 		updateEnvironment();
 		updateDrone();
 		repaint();
@@ -356,7 +359,24 @@ public class GridPanel extends JPanel implements ActionListener {
 			stateNum++;
 		}
 	}
-	
+	public void updateScenario() {
+		if(this.currentScenario == null)
+			return;
+		ScenarioStep currentStep = this.currentScenario.peek();
+		if (!currentStep.HasStarted()) { // update all the env variable by the current step
+			this.houseRequests = currentStep.getHouseRequestValue();
+			this.warehouseRequests = currentStep.getWarehouseRequestValue();
+			this.windsMode= currentStep.getIsWinds();
+			this.priorityMode = currentStep.getIsPriority();
+			currentStep.setHasStarted(true);
+		} else if (currentStep.isFinished(this.droneToHouseCap, this.droneToWarehouseCap, this.houseMonitors, this.warehouseMonitors, this.pickUpThisState, this.dropOffThisState)) { // step finished, get the next step
+			this.currentScenario.poll();
+			if (this.currentScenario.isEmpty()) { // no more steps
+				this.currentScenario = null;
+				this.parentFrame.updateButtonsEnabled(true); // buttons work again
+			}
+		}
+	}
 	private void updateDemo() {
 		// could consider inserting guaranteed randomized choice every X time.
 		if(this.isDemo == DemoMode.RUNNING) {

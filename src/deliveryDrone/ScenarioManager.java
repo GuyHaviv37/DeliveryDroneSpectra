@@ -60,9 +60,9 @@ public class ScenarioManager {
 		Queue<ScenarioStep> scenarioSteps = new LinkedList<>();
 		int stepNumber = 0;
 		boolean[] house = new boolean[GridPanel.NUM_OF_HOUSES];
-		boolean[] warehouse = new boolean[GridPanel.NUM_OF_HOUSES];
-		warehouse[3]=true; // package in the warehouse to house #4
-		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.ONE,stepNumber++, house, warehouse) {
+		boolean[] warehouse0 = new boolean[GridPanel.NUM_OF_HOUSES]; 
+		warehouse0[3]=true; // package in the warehouse to house #4
+		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.ONE,stepNumber++, house, warehouse0) {
 
 			@Override
 			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
@@ -74,8 +74,8 @@ public class ScenarioManager {
 			}
 		};
 		scenarioSteps.offer(scenarioStep0); 
-		warehouse[3]=false; 
-		ScenarioStep scenarioStep1 = new ScenarioStep(ScenarioNumber.ONE,stepNumber++, house, warehouse) {
+		boolean[] warehouse1 = new boolean[GridPanel.NUM_OF_HOUSES]; 
+		ScenarioStep scenarioStep1 = new ScenarioStep(ScenarioNumber.ONE,stepNumber++, house, warehouse1) {
 
 			@Override
 			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
