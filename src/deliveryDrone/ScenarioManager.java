@@ -102,7 +102,7 @@ public class ScenarioManager {
 		boolean[] house = new boolean[GridPanel.NUM_OF_HOUSES];
 		boolean[] warehouse0 = new boolean[GridPanel.NUM_OF_HOUSES]; 
 		Arrays.fill(house, Boolean.TRUE);
-		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.ONE,stepNumber++, house, warehouse0) {
+		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.TWO,stepNumber++, house, warehouse0) {
 
 			@Override
 			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
@@ -133,6 +133,42 @@ public class ScenarioManager {
 		return scenarioSteps;
 	}
 	/*
+	 * Scenario #3 - 'priority without warehouse packages'
+	 * This scenario has one step. 
+	 * The step is finished whenever the drone pickup the package from house#1 and the envelope from house #3.
+	 */
+	private static Queue<ScenarioStep> createScenarioThree() {
+		Queue<ScenarioStep> scenarioSteps = new LinkedList<>();
+		int stepNumber = 0;
+		boolean[] house = new boolean[GridPanel.NUM_OF_HOUSES];
+		boolean[] envelope = new boolean[GridPanel.NUM_OF_HOUSES];
+		boolean[] warehouse0 = new boolean[GridPanel.NUM_OF_HOUSES]; 
+		house[0]=true;
+		house[2]= true;
+		envelope[2]=true;
+		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.THREE,stepNumber++, house, warehouse0,false, true, envelope) {
+
+			@Override
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+				switch (pickUpThisState) {
+				case 1:
+					this.getPrivateData()[0]=true;
+					break;
+				case 3:
+					this.getPrivateData()[2]=true;
+					break;
+				}
+				if(this.getPrivateData()[2] && this.getPrivateData()[0]) {
+					System.out.println("scenario #3 - final step (step #0) is finished");
+					return true;
+				}
+				return false;
+			}
+		};
+		scenarioSteps.offer(scenarioStep0); 
+		return scenarioSteps;
+	}
+	/*
 	 * returns a queue of steps needed to be taken in order to play the specified scenario
 	 */
 	public static Queue<ScenarioStep> getScenario(int scenarioID) {
@@ -141,8 +177,8 @@ public class ScenarioManager {
 			return createScenarioOne();
 		case 2:
 			return createScenarioTwo();
-			//		case 3:
-			//			return createScenarioThree();
+		case 3:
+			return createScenarioThree();
 			//		case 4:
 			//			return createScenarioFour();
 			//		case 5:

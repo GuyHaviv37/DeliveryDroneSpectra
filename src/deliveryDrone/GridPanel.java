@@ -368,11 +368,14 @@ public class GridPanel extends JPanel implements ActionListener {
 			this.warehouseRequests = currentStep.getWarehouseRequestValue();
 			this.windsMode= currentStep.getIsWinds();
 			this.priorityMode = currentStep.getIsPriority();
+			this.envelopeRequests= currentStep.getEnvelopeModeValue();
 			currentStep.setHasStarted(true);
 		} else if (currentStep.isFinished(this.droneToHouseCap, this.droneToWarehouseCap, this.houseMonitors, this.warehouseMonitors, this.pickUpThisState, this.dropOffThisState)) { // step finished, get the next step
 			this.currentScenario.poll();
 			if (this.currentScenario.isEmpty()) { // no more steps
 				this.currentScenario = null;
+				this.priorityMode = false;
+				this.windsMode = false;
 				this.parentFrame.updateButtonsEnabled(true); // buttons work again
 			}
 		}
