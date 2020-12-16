@@ -6,8 +6,8 @@ import java.util.Queue;
 
 enum ScenarioNumber{ 
 	ONE(1,"One package from warehouse to house #4"),
-	TWO(2,"  "),
-	THREE(3,"  "),
+	TWO(2,"each house send one package to warehouse"),
+	THREE(3,"priority without warehouse packages"),
 	FOUR(4,"  "),
 	FIVE(5,"  "),
 	SIX(6,"  "),
