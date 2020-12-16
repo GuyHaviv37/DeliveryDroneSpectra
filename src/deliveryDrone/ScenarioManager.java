@@ -1,5 +1,6 @@
 package deliveryDrone;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -49,7 +50,7 @@ enum ScenarioNumber{
 	}
 }
 public class ScenarioManager {
-	
+
 	/*
 	 * Scenario #1 - 'One package from warehouse to house #4'
 	 * This scenario has two steps. 
@@ -89,7 +90,48 @@ public class ScenarioManager {
 		scenarioSteps.offer(scenarioStep1); 
 		return scenarioSteps;
 	}
-	
+
+	/*
+	 * Scenario #2 - 'each house send one package to warehouse'
+	 * This scenario has one step. 
+	 * The step is finished whenever the drone pickup the packages from all the houses.
+	 */
+	private static Queue<ScenarioStep> createScenarioTwo() {
+		Queue<ScenarioStep> scenarioSteps = new LinkedList<>();
+		int stepNumber = 0;
+		boolean[] house = new boolean[GridPanel.NUM_OF_HOUSES];
+		boolean[] warehouse0 = new boolean[GridPanel.NUM_OF_HOUSES]; 
+		Arrays.fill(house, Boolean.TRUE);
+		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.ONE,stepNumber++, house, warehouse0) {
+
+			@Override
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+				switch (pickUpThisState) {
+				case 1:
+					this.getPrivateData()[0]=true;
+					break;
+				case 2:
+					this.getPrivateData()[1]=true;
+					break;
+				case 3:
+					this.getPrivateData()[2]=true;
+					break;
+				case 4:
+					this.getPrivateData()[3]=true;
+					break;
+				}
+				for(int i=0; i< this.getPrivateData().length ; i++) {
+					if(!this.getPrivateData()[i]) {
+						return false;
+					}
+				}
+				System.out.println("scenario #2 - final step (step #0) is finished");
+				return true;
+			}
+		};
+		scenarioSteps.offer(scenarioStep0); 
+		return scenarioSteps;
+	}
 	/*
 	 * returns a queue of steps needed to be taken in order to play the specified scenario
 	 */
@@ -97,18 +139,18 @@ public class ScenarioManager {
 		switch (scenarioID) {
 		case 1:
 			return createScenarioOne();
-//		case 2:
-//			return createScenarioTwo();
-//		case 3:
-//			return createScenarioThree();
-//		case 4:
-//			return createScenarioFour();
-//		case 5:
-//			return createScenarioFive();
-//		case 6:
-//			return createScenarioSix();
-//		default:
-//			return createScenarioSeven();
+		case 2:
+			return createScenarioTwo();
+			//		case 3:
+			//			return createScenarioThree();
+			//		case 4:
+			//			return createScenarioFour();
+			//		case 5:
+			//			return createScenarioFive();
+			//		case 6:
+			//			return createScenarioSix();
+			//		default:
+			//			return createScenarioSeven();
 		}
 		return null;
 	}

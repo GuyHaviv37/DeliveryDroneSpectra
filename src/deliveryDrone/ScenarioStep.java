@@ -9,7 +9,9 @@ abstract class ScenarioStep {
 	
 	private boolean hasStarted = false; // did the step start?
 	private int stepNumber;
-
+	
+	private boolean[] privateData;
+	
 	public ScenarioStep(ScenarioNumber scenario, int stepNumber, boolean[] houseRequestsValue, boolean[] warehouseRequestsValue) {
 		this.scenarioID = scenario;
 		this.stepNumber = stepNumber;
@@ -17,6 +19,7 @@ abstract class ScenarioStep {
 		this.warehouseRequestsValue = warehouseRequestsValue;
 		this.isWinds = false;
 		this.isPriority = false;
+		this.privateData = new boolean[GridPanel.NUM_OF_HOUSES];
 	}
 
 	public ScenarioStep(ScenarioNumber scenario, int stepNumber, boolean[] houseRequestsValue, boolean[] warehouseRequestsValue,boolean isWinds, boolean isPriority ) {
@@ -26,6 +29,7 @@ abstract class ScenarioStep {
 		this.warehouseRequestsValue = warehouseRequestsValue;
 		this.isWinds = isWinds;
 		this.isPriority = isWinds;
+		this.privateData = new boolean[GridPanel.NUM_OF_HOUSES];
 	}
 	
 	public void setHasStarted(boolean hasStarted) {
@@ -51,7 +55,9 @@ abstract class ScenarioStep {
 	public boolean getIsPriority() {
 		return this.isPriority;
 	}
-
+	public boolean[] getPrivateData() {
+		return this.privateData;
+	}
 	public String getDescription() {
 		return this.scenarioID.toString();
 	}
