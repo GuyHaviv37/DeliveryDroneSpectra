@@ -3,10 +3,12 @@ package deliveryDrone;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 enum ScenarioNumber{ 
-	ONE(1,"One package from warehouse to house #4"),
-	TWO(2,"each house send one package to warehouse"),
+	ONE(1,"One Random package from warehouse"),
+	TWO(2,"each house send package to warehouse"),
 	THREE(3,"priority without warehouse packages"),
 	FOUR(4,"  "),
 	FIVE(5,"  "),
@@ -62,12 +64,14 @@ public class ScenarioManager {
 		int stepNumber = 0;
 		boolean[] house = new boolean[GridPanel.NUM_OF_HOUSES];
 		boolean[] warehouse0 = new boolean[GridPanel.NUM_OF_HOUSES]; 
-		warehouse0[3]=true; // package in the warehouse to house #4
+	    int randomNum = ThreadLocalRandom.current().nextInt(0, 4);
+
+		warehouse0[randomNum]=true; // package in the warehouse to house #4
 		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.ONE,stepNumber++, house, warehouse0) {
 
 			@Override
 			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
-				if(pickUpThisState == 8) {
+				if(pickUpThisState == randomNum+5) {
 					System.out.println("scenario #1 - step #0 is finished");
 					return true;
 				}
@@ -80,7 +84,7 @@ public class ScenarioManager {
 
 			@Override
 			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
-				if(dropOffThisState == 4) {
+				if(dropOffThisState == randomNum+1) {
 					System.out.println("scenario #1 - final step (step #1) is finished");
 					return true;
 				}
@@ -101,8 +105,13 @@ public class ScenarioManager {
 		int stepNumber = 0;
 		boolean[] house = new boolean[GridPanel.NUM_OF_HOUSES];
 		boolean[] warehouse0 = new boolean[GridPanel.NUM_OF_HOUSES]; 
+		boolean[] envelope = new boolean[GridPanel.NUM_OF_HOUSES];
+		Random rand = new Random(); 
+		for(int i=0; i<envelope.length;i++) {
+			envelope[i]= rand.nextBoolean();
+		}
 		Arrays.fill(house, Boolean.TRUE);
-		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.TWO,stepNumber++, house, warehouse0) {
+		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.TWO,stepNumber++, house, warehouse0, false, false, envelope) {
 
 			@Override
 			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
