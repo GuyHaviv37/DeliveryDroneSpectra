@@ -260,4 +260,19 @@ public class ManualMenuPanel extends JPanel implements ActionListener {
 		this.windsOffBtn.setEnabled(enabled);
 	}
 
+	public void updateModeButtons(boolean priorityMode, boolean windsMode) {
+		this.isPriorityMode = priorityMode;
+		this.isWindsMode = windsMode;
+		if(priorityMode) {
+			this.priorityOnBtn.setSelected(true);
+		} else {
+			this.priorityOffBtn.setSelected(true);
+		}
+		if(windsMode) {
+			this.windsOnBtn.setSelected(true);
+		} else {
+			this.windsOffBtn.setSelected(true);
+		}
+	}
+
 }

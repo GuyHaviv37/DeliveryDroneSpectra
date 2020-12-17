@@ -321,17 +321,13 @@ public class GridPanel extends JPanel implements ActionListener {
 	
 	public void toggleDemo(boolean isDemo) {
 		if(isDemo) {
-			/* wait until animation is over and get New state.
-			* this will ensure that no request added before Demo was played will be missed
-			* between the demo click and the randomization of the new requests.
-			* getNewState();
-			*/
 			this.isDemo = DemoMode.WAITING;
 			//this.parentFrame.updateButtonsEnabled(false);
 			this.parentFrame.enableDemoBtn(false);
 		} else {
 			this.isDemo = DemoMode.IDLE;
 			this.parentFrame.updateButtonsEnabled(true);
+			this.parentFrame.updateModeButtons(priorityMode,windsMode);
 		}
 	}
 	
@@ -364,6 +360,10 @@ public class GridPanel extends JPanel implements ActionListener {
 			return;
 		ScenarioStep currentStep = this.currentScenario.peek();
 		if (!currentStep.HasStarted()) { // update all the env variable by the current step
+			if(currentStep.getStepNumber() == 0) {
+				// TODO - fast forward
+				// if fast forward is not done - return (i.e. keep on FF)
+			}
 			this.houseRequests = currentStep.getHouseRequestValue();
 			this.warehouseRequests = currentStep.getWarehouseRequestValue();
 			this.windsMode= currentStep.getIsWinds();
@@ -397,12 +397,14 @@ public class GridPanel extends JPanel implements ActionListener {
 			this.windsMode= (precentWind < 0.002) ? !this.windsMode : this.windsMode;
 			this.priorityMode= (precentPriority < 0.002) ? !this.priorityMode : this.priorityMode;
 		} else if (this.isDemo == DemoMode.WAITING) {
-			// TODO - check that all cleared (or not)
-			this.isDemo = DemoMode.RUNNING;
-			this.parentFrame.enableDemoBtn(true);
+			if(cleanRequests()) { // check that all a-priory requests are monitored
+				this.isDemo = DemoMode.RUNNING;
+				this.parentFrame.enableDemoBtn(true);				
+			}
 		}
 	}
 	
+
 	private void updateDrone() {
 		if (drone.isMoving()) {
 			if (!drone.shouldMakeStop()) {
@@ -500,6 +502,13 @@ public class GridPanel extends JPanel implements ActionListener {
 			warehouseRequests[i] = false;
 			// envelopes are not reset since they works as toggles
 		}
+	}
+	
+	private boolean cleanRequests() {
+		for(int i=0;i < houseRequests.length; i++) {
+			if(this.houseRequests[i] || this.warehouseRequests[i]) return false;
+		}
+		return true;
 	}
 
 }

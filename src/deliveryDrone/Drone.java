@@ -12,7 +12,7 @@ public class Drone {
 	private int droneSize = 125;
 	private BufferedImage droneImg;
 	private int[] location = new int[] { 3, 3 };
-	private int SPEED = 10; // This should mean 15 steps for a next location
+	private int SPEED = 10; // This should mean 15 steps for a next location (fast - 30)
 	private DroneAnimationState droneState = DroneAnimationState.IDLE;
 	private int[] stopPosition = new int[] { 3, 3 };
 	/*
@@ -25,7 +25,7 @@ public class Drone {
 	private int currStockFrame = 0;
 
 	private static final int SQUARE_SIZE = 150;
-	private static final int STOCK_FRAMES = 7;
+	private static final int STOCK_FRAMES = 7; // fast - 2/3
 	int[] chargingStationLocation;
 
 	public Drone(int[] chargingStationLocation) {

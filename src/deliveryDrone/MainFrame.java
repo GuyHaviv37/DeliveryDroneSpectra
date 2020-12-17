@@ -64,4 +64,8 @@ public class MainFrame extends JFrame {
 	public void enableDemoBtn(boolean b) {
 		this.menuPanel.enableDemoBtn(b);
 	}
+
+	public void updateModeButtons(boolean priorityMode, boolean windsMode) {
+		this.menuPanel.updateModeButtons(priorityMode,windsMode);
+	}
 }
