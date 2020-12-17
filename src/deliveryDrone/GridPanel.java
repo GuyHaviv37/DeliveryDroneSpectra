@@ -361,8 +361,19 @@ public class GridPanel extends JPanel implements ActionListener {
 		ScenarioStep currentStep = this.currentScenario.peek();
 		if (!currentStep.HasStarted()) { // update all the env variable by the current step
 			if(currentStep.getStepNumber() == 0) {
-				// TODO - fast forward
-				// if fast forward is not done - return (i.e. keep on FF)
+				if(!(drone.isMoving())) {
+					this.drone.setTurboMode(true);					
+				}
+				resetModes();
+				// make loading header visible
+				System.out.println("Clearing..");
+				this.parentFrame.updateButtonsEnabled(false);
+				if(isGridClear()) {
+					this.drone.setTurboMode(false);
+					System.out.println("Clear");
+				} else {
+					return ;
+				}
 			}
 			this.houseRequests = currentStep.getHouseRequestValue();
 			this.warehouseRequests = currentStep.getWarehouseRequestValue();
@@ -374,9 +385,13 @@ public class GridPanel extends JPanel implements ActionListener {
 			if (this.currentScenario.isEmpty()) { // no more steps
 				this.currentScenario = null;
 				this.parentFrame.updateButtonsEnabled(true); // buttons work again
+				resetModes();
 			}
 		}
 	}
+
+	
+
 	private void updateDemo() {
 		// could consider inserting guaranteed randomized choice every X time.
 		if(this.isDemo == DemoMode.RUNNING) {
@@ -397,7 +412,7 @@ public class GridPanel extends JPanel implements ActionListener {
 			this.windsMode= (precentWind < 0.002) ? !this.windsMode : this.windsMode;
 			this.priorityMode= (precentPriority < 0.002) ? !this.priorityMode : this.priorityMode;
 		} else if (this.isDemo == DemoMode.WAITING) {
-			if(cleanRequests()) { // check that all a-priory requests are monitored
+			if(isRequestsClear()) { // check that all a-priory requests are monitored
 				this.isDemo = DemoMode.RUNNING;
 				this.parentFrame.enableDemoBtn(true);				
 			}
@@ -504,11 +519,25 @@ public class GridPanel extends JPanel implements ActionListener {
 		}
 	}
 	
-	private boolean cleanRequests() {
+	private boolean isRequestsClear() {
 		for(int i=0;i < houseRequests.length; i++) {
 			if(this.houseRequests[i] || this.warehouseRequests[i]) return false;
 		}
 		return true;
+	}
+	
+	private boolean isGridClear() {
+		if(totalPackages > 0 || totalEnvelopes > 0) return false;
+		for(int i=0;i<houseMonitors.length;i++) {
+			if(houseMonitors[i] || warehouseMonitors[i]) return false;
+		}
+		return true;
+	}
+	
+	private void resetModes() {
+		this.priorityMode = false;
+		this.windsMode = false;
+		this.parentFrame.updateModeButtons(priorityMode, windsMode);
 	}
 
 }

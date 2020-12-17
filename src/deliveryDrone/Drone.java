@@ -13,6 +13,7 @@ public class Drone {
 	private BufferedImage droneImg;
 	private int[] location = new int[] { 3, 3 };
 	private int SPEED = 10; // This should mean 15 steps for a next location (fast - 30)
+	private int STOCK_FRAMES = 7; // fast - 2/3
 	private DroneAnimationState droneState = DroneAnimationState.IDLE;
 	private int[] stopPosition = new int[] { 3, 3 };
 	/*
@@ -25,7 +26,6 @@ public class Drone {
 	private int currStockFrame = 0;
 
 	private static final int SQUARE_SIZE = 150;
-	private static final int STOCK_FRAMES = 7; // fast - 2/3
 	int[] chargingStationLocation;
 
 	public Drone(int[] chargingStationLocation) {
@@ -174,6 +174,16 @@ public class Drone {
 	public String toString() {
 		return "Drone [x=" + x + ", y=" + y + ", location=" + Arrays.toString(location) + ", droneState=" + droneState
 				+ ", stopPosition=" + Arrays.toString(stopPosition) + ", direction=" + direction + "]";
+	}
+
+	public void setTurboMode(boolean faster) {
+		if(faster) {
+			this.SPEED = 30;
+			this.STOCK_FRAMES = 2;
+		} else {
+			this.SPEED = 10;
+			this.STOCK_FRAMES = 7;
+		}
 	}
 }
 
