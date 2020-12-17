@@ -361,7 +361,7 @@ public class GridPanel extends JPanel implements ActionListener {
 		ScenarioStep currentStep = this.currentScenario.peek();
 		if (!currentStep.HasStarted()) { // update all the env variable by the current step
 			if(currentStep.getStepNumber() == 0) {
-				if(!(drone.isMoving())) {
+				if(!(drone.isMoving() || drone.isStocking())) {
 					this.drone.setTurboMode(true);					
 				}
 				resetModes();
