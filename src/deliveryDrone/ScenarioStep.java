@@ -3,6 +3,7 @@ package deliveryDrone;
 abstract class ScenarioStep {
 	private ScenarioNumber scenarioID; 
 	private boolean[] houseRequestsValue; // house request this step
+	private boolean[] envelopeModeValue; // envelope request this step
 	private boolean[] warehouseRequestsValue; // warehouse request this step
 	private boolean isWinds ; // is there winds this step?
 	private boolean isPriority; // is there priority mode this step?
@@ -12,6 +13,7 @@ abstract class ScenarioStep {
 	
 	private boolean[] privateData;
 	
+	//only house and warehouse request - rest of the variables set to false
 	public ScenarioStep(ScenarioNumber scenario, int stepNumber, boolean[] houseRequestsValue, boolean[] warehouseRequestsValue) {
 		this.scenarioID = scenario;
 		this.stepNumber = stepNumber;
@@ -20,16 +22,18 @@ abstract class ScenarioStep {
 		this.isWinds = false;
 		this.isPriority = false;
 		this.privateData = new boolean[GridPanel.NUM_OF_HOUSES];
+		this.envelopeModeValue = new boolean[GridPanel.NUM_OF_HOUSES];
 	}
 
-	public ScenarioStep(ScenarioNumber scenario, int stepNumber, boolean[] houseRequestsValue, boolean[] warehouseRequestsValue,boolean isWinds, boolean isPriority ) {
+	public ScenarioStep(ScenarioNumber scenario, int stepNumber, boolean[] houseRequestsValue, boolean[] warehouseRequestsValue,boolean isWinds, boolean isPriority, boolean[] envelopeModeValue ) {
 		this.scenarioID = scenario;
 		this.stepNumber = stepNumber;
 		this.houseRequestsValue = houseRequestsValue;
 		this.warehouseRequestsValue = warehouseRequestsValue;
 		this.isWinds = isWinds;
-		this.isPriority = isWinds;
+		this.isPriority = isPriority;
 		this.privateData = new boolean[GridPanel.NUM_OF_HOUSES];
+		this.envelopeModeValue = envelopeModeValue;	
 	}
 	
 	public void setHasStarted(boolean hasStarted) {
@@ -42,6 +46,9 @@ abstract class ScenarioStep {
 
 	public boolean[] getHouseRequestValue() {
 		return this.houseRequestsValue;
+	}
+	public boolean[] getEnvelopeModeValue() {
+		return this.envelopeModeValue;
 	}
 
 	public boolean[] getWarehouseRequestValue() {
