@@ -15,6 +15,7 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -59,6 +60,8 @@ public class GridPanel extends JPanel implements ActionListener {
 	private Queue<ScenarioStep> currentScenario;
 
 	// SIMULATION VARIABLES
+	boolean isLoading = false;
+	boolean afterScenarioEffect = false;
 	int[][] houseLocations = new int[][] { { 0, 0 }, { 0, 2 }, { 2, 0 }, { 2, 2 } };
 	int[] warehouseLocation = new int[] { 3, 3 };
 	int[] chargingStationLocation = new int[] { 3, 2 };
@@ -129,8 +132,10 @@ public class GridPanel extends JPanel implements ActionListener {
 		paintChargingStation(g);
 		paintWarehouse(g);
 		paintWarehouseBoard(g);
+		if(isLoading) paintLoadingHeader(g);
 
 		// paint state details
+		g.setFont(new Font("MV Boli", Font.BOLD, 14));
 		g.setColor(Color.black);
 		row = 0;
 		col = 3;
@@ -138,6 +143,14 @@ public class GridPanel extends JPanel implements ActionListener {
 
 		// paint drone by it's new x,y coordinates
 		g.drawImage(drone.getImage(), drone.getX(), drone.getY(), drone.getSize(), drone.getSize(), null);
+	}
+
+	private void paintLoadingHeader(Graphics g) {
+		g.setColor(Color.BLACK);
+		g.fillRect(225, 290, 125, 40);
+		g.setColor(Color.white);
+		g.setFont(new Font("MV Boli", Font.BOLD, 20));
+		g.drawString("Loading...",235, 317);
 	}
 
 	private void paintBackground(Graphics g) {
@@ -356,8 +369,15 @@ public class GridPanel extends JPanel implements ActionListener {
 		}
 	}
 	public void updateScenario() {
-		if(this.currentScenario == null)
+		if(this.currentScenario == null) {
+			if(afterScenarioEffect) {
+				if(drone.isStocking()) {
+					this.parentFrame.updateButtonsEnabled(true); // buttons work again
+					afterScenarioEffect = false;
+				}
+			}
 			return;
+		}
 		ScenarioStep currentStep = this.currentScenario.peek();
 		if (!currentStep.HasStarted()) { // update all the env variable by the current step
 			if(currentStep.getStepNumber() == 0) {
@@ -365,12 +385,13 @@ public class GridPanel extends JPanel implements ActionListener {
 					this.drone.setTurboMode(true);					
 				}
 				resetModes();
-				// make loading header visible
+				this.isLoading = true;
 				System.out.println("Clearing..");
 				this.parentFrame.updateButtonsEnabled(false);
 				if(isGridClear()) {
 					this.drone.setTurboMode(false);
 					System.out.println("Clear");
+					this.isLoading = false;
 				} else {
 					return ;
 				}
@@ -380,13 +401,18 @@ public class GridPanel extends JPanel implements ActionListener {
 			this.windsMode= currentStep.getIsWinds();
 			this.priorityMode = currentStep.getIsPriority();
 			currentStep.setHasStarted(true);
-		} else if (currentStep.isFinished(this.droneToHouseCap, this.droneToWarehouseCap, this.houseMonitors, this.warehouseMonitors, this.pickUpThisState, this.dropOffThisState)) { // step finished, get the next step
+		} else if (currentStep.isFinished(this.droneToHouseCap, this.droneToWarehouseCap,
+				this.houseMonitors, this.warehouseMonitors, this.pickUpThisState,
+				this.dropOffThisState)) { // step finished, get the next step
+
 			this.currentScenario.poll();
 			if (this.currentScenario.isEmpty()) { // no more steps
 				this.currentScenario = null;
-				this.parentFrame.updateButtonsEnabled(true); // buttons work again
+				afterScenarioEffect = true;
+//				this.parentFrame.updateButtonsEnabled(true); // buttons work again
 				resetModes();
 			}
+			
 		}
 	}
 

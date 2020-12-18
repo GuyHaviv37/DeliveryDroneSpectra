@@ -168,6 +168,7 @@ public class Drone {
 	public boolean isCharging() {
 		return this.location[0] == this.chargingStationLocation[0] && this.location[1] == this.chargingStationLocation[1];
 	}
+	
 
 	/* DEBUGGING */
 	@Override
