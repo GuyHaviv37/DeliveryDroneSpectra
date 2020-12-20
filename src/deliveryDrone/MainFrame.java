@@ -1,6 +1,7 @@
 package deliveryDrone;
 import java.awt.BorderLayout;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 public class MainFrame extends JFrame {
@@ -46,6 +47,9 @@ public class MainFrame extends JFrame {
 
 		add(this.gridPanel, BorderLayout.WEST);
 		add(this.menuPanel, BorderLayout.EAST);
+		
+		ImageIcon image = new ImageIcon("img/drone_icon.png");
+		this.setIconImage(image.getImage());
 
 		setSize(900, 700);
 		setResizable(false);

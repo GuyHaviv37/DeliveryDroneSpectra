@@ -398,6 +398,7 @@ public class GridPanel extends JPanel implements ActionListener {
 			}
 			this.houseRequests = currentStep.getHouseRequestValue();
 			this.warehouseRequests = currentStep.getWarehouseRequestValue();
+			this.envelopeRequests = currentStep.getEnvelopeModeValue();
 			this.windsMode= currentStep.getIsWinds();
 			this.priorityMode = currentStep.getIsPriority();
 			currentStep.setHasStarted(true);
