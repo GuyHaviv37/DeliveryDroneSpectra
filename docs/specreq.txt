@@ -21,12 +21,21 @@ REQUESTS / PICKUP / DROP-OFF MECHANISM
 * A package (src,dest) is DROPPED-OFF only if the drone is at (dest) and there is a packaged intended for (dest) at the drone's inventory.
 * The system guarantee that while there are packages intended for (dest) at the drone's inventory,
 the drone will respond by going to (dest)'s location.
+* (New Feature) "Must-Drop-Off" when the drone is at a location for which it has a package to deliver - it must drop-off that package.
 
 INVENTORY MANAGEMENT:
 The entire inventory management is implemented with counters:
 *totalPackages - # of packages on the drone , incremented at pickup and decremented at drop-off (of any package)
 *(dest)Capacity - # of packages on the drone -intended for (dest)- . incremented when picking up a package to (dest)
 and decremented at drop-off.
+
+ENVELOPES:
+A new kind of "packages" - 'envelopes'
+* This is implemented by a new environment boolean array s.t. if index X is TRUE then package requests at house (X+1) is an envelope.
+* Have their own inventory on the drone - implemented by a new counter.
+* Do not count as 'energy-wasters' - does not decrement the energy counter.
+* Note : This is only implemented from Houses.
+** A house can request a delivery to either a package OR an envelope (only the last request will made will be satisfied). 
 
 WINDS LOGIC:
 * The drone can only move sideways when the winds env variable is true

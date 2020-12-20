@@ -1,7 +1,5 @@
-We encounted only one main issue on this sprint.
-While working on the 'Priority Mode' feature, we tried to added the priority as a new package type.
-We thought that this could be done with a new array of env variables (priority requests) that will be monitored
-(same as regular ones). This can be viewed at the DeliveryDronePriority-CannotComput.spectra file.
-Although, the addition of the new variables together with the new monitors and auxiliary guarantees,
-the specification became really hard to compute (together with the other new features it took a lot of time).
-So we dealed with it by making a new implementation that can be viewed at the Main specification.
+While working on the envelopes feature we hit large computing times for realizability and for a controller computation.
+The solution came unexpectedly - as ADDING another feature - "Must-Drop-Off" actually reduced computing times significantly.
+We assume that it restrics the controllers optional moves (for sys variables next state) hence reducing it's computation time.
+
+Other minor issues was integrated the demo and scenario states into the GUI, synchronizing between both the grid and menu panel.

@@ -410,7 +410,6 @@ public class GridPanel extends JPanel implements ActionListener {
 			if (this.currentScenario.isEmpty()) { // no more steps
 				this.currentScenario = null;
 				afterScenarioEffect = true;
-//				this.parentFrame.updateButtonsEnabled(true); // buttons work again
 				resetModes();
 			}
 			

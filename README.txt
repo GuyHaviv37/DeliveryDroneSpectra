@@ -6,10 +6,12 @@ To run our project:
 
 To control the simulation:
 * At the right menu panel, simply choose which package delivery request you'd like to add
-** From house : add pickup from House #X to the Warehouse
+** From house : add pickup from House #X to the Warehouse (this can be a package or an envelope).
 ** From warehouse : add pickup from Warehouse to House #X
 * You can toggle Priority Mode to be ON/OFF
 * You can toggle Winds Mode to be ON/OFF
+* You can run Demo Mode - which is a random automated environment
+* You can run Scenarios - Semi-Automatic "scripts" of environment behaivour.
 
 Read the simulation details:
 * Generally, At each house you can see:
@@ -25,5 +27,6 @@ In addition, now you can view the drone's state details at the conrol panel:
 * Inventory: 
 ** How many packages the drone has in it's inventory at this state
 ** Specifies the packages distribution across all destinations.
+** Envelopes inventory
 * Priority & Winds : a mode is toggled ON when a green light is shown, and is OFF when a red light is shown.
 * Energy : the drone's battery can be viewed at the RHS of the control panel.

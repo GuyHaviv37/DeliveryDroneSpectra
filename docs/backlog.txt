@@ -11,6 +11,12 @@ Front-end:
 * Improve visual styling.
 * Add to manual menu the ability to enable 'Priority Mode'.
 * Add to the Grid a "Control Panel" that summarize all the information about the drone's state.
+* Add support for envelopes feature (see Specification)
+** Menu support - request envelope delivery
+** Grid support - show details on the drone control panel.
+* Add Automate Mode (Demo Mode)
+* Built scenario management + 3 basic scenarios.
+* Built scenario menu.
 
 Specification:
 * Create the basic Drone mechanism : Request Delivery, Pickup , Drop-off packages from/to houses and warehouse.
@@ -24,22 +30,16 @@ s.t. the drone can make an at most X amount of pickups without being charged (re
 *** This was intended to prevent house package starvation.
 ** When a package is picked up from the Warehouse, the # of packages that can be picked up from Houses is reset.
 * Implement 'Strong Winds' environment - forbids drone's movement diagonally.
+* Added 'envelopes' - light-weight packages.
+* Integrated 'Must-Drop-Off' feature to the main specification.
 
 
 -------------------
-Left To Do (Sprint 3):
+Left To Do (Sprint 4):
 Front-end:
-* Add support for envelopes feature (see Specification)
-** Menu support - request envelope delivery
-** Grid support - show details on the drone control panel.
-* Add Automate Mode
-* Start working on Scenarios
+* Add more scenarios.
+* Add scenario tooltips to the scenario menu (information about each scenario).
+* Refactoring.
 
 Specification:
-* Add a new kind of "packages" - 'envelopes'
-** Have their own inventory on the drone (do not count as same as packages).
-** Do not count as 'energy-wasters' (does not cost energy on pickup).
-** This is only implemented from Houses.
-*** A house can request a delivery to either a package OR an envelope (only the last request will made will be satisfied). 
-
-
+-
