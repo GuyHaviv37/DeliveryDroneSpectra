@@ -9,11 +9,11 @@ import java.util.concurrent.ThreadLocalRandom;
 enum ScenarioNumber{ 
 	ONE(1,"One Random package from warehouse"),
 	TWO(2,"each house send package to warehouse"),
-	THREE(3,"priority without warehouse packages"),
-	FOUR(4,"  "),
-	FIVE(5,"  "),
-	SIX(6,"  "),
-	SEVEN(7,"  ");
+	THREE(3,"priority without warehouse packages");
+//	FOUR(4,"  "),
+//	FIVE(5,"  "),
+//	SIX(6,"  "),
+//	SEVEN(7,"  ");
 
 	private String description;
 	private int number;
@@ -39,14 +39,14 @@ enum ScenarioNumber{
 			return TWO;
 		case 3:
 			return THREE;
-		case 4:
-			return FOUR;
-		case 5:
-			return FIVE;
-		case 6:
-			return SIX;
-		case 7:
-			return SEVEN;
+//		case 4:
+//			return FOUR;
+//		case 5:
+//			return FIVE;
+//		case 6:
+//			return SIX;
+//		case 7:
+//			return SEVEN;
 		}
 		return null; 
 	}
