@@ -402,7 +402,7 @@ public class GridPanel extends JPanel implements ActionListener {
 			this.windsMode= currentStep.getIsWinds();
 			this.priorityMode = currentStep.getIsPriority();
 			currentStep.setHasStarted(true);
-		} else if (currentStep.isFinished(this.droneToHouseCap, this.droneToWarehouseCap,
+		} else if (currentStep.isFinished(this.droneToHouseCap, this.droneToWarehouseCap,this.totalEnvelopes,
 				this.houseMonitors, this.warehouseMonitors, this.pickUpThisState,
 				this.dropOffThisState)) { // step finished, get the next step
 

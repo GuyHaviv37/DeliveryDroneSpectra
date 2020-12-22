@@ -24,7 +24,7 @@ public class ScenarioMenuPanel extends JPanel implements ActionListener {
 	private CreationListener creationListener;
 	
 	public ScenarioMenuPanel() {
-		String[] scenarioTitles = {"Choose Scenario","Scenario 1", "Scenario 2","Scenario 3"};
+		String[] scenarioTitles = {"Choose Scenario","Scenario 1", "Scenario 2","Scenario 3","Scenario 4","Scenario 5"};
 		setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridx = 0;
@@ -63,6 +63,12 @@ public class ScenarioMenuPanel extends JPanel implements ActionListener {
 						break;
 					case "Scenario 3":
 						selection = 3;
+						break;
+					case "Scenario 4":
+						selection = 4;
+						break;
+					case "Scenario 5":
+						selection = 5;
 						break;
 				}
 			}
