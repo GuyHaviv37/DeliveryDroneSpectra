@@ -372,6 +372,7 @@ public class GridPanel extends JPanel implements ActionListener {
 		if(this.currentScenario == null) {
 			if(afterScenarioEffect) {
 				if(drone.isStocking()) {
+					resetModes();
 					this.parentFrame.updateButtonsEnabled(true); // buttons work again
 					afterScenarioEffect = false;
 				}
@@ -396,7 +397,13 @@ public class GridPanel extends JPanel implements ActionListener {
 					return ;
 				}
 			}
+			for(int i =0; i<4; i++) {
+				System.out.println(currentStep.getHouseRequestValue()[i]);
+			}
 			this.houseRequests = currentStep.getHouseRequestValue();
+			for(int i =0; i<4; i++) {
+				System.out.println(this.houseRequests[i]);
+			}
 			this.warehouseRequests = currentStep.getWarehouseRequestValue();
 			this.envelopeRequests = currentStep.getEnvelopeModeValue();
 			this.windsMode= currentStep.getIsWinds();
@@ -410,7 +417,7 @@ public class GridPanel extends JPanel implements ActionListener {
 			if (this.currentScenario.isEmpty()) { // no more steps
 				this.currentScenario = null;
 				afterScenarioEffect = true;
-				resetModes();
+			
 			}
 			
 		}

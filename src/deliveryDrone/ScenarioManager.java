@@ -189,14 +189,12 @@ public class ScenarioManager {
 		boolean[] envelope = new boolean[GridPanel.NUM_OF_HOUSES];
 		boolean[] warehouse0 = new boolean[GridPanel.NUM_OF_HOUSES]; 
 		Arrays.fill(envelope, Boolean.TRUE);
-		Arrays.fill(house, Boolean.TRUE);
-		for(int i=0;i<2;i++) {
-			int randomNum = ThreadLocalRandom.current().nextInt(0, 4);
-			while(!warehouse0[randomNum]) {
-				randomNum = ThreadLocalRandom.current().nextInt(0, 4);
-			}
-			warehouse0[randomNum]=true;
-		}
+		house[2]=true;
+		house[0]=true;
+		warehouse0[1]=true;
+		warehouse0[2]=true;
+		warehouse0[3]=true;
+
 		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.FOUR,stepNumber++, house, warehouse0,false, true, envelope) {
 
 			@Override
@@ -205,15 +203,10 @@ public class ScenarioManager {
 				case 1:
 					this.getPrivateData()[0]=true;
 					break;
-				case 2:
-					this.getPrivateData()[1]=true;
-					break;
 				case 3:
 					this.getPrivateData()[2]=true;
 					break;
-				case 4:
-					this.getPrivateData()[3]=true;
-					break;
+		
 				}
 				if(pickUpThisState>4) {
 					if(this.getPrivateData()[4]) {
@@ -269,7 +262,10 @@ public class ScenarioManager {
 			}
 		};
 		scenarioSteps.offer(scenarioStep0); 
-		ScenarioStep scenarioStep1 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house, warehouse0) {
+		boolean[] house1 = new boolean[GridPanel.NUM_OF_HOUSES];
+		Arrays.fill(house1, Boolean.TRUE);
+
+		ScenarioStep scenarioStep1 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house1, warehouse0) {
 			@Override
 			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
 				if(pickUpThisState>0) {
@@ -344,7 +340,7 @@ public class ScenarioManager {
 					if(houseMonitors[i]) {
 						return false;
 					}
-					
+
 				}
 				if(droneToWarehouseCap==0 && totalEnvelopes==0) {
 					System.out.println("scenario #5 -final step (step #5) is finished");
