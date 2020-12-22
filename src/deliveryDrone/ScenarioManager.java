@@ -342,7 +342,7 @@ public class ScenarioManager {
 					}
 
 				}
-				if(droneToWarehouseCap==0 && totalEnvelopes==0) {
+				if((droneToWarehouseCap + totalEnvelopes)==1 && dropOffThisState>0) {
 					System.out.println("scenario #5 -final step (step #5) is finished");
 					return true;
 				}
