@@ -52,7 +52,7 @@ env boolean[NUM_OF_HOUSES] envelopeRequests;
 
 /* ======================================== SYSTEM VARIABLS ==============================================*/
 sys Cord[2] drone;
-sys Int(0..8) pickUpThisState;  // 0 - no pickup , 1-4 house small pickups by # ,  5-8 warehouse  pickup to house (#-4)
+sys Int(0..8) pickUpThisState;  // 0 - no pickup , 1-4 house package pickups by # ,  5-8 warehouse  pickup to house (#-4)
 sys Int(0..6) dropOffThisState;  // 0 - no drop-off , 1-4 house drop-offs by #, 5 - warehouse drop-off ,6- warehouse drop-off envelope 
 
 /* ======================================== ASSUMPTIONS ==============================================*/

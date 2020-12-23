@@ -7,13 +7,14 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 enum ScenarioNumber{ 
-	ONE(1,"One Random package from warehouse"),
+	ONE(1,"one Random package from warehouse"),
 	TWO(2,"each house send one package or envelope to warehouse"),
 	THREE(3,"priority without warehouse packages"),
 	FOUR(4,"3 packages in warehouse, 2 envelopes at houses- priority mode on- till all requests picked up"),
 	FIVE(5,"each house send package, there if refill of 4 new packages (one after each pickup), winds- on part of the time"),
-	SIX(6,"  "),
-	SEVEN(7,"  ");
+	SIX(6,"4 packages in warehouse, 4 requests from houses- winds mode on- till all requests drop off"),
+	SEVEN(7,"circle of packages from houses- till all drop off"),
+	EIGHT(8,"one random package from warehouse, when pickup request from the same house. finish when pickup from house");
 
 	private String description;
 	private int number;
@@ -47,7 +48,9 @@ enum ScenarioNumber{
 			return SIX;
 		case 7:
 			return SEVEN;
-		}
+		case 8:
+			return EIGHT;
+	}
 		return null; 
 	}
 }
@@ -66,7 +69,7 @@ public class ScenarioManager {
 		boolean[] warehouse0 = new boolean[GridPanel.NUM_OF_HOUSES]; 
 		int randomNum = ThreadLocalRandom.current().nextInt(0, 4);
 
-		warehouse0[randomNum]=true; // package in the warehouse to house #4
+		warehouse0[randomNum]=true; 
 		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.ONE,stepNumber++, house, warehouse0) {
 
 			@Override
@@ -425,12 +428,12 @@ public class ScenarioManager {
 		return scenarioSteps;
 	}
 	/*
-	 * Scenario #7 - 'each house send package, there if refill of 4 new packages (one after each pickup), winds- on part of the time'
+	 * Scenario #7 - 'circle of packages from houses- till all drop off'
 	 * This scenario has 5 steps. 
-	 * step#0 is finished whenever the drone pickup the first package from house.
-	 * step#1 is finished whenever the drone pickup the second package from house.
-	 * step#2 is finished whenever the drone pickup the third package from house.
-	 * step#3 is finished whenever the drone pickup the fourth package from house.
+	 * step#0 is finished whenever the drone pickup the package from house #1.
+	 * step#1 is finished whenever the drone pickup the package from house #2.
+	 * step#2 is finished whenever the drone pickup the package from house #4.
+	 * step#3 is finished whenever the drone pickup the package from house #3.
 	 * step#4 is finished whenever the drone delivered all the packages to the warehouse.
 	 */
 	private static Queue<ScenarioStep> createScenarioSeven() {
@@ -532,6 +535,50 @@ public class ScenarioManager {
 		return scenarioSteps;
 	}
 	/*
+	 * Scenario #8 - 'one random package from warehouse, when pickup request from the same house. finish when pickup from house'
+	 * This scenario has two steps. 
+	 * The first step is finished whenever the drone pickup the package from warehouse.
+	 * The second step is finished whenever the drone drop off the package at house #4.
+	 */
+	private static Queue<ScenarioStep> createScenarioEight() {
+		Queue<ScenarioStep> scenarioSteps = new LinkedList<>();
+		int stepNumber = 0;
+		boolean[] house = new boolean[GridPanel.NUM_OF_HOUSES];
+		boolean[] warehouse0 = new boolean[GridPanel.NUM_OF_HOUSES]; 
+		int randomNum = ThreadLocalRandom.current().nextInt(0, 4);
+
+		warehouse0[randomNum]=true; 
+		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.EIGHT,stepNumber++, house, warehouse0) {
+
+			@Override
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+				if(pickUpThisState == randomNum+5) {
+					System.out.println("scenario #8 - step #0 is finished");
+					return true;
+				}
+				return false;
+			}
+		};
+		scenarioSteps.offer(scenarioStep0); 
+		boolean[] warehouse1 = new boolean[GridPanel.NUM_OF_HOUSES];
+		boolean[] house1 = new boolean[GridPanel.NUM_OF_HOUSES];
+		house1[randomNum]=true; 
+		ScenarioStep scenarioStep1 = new ScenarioStep(ScenarioNumber.EIGHT,stepNumber++, house1, warehouse1) {
+
+			@Override
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+				if(pickUpThisState == randomNum+1) {
+					System.out.println("scenario #8 - final step (step #1) is finished");
+					return true;
+				}
+				return false;
+			}
+		};
+		scenarioSteps.offer(scenarioStep1); 
+		return scenarioSteps;
+	}
+
+	/*
 	 * returns a queue of steps needed to be taken in order to play the specified scenario
 	 */
 	public static Queue<ScenarioStep> getScenario(int scenarioID) {
@@ -550,7 +597,9 @@ public class ScenarioManager {
 			return createScenarioSix();
 		case 7:
 			return createScenarioSeven();
-		}
+		case 8:
+			return createScenarioEight();
+	}
 		return null;
 	}
 }
