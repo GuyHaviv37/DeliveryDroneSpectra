@@ -10,10 +10,10 @@ enum ScenarioNumber{
 	ONE(1,"One Random package from warehouse"),
 	TWO(2,"each house send one package or envelope to warehouse"),
 	THREE(3,"priority without warehouse packages"),
-	FOUR(4,"  "),
-	FIVE(5,"  ");
-	//	SIX(6,"  "),
-	//	SEVEN(7,"  ");
+	FOUR(4,"3 packages in warehouse, 2 envelopes at houses- priority mode on- till all requests picked up"),
+	FIVE(5,"each house send package, there if refill of 4 new packages (one after each pickup), winds- on part of the time"),
+	SIX(6,"  "),
+	SEVEN(7,"  ");
 
 	private String description;
 	private int number;
@@ -43,10 +43,10 @@ enum ScenarioNumber{
 			return FOUR;
 		case 5:
 			return FIVE;
-			//		case 6:
-			//			return SIX;
-			//		case 7:
-			//			return SEVEN;
+		case 6:
+			return SIX;
+		case 7:
+			return SEVEN;
 		}
 		return null; 
 	}
@@ -178,9 +178,9 @@ public class ScenarioManager {
 		return scenarioSteps;
 	}
 	/*
-	 * Scenario #4 - '2 random packages at the warehouse, 4 envelopes- one each house, priority mode on- till all requests picked up'
+	 * Scenario #4 - '3 packages in warehouse, 2 envelopes at houses- priority mode on- till all requests picked up'
 	 * This scenario has one step. 
-	 * The step is finished whenever the drone pickup the all the requests
+	 * The step is finished whenever the drone pickup all the requests
 	 * */
 	private static Queue<ScenarioStep> createScenarioFour() {
 		Queue<ScenarioStep> scenarioSteps = new LinkedList<>();
@@ -228,10 +228,13 @@ public class ScenarioManager {
 		return scenarioSteps;
 	}
 	/*
-	 * Scenario #5 - '4 requests from houses at the beginning and fill 3 more after pickup'
-	 * This scenario has two steps. 
-	 * The first step is finished whenever the drone pickup the package from warehouse.
-	 * The second step is finished whenever the drone drop off the package at house #4.
+	 * Scenario #5 - 'each house send package, there if refill of 4 new packages (one after each pickup), winds- on part of the time'
+	 * This scenario has 5 steps. 
+	 * step#0 is finished whenever the drone pickup the first package from house.
+	 * step#1 is finished whenever the drone pickup the second package from house.
+	 * step#2 is finished whenever the drone pickup the third package from house.
+	 * step#3 is finished whenever the drone pickup the fourth package from house.
+	 * step#4 is finished whenever the drone delivered all the packages to the warehouse.
 	 */
 	private static Queue<ScenarioStep> createScenarioFive() {
 		Queue<ScenarioStep> scenarioSteps = new LinkedList<>();
@@ -240,7 +243,7 @@ public class ScenarioManager {
 		boolean[] warehouse0 = new boolean[GridPanel.NUM_OF_HOUSES]; 
 		boolean[] envelope = new boolean[GridPanel.NUM_OF_HOUSES];
 		Arrays.fill(house, Boolean.TRUE);
-		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house, warehouse0,false, false, envelope) {
+		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house, warehouse0) {
 			@Override
 			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
 				if(pickUpThisState>0) {
@@ -353,6 +356,75 @@ public class ScenarioManager {
 		return scenarioSteps;
 	}
 	/*
+	 * Scenario #6 - '4 packages in warehouse, 4 requests from houses- winds mode on- till all requests drop off'
+	 * This scenario has one step. 
+	 * The step is finished whenever the drone drop off all the requests
+	 * */
+	private static Queue<ScenarioStep> createScenarioSix() {
+		Queue<ScenarioStep> scenarioSteps = new LinkedList<>();
+		int stepNumber = 0;
+		boolean[] house = new boolean[GridPanel.NUM_OF_HOUSES];
+		boolean[] envelope = new boolean[GridPanel.NUM_OF_HOUSES];
+		boolean[] warehouse = new boolean[GridPanel.NUM_OF_HOUSES]; 
+		Random rand = new Random();
+		for(int i=0; i< GridPanel.NUM_OF_HOUSES;i++) {
+			envelope[i]=rand.nextBoolean();
+		}
+		Arrays.fill(house, Boolean.TRUE);
+		Arrays.fill(warehouse, Boolean.TRUE);
+
+
+		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.SIX,stepNumber++, house, warehouse,true, false, envelope) {
+
+			@Override
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+
+				switch (pickUpThisState) {
+				case 1:
+					this.getPrivateData()[0]=true;
+					break;
+				case 2:
+					this.getPrivateData()[1]=true;
+					break;
+				case 3:
+					this.getPrivateData()[2]=true;
+					break;
+				case 4:
+					this.getPrivateData()[3]=true;
+					break;
+				case 5:
+					this.getPrivateData()[4]=true;
+					break;
+				case 6:
+					this.getPrivateData()[5]=true;
+					break;
+				case 7:
+					this.getPrivateData()[6]=true;
+					break;
+				case 8:
+					this.getPrivateData()[7]=true;
+					break;
+				}
+				for(int i=0; i<GridPanel.NUM_OF_HOUSES*2;i++) {
+					if(!this.getPrivateData()[i]) {
+						return false;
+					}
+				}
+				int totalCap= droneToWarehouseCap + totalEnvelopes;
+				for(int i=0; i<GridPanel.NUM_OF_HOUSES;i++) {
+					totalCap+= droneToHouseCap[i];
+				}
+				if(totalCap==1 && dropOffThisState>0) {
+					System.out.println("scenario #6 -final step (step #5) is finished");
+					return true;
+				}
+				return false;
+			}
+		};
+		scenarioSteps.offer(scenarioStep0); 
+		return scenarioSteps;
+	}
+	/*
 	 * returns a queue of steps needed to be taken in order to play the specified scenario
 	 */
 	public static Queue<ScenarioStep> getScenario(int scenarioID) {
@@ -367,9 +439,9 @@ public class ScenarioManager {
 			return createScenarioFour();
 		case 5:
 			return createScenarioFive();
-			//		case 6:
-			//			return createScenarioSix();
-			//		default:
+		case 6:
+			return createScenarioSix();
+			//		case 7:
 			//			return createScenarioSeven();
 		}
 		return null;

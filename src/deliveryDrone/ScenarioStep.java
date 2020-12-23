@@ -12,7 +12,7 @@ abstract class ScenarioStep {
 	
 	private boolean hasStarted = false; // did the step start?
 	private int stepNumber;
-	private static final int NUM_OF_PRIVATE_DATA = 10;
+	public static final int NUM_OF_PRIVATE_DATA = 10;
 	private boolean[] privateData;
 	
 	//only house and warehouse request - rest of the variables set to false
