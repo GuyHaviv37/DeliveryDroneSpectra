@@ -62,6 +62,7 @@ public class GridPanel extends JPanel implements ActionListener {
 	// SIMULATION VARIABLES
 	boolean isLoading = false;
 	boolean afterScenarioEffect = false;
+	boolean turnOnTurbo = false;
 	int[][] houseLocations = new int[][] { { 0, 0 }, { 0, 2 }, { 2, 0 }, { 2, 2 } };
 	int[] warehouseLocation = new int[] { 3, 3 };
 	int[] chargingStationLocation = new int[] { 3, 2 };
@@ -335,17 +336,22 @@ public class GridPanel extends JPanel implements ActionListener {
 	public void toggleDemo(boolean isDemo) {
 		if(isDemo) {
 			this.isDemo = DemoMode.WAITING;
-			//this.parentFrame.updateButtonsEnabled(false);
 			this.parentFrame.enableDemoBtn(false);
+			this.parentFrame.enableRunScenarioBtn(false, "Run Scenario");
 		} else {
 			this.isDemo = DemoMode.IDLE;
 			this.parentFrame.updateButtonsEnabled(true);
 			this.parentFrame.updateModeButtons(priorityMode,windsMode);
+			this.parentFrame.enableRunScenarioBtn(true, "Run Scenario");
 		}
 	}
 	
 	public void createScenario(int scenarioNumber) {
-		this.currentScenario = ScenarioManager.getScenario(scenarioNumber);
+		if(scenarioNumber > 0) this.currentScenario = ScenarioManager.getScenario(scenarioNumber);
+		else {
+			System.out.println("Skip");
+			this.turnOnTurbo = true;
+		}
 	}
 
 	// this is what the timer will generate at each delay
@@ -374,6 +380,7 @@ public class GridPanel extends JPanel implements ActionListener {
 				if(drone.isStocking()) {
 					resetModes();
 					this.parentFrame.updateButtonsEnabled(true); // buttons work again
+					this.parentFrame.enableRunScenarioBtn(true, "Run Scenario");
 					afterScenarioEffect = false;
 				}
 			}
@@ -387,23 +394,17 @@ public class GridPanel extends JPanel implements ActionListener {
 				}
 				resetModes();
 				this.isLoading = true;
-				System.out.println("Clearing..");
 				this.parentFrame.updateButtonsEnabled(false);
+				this.parentFrame.enableRunScenarioBtn(false,"Skip Step");
 				if(isGridClear()) {
 					this.drone.setTurboMode(false);
-					System.out.println("Clear");
+					this.parentFrame.enableRunScenarioBtn(true,"Skip Step");
 					this.isLoading = false;
 				} else {
 					return ;
 				}
 			}
-			for(int i =0; i<4; i++) {
-				System.out.println(currentStep.getHouseRequestValue()[i]);
-			}
 			this.houseRequests = currentStep.getHouseRequestValue();
-			for(int i =0; i<4; i++) {
-				System.out.println(this.houseRequests[i]);
-			}
 			this.warehouseRequests = currentStep.getWarehouseRequestValue();
 			this.envelopeRequests = currentStep.getEnvelopeModeValue();
 			this.windsMode= currentStep.getIsWinds();
@@ -412,14 +413,19 @@ public class GridPanel extends JPanel implements ActionListener {
 		} else if (currentStep.isFinished(this.droneToHouseCap, this.droneToWarehouseCap,this.totalEnvelopes,
 				this.houseMonitors, this.warehouseMonitors, this.pickUpThisState,
 				this.dropOffThisState)) { // step finished, get the next step
-
+			this.drone.setTurboMode(false);
 			this.currentScenario.poll();
 			if (this.currentScenario.isEmpty()) { // no more steps
 				this.currentScenario = null;
 				afterScenarioEffect = true;
-			
 			}
-			
+		} else { //during a step
+			// if we toggled turnOnTurbo (on Skip Step) then wait for right time then turn on
+			if(this.turnOnTurbo && !(drone.isMoving() || drone.isStocking())) {
+				this.drone.setTurboMode(true);
+				this.turnOnTurbo = false;
+			}
+
 		}
 	}
 

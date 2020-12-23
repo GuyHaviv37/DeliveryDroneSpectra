@@ -105,6 +105,9 @@ public class ScenarioMenuPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		JButton target = (JButton) e.getSource();
 		if (target == runScenarioBtn) {
+			if(target.getText().equals("Skip Step")) {
+				this.selection = -1;
+			}
 			creationListener.createScenario(selection);
 			menuListener.updateButtonsEnabled(false);
 		} else if (target == demoBtn) {
@@ -119,15 +122,25 @@ public class ScenarioMenuPanel extends JPanel implements ActionListener {
 	public void setDemoBtnEnabled(boolean isEnabled) {
 		this.demoBtn.setEnabled(isEnabled);
 	}
+	
+	public void enableRunScenarioBtn(boolean b,String text) {
+		this.runScenarioBtn.setEnabled(b);
+		this.runScenarioBtn.setText(text);
+		if(b && text.equals("Run Scenario")) {
+			resetSelection();
+		}
+	} 
 
 	public void setButtonsEnabled(boolean enabled) {
 		this.selectionList.setEnabled(enabled);
-		if(this.selectionList.getSelectedIndex() != 0) {
-			this.runScenarioBtn.setEnabled(enabled);
-		}
 		if(!this.isDemo) {
 			this.demoBtn.setEnabled(enabled);
 		}
+	}
+	
+	private void resetSelection() {
+		this.selectionList.setSelectedIndex(0);
+		this.selection = 0;
 	}
 
 }

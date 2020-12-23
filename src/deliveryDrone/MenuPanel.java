@@ -76,6 +76,10 @@ public class MenuPanel extends JPanel {
 	public void enableDemoBtn(boolean isEnabled) {
 		scenarioMenu.setDemoBtnEnabled(isEnabled);
 	}
+	
+	public void enableRunScenarioBtn(boolean b,String text) {
+		scenarioMenu.enableRunScenarioBtn(b,text);
+	}
 
 	public void updateModeButtons(boolean priorityMode, boolean windsMode) {
 		manualMenu.updateModeButtons(priorityMode,windsMode);

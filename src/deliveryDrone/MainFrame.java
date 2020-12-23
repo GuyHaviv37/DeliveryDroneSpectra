@@ -40,7 +40,7 @@ public class MainFrame extends JFrame {
 
 			@Override
 			public void createScenario(int scenarioNumber) {
-				if(scenarioNumber > 0) gridPanel.createScenario(scenarioNumber);
+				if(scenarioNumber != 0) gridPanel.createScenario(scenarioNumber);
 			}
 
 		});
@@ -67,6 +67,10 @@ public class MainFrame extends JFrame {
 
 	public void enableDemoBtn(boolean b) {
 		this.menuPanel.enableDemoBtn(b);
+	}
+	
+	public void enableRunScenarioBtn(boolean b,String text) {
+		this.menuPanel.enableRunScenarioBtn(b,text);
 	}
 
 	public void updateModeButtons(boolean priorityMode, boolean windsMode) {
