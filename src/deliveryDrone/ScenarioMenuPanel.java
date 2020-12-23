@@ -4,6 +4,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -38,10 +40,11 @@ public class ScenarioMenuPanel extends JPanel implements ActionListener {
 		this.runScenarioBtn = new JButton("Run Scenario");
 		this.runScenarioBtn.addActionListener(this);
 		this.runScenarioBtn.setEnabled(false);
+		this.runScenarioBtn.setToolTipText("Run Selected Scenario");
 		
 		this.demoBtn = new JButton("Run Demo");
 		this.demoBtn.addActionListener(this);
-		//this.demoBtn.setToolTipText("Run automated environment");
+		this.demoBtn.setToolTipText("Run automated environment");
 		
 		// Selection List
 		this.selectionList = new JComboBox<String>(scenarioTitles);
@@ -83,6 +86,14 @@ public class ScenarioMenuPanel extends JPanel implements ActionListener {
 			}
 		};
 		selectionList.addActionListener(comboBoxListener);
+		ComboboxToolTipRenderer renderer = new ComboboxToolTipRenderer();
+		List<String> tooltips = new ArrayList<String>();
+		tooltips.add("");
+		for(int i=1;i<=8;i++) {
+			tooltips.add(ScenarioNumber.getScenarioNumber(i).toString());
+		}
+		renderer.setTooltips(tooltips);
+		this.selectionList.setRenderer(renderer);
 		
 		// Add Scenario section
 		gbc.insets = new Insets(20,0,0,0);
@@ -114,7 +125,7 @@ public class ScenarioMenuPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		JButton target = (JButton) e.getSource();
 		if (target == runScenarioBtn) {
-			if(target.getText().equals("Skip Step")) {
+			if(target.getText().equals("Fast Forward Step")) {
 				this.selection = -1;
 			}
 			creationListener.createScenario(selection);
@@ -135,6 +146,7 @@ public class ScenarioMenuPanel extends JPanel implements ActionListener {
 	public void enableRunScenarioBtn(boolean b,String text) {
 		this.runScenarioBtn.setEnabled(b);
 		this.runScenarioBtn.setText(text);
+		this.runScenarioBtn.setToolTipText(text.equals("Run Scenario") ? "Run Selected Scenario" : "Fast Forward To The Next Step");
 		if(b && text.equals("Run Scenario")) {
 			resetSelection();
 		}
