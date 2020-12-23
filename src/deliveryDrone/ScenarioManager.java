@@ -425,6 +425,113 @@ public class ScenarioManager {
 		return scenarioSteps;
 	}
 	/*
+	 * Scenario #7 - 'each house send package, there if refill of 4 new packages (one after each pickup), winds- on part of the time'
+	 * This scenario has 5 steps. 
+	 * step#0 is finished whenever the drone pickup the first package from house.
+	 * step#1 is finished whenever the drone pickup the second package from house.
+	 * step#2 is finished whenever the drone pickup the third package from house.
+	 * step#3 is finished whenever the drone pickup the fourth package from house.
+	 * step#4 is finished whenever the drone delivered all the packages to the warehouse.
+	 */
+	private static Queue<ScenarioStep> createScenarioSeven() {
+		Queue<ScenarioStep> scenarioSteps = new LinkedList<>();
+		int stepNumber = 0;
+		boolean[] house = new boolean[GridPanel.NUM_OF_HOUSES];
+		boolean[] warehouse0 = new boolean[GridPanel.NUM_OF_HOUSES]; 
+		house[0]=true;
+		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.SEVEN,stepNumber++, house, warehouse0) {
+			@Override
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+				if(pickUpThisState>0) {
+					this.getPrivateData()[0]=true;
+					return false;
+				}
+				else {
+					if(this.getPrivateData()[0]) {
+						System.out.println("scenario #7 - step #0 is finished");
+						return true;
+					}
+				}
+				return false;
+			}
+		};
+		scenarioSteps.offer(scenarioStep0); 
+		boolean[] house1 = new boolean[GridPanel.NUM_OF_HOUSES];
+		house1[1]=true;
+		ScenarioStep scenarioStep1 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house1, warehouse0) {
+			@Override
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+				if(pickUpThisState>0) {
+					this.getPrivateData()[0]=true;
+					return false;
+				}
+				else {
+					if(this.getPrivateData()[0]) {
+						System.out.println("scenario #7 - step #1 is finished");
+						return true;
+					}
+				}
+				return false;
+			}
+		};
+		scenarioSteps.offer(scenarioStep1); 
+		boolean[] house2 = new boolean[GridPanel.NUM_OF_HOUSES];
+		house2[3]=true;
+		ScenarioStep scenarioStep2 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house2, warehouse0) {
+			@Override
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+				if(pickUpThisState>0) {
+					this.getPrivateData()[0]=true;
+					return false;
+				}
+				else {
+					if(this.getPrivateData()[0]) {
+						System.out.println("scenario #7 - step #2 is finished");
+						return true;
+					}
+				}
+				return false;
+			}
+		};
+		scenarioSteps.offer(scenarioStep2); 
+		boolean[] house3 = new boolean[GridPanel.NUM_OF_HOUSES];
+		house3[2]=true;
+		ScenarioStep scenarioStep3 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house3, warehouse0) {
+			@Override
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+				if(pickUpThisState>0) {
+					this.getPrivateData()[0]=true;
+					return false;
+				}
+				else {
+					if(this.getPrivateData()[0]) {
+						System.out.println("scenario #7 - step #3 is finished");
+						return true;
+					}
+				}
+				return false;
+			}
+		};
+		scenarioSteps.offer(scenarioStep3); 
+		ScenarioStep scenarioStep4 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house, warehouse0) {
+			@Override
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+				for(int i=0; i< GridPanel.NUM_OF_HOUSES;i++) {
+					if(houseMonitors[i]) {
+						return false;
+					}
+				}
+				if((droneToWarehouseCap + totalEnvelopes)==1 && dropOffThisState>0) {
+					System.out.println("scenario #7 -final step (step #4) is finished");
+					return true;
+				}
+				return false;
+			}
+		};
+		scenarioSteps.offer(scenarioStep4); 
+		return scenarioSteps;
+	}
+	/*
 	 * returns a queue of steps needed to be taken in order to play the specified scenario
 	 */
 	public static Queue<ScenarioStep> getScenario(int scenarioID) {
@@ -441,8 +548,8 @@ public class ScenarioManager {
 			return createScenarioFive();
 		case 6:
 			return createScenarioSix();
-			//		case 7:
-			//			return createScenarioSeven();
+		case 7:
+			return createScenarioSeven();
 		}
 		return null;
 	}
