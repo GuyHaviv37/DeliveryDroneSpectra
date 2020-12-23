@@ -442,7 +442,9 @@ public class ScenarioManager {
 		boolean[] house = new boolean[GridPanel.NUM_OF_HOUSES];
 		boolean[] warehouse0 = new boolean[GridPanel.NUM_OF_HOUSES]; 
 		house[0]=true;
-		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.SEVEN,stepNumber++, house, warehouse0) {
+		boolean[] envelope = new boolean[GridPanel.NUM_OF_HOUSES];
+		envelope[0]=true;
+		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.SEVEN,stepNumber++, house, warehouse0,false,false, envelope) {
 			@Override
 			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
 				if(pickUpThisState>0) {
@@ -461,7 +463,9 @@ public class ScenarioManager {
 		scenarioSteps.offer(scenarioStep0); 
 		boolean[] house1 = new boolean[GridPanel.NUM_OF_HOUSES];
 		house1[1]=true;
-		ScenarioStep scenarioStep1 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house1, warehouse0) {
+		boolean[] envelope1 = new boolean[GridPanel.NUM_OF_HOUSES];
+		envelope1[1]=true;
+		ScenarioStep scenarioStep1 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house1, warehouse0, false,false, envelope1) {
 			@Override
 			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
 				if(pickUpThisState>0) {
@@ -480,7 +484,9 @@ public class ScenarioManager {
 		scenarioSteps.offer(scenarioStep1); 
 		boolean[] house2 = new boolean[GridPanel.NUM_OF_HOUSES];
 		house2[3]=true;
-		ScenarioStep scenarioStep2 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house2, warehouse0) {
+		boolean[] envelope2= new boolean[GridPanel.NUM_OF_HOUSES];
+		envelope2[3]=true;
+		ScenarioStep scenarioStep2 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house2, warehouse0, false,false, envelope2) {
 			@Override
 			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
 				if(pickUpThisState>0) {
@@ -499,7 +505,9 @@ public class ScenarioManager {
 		scenarioSteps.offer(scenarioStep2); 
 		boolean[] house3 = new boolean[GridPanel.NUM_OF_HOUSES];
 		house3[2]=true;
-		ScenarioStep scenarioStep3 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house3, warehouse0) {
+		boolean[] envelope3= new boolean[GridPanel.NUM_OF_HOUSES];
+		envelope3[2]=true;
+		ScenarioStep scenarioStep3 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house3, warehouse0, false,false,envelope3) {
 			@Override
 			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
 				if(pickUpThisState>0) {
