@@ -7,14 +7,14 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.Arrays;
 
 enum ScenarioNumber{ 
-	ONE(1,"one Random package from warehouse"),
-	TWO(2,"each house send one package or envelope to warehouse"),
-	THREE(3,"priority without warehouse packages"),
-	FOUR(4,"3 packages in warehouse, 2 envelopes at houses- priority mode on- till all requests picked up"),
-	FIVE(5,"each house send package, there if refill of 4 new packages (one after each pickup), winds- on part of the time"),
-	SIX(6,"4 packages in warehouse, 4 requests from houses- winds mode on- till all requests drop off"),
-	SEVEN(7,"circle of packages from houses- till all drop off"),
-	EIGHT(8,"one random package from warehouse, when pickup request from the same house. finish when pickup from house");
+	ONE(1,"A package is sent from the warehouse to a random house"),
+	TWO(2,"All houses request a package or an envelope delivery"),
+	THREE(3,"Priority mode, with no warehouse packages"),
+	FOUR(4,"Pickup: 3 WH packages, 2 house envelopes - with Priority Mode"),
+	FIVE(5,"Pickup: all houses request package delivery, with a 4 package refill after a pickup. Partial use of Winds Mode"),
+	SIX(6,"Full Grid, Full Delivery - All houses request delivery, Warehouse full as well. with Winds Mode"),
+	SEVEN(7,"Carousel of house packages (Requests in cycle) - Full Delivery"),
+	EIGHT(8,"On-the-way Pickup: Random WH request to a house, upon pickup - add delivery request from that house. Full Delivery of house request");
 
 	private String description;
 	private int number;
