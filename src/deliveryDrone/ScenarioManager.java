@@ -1,10 +1,10 @@
 package deliveryDrone;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.Arrays;
 
 enum ScenarioNumber{ 
 	ONE(1,"one Random package from warehouse"),

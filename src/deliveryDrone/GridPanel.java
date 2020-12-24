@@ -61,6 +61,7 @@ public class GridPanel extends JPanel implements ActionListener {
 
 	// SIMULATION VARIABLES
 	boolean isLoading = false;
+	boolean isSkip = false;
 	boolean afterScenarioEffect = false;
 	boolean turnOnTurbo = false;
 	int[][] houseLocations = new int[][] { { 0, 0 }, { 0, 2 }, { 2, 0 }, { 2, 2 } };
@@ -80,6 +81,8 @@ public class GridPanel extends JPanel implements ActionListener {
 	BufferedImage redLightImg;
 	BufferedImage greenArrowImg;
 	BufferedImage redArrowImg;
+	
+	BufferedImage ffIconImg;
 
 	int gridSize = 600;
 	int squareSize = 150;
@@ -114,6 +117,7 @@ public class GridPanel extends JPanel implements ActionListener {
 			greenLightImg = ImageIO.read(new File("img/GREEN_LED.png"));
 			redArrowImg = ImageIO.read(new File("img/arrow_red.png"));
 			greenArrowImg = ImageIO.read(new File("img/arrow_green.png"));
+			ffIconImg = ImageIO.read(new File("img/ff_icon.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -134,6 +138,7 @@ public class GridPanel extends JPanel implements ActionListener {
 		paintWarehouse(g);
 		paintWarehouseBoard(g);
 		if(isLoading) paintLoadingHeader(g);
+		if(isSkip) paintFFHeader(g);
 
 		// paint state details
 		g.setFont(new Font("MV Boli", Font.BOLD, 14));
@@ -144,6 +149,10 @@ public class GridPanel extends JPanel implements ActionListener {
 
 		// paint drone by it's new x,y coordinates
 		g.drawImage(drone.getImage(), drone.getX(), drone.getY(), drone.getSize(), drone.getSize(), null);
+	}
+
+	private void paintFFHeader(Graphics g) {
+		g.drawImage(ffIconImg, 250, 250, 100, 100, null);
 	}
 
 	private void paintLoadingHeader(Graphics g) {
@@ -347,9 +356,11 @@ public class GridPanel extends JPanel implements ActionListener {
 	}
 	
 	public void createScenario(int scenarioNumber) {
-		if(scenarioNumber > 0) this.currentScenario = ScenarioManager.getScenario(scenarioNumber);
-		else {
+		if(scenarioNumber > 0) {
+			this.currentScenario = ScenarioManager.getScenario(scenarioNumber);
+		} else {
 			this.turnOnTurbo = true;
+			this.isSkip = true;
 		}
 	}
 
@@ -413,6 +424,9 @@ public class GridPanel extends JPanel implements ActionListener {
 				this.houseMonitors, this.warehouseMonitors, this.pickUpThisState,
 				this.dropOffThisState)) { // step finished, get the next step
 			this.drone.setTurboMode(false);
+			if(this.isSkip) {
+				this.isSkip = false;
+			}
 			this.currentScenario.poll();
 			if (this.currentScenario.isEmpty()) { // no more steps
 				this.currentScenario = null;
