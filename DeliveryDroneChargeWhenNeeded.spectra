@@ -28,10 +28,10 @@ define
 	housePickedup := pickUpThisState > 0 & pickUpThisState <5 ;
 	warehousePickedup := pickUpThisState > 4 & pickUpThisState <9;
 
-define housePickupPackageOnly := (pickUpThisState = 1 & !envelopeRequests[0])
+define pickupPackageOnly := (pickUpThisState = 1 & !envelopeRequests[0])
 	| (pickUpThisState = 2 & !envelopeRequests[1])
 	| (pickUpThisState = 3 & !envelopeRequests[2])
-	| (pickUpThisState = 4 & !envelopeRequests[3]);
+	| (pickUpThisState = 4 & !envelopeRequests[3]) | warehousePickedup;
 	
 define
 	packageDelivered := dropOffThisState > 0 & dropOffThisState<6; 
@@ -252,9 +252,17 @@ counter energy (0..MAX_ENERGY){
 }
 gar G energy <= MAX_ENERGY;
 
-// Dont charge if energy is full ?
-gar trig [true]*[atChargingStation] |=> [!atChargingStation]*[energy > 0]{1,};
-
+// Don't charge if energy is full ?
+//gar trig [true][atChargingStation] |=> [!atChargingStation]*[pickupPackageOnly]{1,};
+//gar trig [true][atChargingStation] |=> [!atChargingStation]*[pickupPackageOnly]{1,}[atChargingStation];
+//gar trig [true][atChargingStation] |=> [!atChargingStation]*[pickupPackageOnly]{1};
+//gar trig [true][atChargingStation] |=> ([!atChargingStation]*[pickupPackageOnly]){1};
+//gar trig [true][atChargingStation] |=> ([!atChargingStation]*[pickupPackageOnly & !atChargingStation]){1,};
+//gar trig [true][atChargingStation] |=> [!atChargingStation]*[pickupPackageOnly]{1}[!atChargingStation];
+//gar trig [true][energy=0] |=> [!atChargingStation]*[pickupPackageOnly]{1};
+//gar trig [true][energy=0] |=> [true][!atChargingStation]*[pickupPackageOnly]{1,};
+//gar trig [true][energy=0][atChargingStation] |=>false;
+//gar trig [true]*([energy=0][atChargingStation]){1} |=>false;
 /*================================ MUST DROP OFF LOGIC  =================================== */
 
 define stay :=  next(drone[0]) = drone[0] & next(drone[1])= drone[1];

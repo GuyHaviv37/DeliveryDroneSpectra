@@ -380,6 +380,9 @@ public class GridPanel extends JPanel implements ActionListener {
 		// When we have animation we will check that no animation is running before
 		// getting new state
 		if (!(drone.isMoving() || drone.isStocking())) {
+//			if( drone.isCharging() ){
+//				System.out.println("at charging station with energ="+controller.getSysVar("energy"));	
+//			}
 			getNewState();
 			stateNum++;
 		}
