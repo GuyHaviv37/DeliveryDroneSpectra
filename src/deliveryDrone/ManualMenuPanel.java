@@ -7,6 +7,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -25,6 +26,7 @@ public class ManualMenuPanel extends JPanel implements ActionListener {
 	private JToggleButton houseBtn;
 	private JToggleButton warehouseBtn;
 	private JButton addBtn;
+	private JButton randomAddBtn;
 	private JToggleButton priorityOnBtn;
 	private JToggleButton priorityOffBtn;
 	private JToggleButton windsOnBtn;
@@ -56,7 +58,7 @@ public class ManualMenuPanel extends JPanel implements ActionListener {
 		gbc.anchor = GridBagConstraints.CENTER;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 
-		setPreferredSize(new Dimension(250, 320));
+		setPreferredSize(new Dimension(250, 380));
 
 		ActionListener buttonListener = new ActionListener() {
 
@@ -68,6 +70,10 @@ public class ManualMenuPanel extends JPanel implements ActionListener {
 					creationListener.addRequest(selection);
 					// reset selection list
 					selectionList.setSelectedIndex(0);
+				} else if (target == randomAddBtn) {
+					// randomize a number between 1-12
+					int randomInt = ThreadLocalRandom.current().nextInt(1, 13);
+					creationListener.addRequest(randomInt);
 				}
 			}
 		};
@@ -157,6 +163,12 @@ public class ManualMenuPanel extends JPanel implements ActionListener {
 		this.addBtn = new JButton("Add request");
 		this.addBtn.addActionListener(buttonListener);
 		add(this.addBtn, gbc);
+		gbc.gridy++;
+		
+		//
+		this.randomAddBtn = new JButton("Randomize a Request");
+		this.randomAddBtn.addActionListener(buttonListener);
+		add(this.randomAddBtn,gbc);
 		gbc.gridy++;
 
 		// priority & winds btn
@@ -254,6 +266,7 @@ public class ManualMenuPanel extends JPanel implements ActionListener {
 		this.warehouseBtn.setEnabled(enabled);
 		this.selectionList.setEnabled(enabled);
 		this.addBtn.setEnabled(enabled);
+		this.randomAddBtn.setEnabled(enabled);
 		this.priorityOnBtn.setEnabled(enabled);
 		this.priorityOffBtn.setEnabled(enabled);
 		this.windsOnBtn.setEnabled(enabled);
