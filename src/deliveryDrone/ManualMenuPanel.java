@@ -171,11 +171,32 @@ public class ManualMenuPanel extends JPanel implements ActionListener {
 		add(this.randomAddBtn,gbc);
 		gbc.gridy++;
 
-		// priority & winds btn
+		// priority & winds btn		
+		// toggle winds
+		this.windsHeader = new JLabel("Toggle Winds");
+		add(this.windsHeader, gbc);
+
+		this.windsOnBtn = new JToggleButton("ON");
+		this.windsOnBtn.addActionListener(this);
+		this.windsOffBtn = new JToggleButton("OFF");
+		this.windsOffBtn.addActionListener(this);
+		this.windsOffBtn.setSelected(true);
+		ButtonGroup windsGrp = new ButtonGroup();
+		gbc.gridwidth = 1;
+		gbc.gridy++;
+		gbc.insets = new Insets(20, 0, 0, 0);
+		windsGrp.add(windsOnBtn);
+		windsGrp.add(windsOffBtn);
+		add(windsOnBtn, gbc);
+		gbc.gridx++;
+		add(windsOffBtn, gbc);
+		gbc.gridx = 0;
+		gbc.gridy++;
+		
+		// toggle priority
 		this.priorityHeader = new JLabel("Toggle Priority Mode");
 		add(this.priorityHeader, gbc);
 
-		// toggle priority
 		this.priorityOnBtn = new JToggleButton("ON");
 		this.priorityOnBtn.addActionListener(this);
 		this.priorityOffBtn = new JToggleButton("OFF");
@@ -193,26 +214,7 @@ public class ManualMenuPanel extends JPanel implements ActionListener {
 		gbc.gridx = 0;
 		gbc.gridy++;
 
-		this.windsHeader = new JLabel("Toggle Winds");
-		add(this.windsHeader, gbc);
-
-		// toggle winds
-		this.windsOnBtn = new JToggleButton("ON");
-		this.windsOnBtn.addActionListener(this);
-		this.windsOffBtn = new JToggleButton("OFF");
-		this.windsOffBtn.addActionListener(this);
-		this.windsOffBtn.setSelected(true);
-		ButtonGroup windsGrp = new ButtonGroup();
-		gbc.gridwidth = 1;
-		gbc.gridy++;
-		gbc.insets = new Insets(20, 0, 0, 0);
-		windsGrp.add(windsOnBtn);
-		windsGrp.add(windsOffBtn);
-		add(windsOnBtn, gbc);
-		gbc.gridx++;
-		add(windsOffBtn, gbc);
-		gbc.gridx = 0;
-		gbc.gridy++;
+		
 
 	}
 

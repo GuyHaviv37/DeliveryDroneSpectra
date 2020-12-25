@@ -253,7 +253,7 @@ counter energy (0..MAX_ENERGY){
 gar G energy <= MAX_ENERGY;
 
 // Dont charge if energy is full ?
-gar trig [true]*[atChargingStation] |=> [!atChargingStation]*(([housePickupPackageOnly] | [warehousePickedup]){1,});
+gar trig [true]*[atChargingStation] |=> [!atChargingStation]*[energy > 0]{1,};
 
 /*================================ MUST DROP OFF LOGIC  =================================== */
 

@@ -191,14 +191,14 @@ public class GridPanel extends JPanel implements ActionListener {
 		g.setColor(Color.BLACK);
 		col = 0;
 		row = 4;
-		g.drawString("Priority Mode:", col * squareSize + paddingWide, row * squareSize + stringRow1);
-		g.drawImage(controllerPriorityMode ? greenLightImg : redLightImg, (col + 1) * squareSize - 30,
-				row * squareSize + stringRow1 - 12, lightControlSize, lightControlSize, null);
-		g.drawString("Priority Cap: " + priorityCap + "/" + MAX_PRIORITY_CAP, col * squareSize + paddingWide,
-				row * squareSize + stringRow2);
-		g.drawString("Winds-Control: ", col * squareSize + paddingWide, row * squareSize + stringRow3);
+		g.drawString("Winds-Control: ", col * squareSize + paddingWide, row * squareSize + stringRow1);
 		g.drawImage(controllerWindsMode ? greenLightImg : redLightImg, (col + 1) * squareSize - 30,
-				row * squareSize + stringRow3 - 12, lightControlSize, lightControlSize, null);
+				row * squareSize + stringRow1 - 12, lightControlSize, lightControlSize, null);
+		g.drawString("Priority Mode:", col * squareSize + paddingWide, row * squareSize + stringRow2);
+		g.drawImage(controllerPriorityMode ? greenLightImg : redLightImg, (col + 1) * squareSize - 30,
+				row * squareSize + stringRow2 - 12, lightControlSize, lightControlSize, null);
+		g.drawString("Priority Cap: " + priorityCap + "/" + MAX_PRIORITY_CAP, col * squareSize + paddingWide,
+				row * squareSize + stringRow3);
 		g.drawString("Stocking:", col * squareSize + paddingWide, row * squareSize + stringRow4);
 		if (drone.isStocking()) {
 			if (pickUpThisState > 0) {
