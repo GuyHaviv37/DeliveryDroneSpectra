@@ -252,17 +252,6 @@ counter energy (0..MAX_ENERGY){
 }
 gar G energy <= MAX_ENERGY;
 
-// Don't charge if energy is full ?
-//gar trig [true][atChargingStation] |=> [!atChargingStation]*[pickupPackageOnly]{1,};
-//gar trig [true][atChargingStation] |=> [!atChargingStation]*[pickupPackageOnly]{1,}[atChargingStation];
-//gar trig [true][atChargingStation] |=> [!atChargingStation]*[pickupPackageOnly]{1};
-//gar trig [true][atChargingStation] |=> ([!atChargingStation]*[pickupPackageOnly]){1};
-//gar trig [true][atChargingStation] |=> ([!atChargingStation]*[pickupPackageOnly & !atChargingStation]){1,};
-//gar trig [true][atChargingStation] |=> [!atChargingStation]*[pickupPackageOnly]{1}[!atChargingStation];
-//gar trig [true][energy=0] |=> [!atChargingStation]*[pickupPackageOnly]{1};
-//gar trig [true][energy=0] |=> [true][!atChargingStation]*[pickupPackageOnly]{1,};
-//gar trig [true][energy=0][atChargingStation] |=>false;
-//gar trig [true]*([energy=0][atChargingStation]){1} |=>false;
 /*================================ MUST DROP OFF LOGIC  =================================== */
 
 define stay :=  next(drone[0]) = drone[0] & next(drone[1])= drone[1];
@@ -281,3 +270,15 @@ gar G atHouse1 & droneToHouseCap1 > 1 |
 	atHouse3 & droneToHouseCap3 > 1 | 
 	atHouse4 & droneToHouseCap4 > 1 |
 	atWarehouse & droneToWarehouseCap > 1 | atWarehouse & totalEnvelopesToWH > 1 -> stay;
+	
+	
+/*================================ TRIGGERS  =================================== */
+
+// When charging (and not coming from warehouse) , checkout the warehouse;
+gar trig [true]*[!atWarehouse][atChargingStation] |=> [atWarehouse];
+
+// Don't stagger in a house - when visiting a house, after 2 safety states for stocking, do not visit that house for 5 states.
+gar trig [true]*[atHouse1] |=> [true]{0,2}[!atHouse1]{5,};
+gar trig [true]*[atHouse2] |=> [true]{0,2}[!atHouse2]{5,};
+gar trig [true]*[atHouse3] |=> [true]{0,2}[!atHouse3]{5,};
+gar trig [true]*[atHouse4] |=> [true]{0,2}[!atHouse4]{5,};
