@@ -34,6 +34,7 @@ define
 
 define roomForPickupPackage := totalPackages + 1 <= PACKAGE_CAPACITY; 
 		roomForPickupEnvelope := totalEnvelopesToWH + 1 <= ENVELOPE_CAPACITY; 
+		roomForPickUpWithDropoffForHouses := roomForPickupPackage | dropOffThisState>0;
 		
 define packageWaitingInWarehouse := waitingPackageInWarehouseToHouse1 | waitingPackageInWarehouseToHouse2 |waitingPackageInWarehouseToHouse3 | waitingPackageInWarehouseToHouse4;
 
@@ -179,15 +180,15 @@ gar droneMoves:
 // ================================== PICKUP , DROP-OFF LOGIC ======================================
 
 // guarantees when a pickup can be made + implications on monitor
-gar G pickUpThisState = 1 -> atHouse1 & waitingPackageOutHouse1 & ((!envelopeRequests[0] & roomForPickupPackage) |(envelopeRequests[0] & roomForPickupEnvelope)) & next(waitingPackageOutHouse1)=false;
-gar G pickUpThisState = 2 -> atHouse2 & waitingPackageOutHouse2 & ((!envelopeRequests[1] & roomForPickupPackage) |(envelopeRequests[1] & roomForPickupEnvelope)) & next(waitingPackageOutHouse2)=false;
-gar G pickUpThisState = 3 -> atHouse3 & waitingPackageOutHouse3 & ((!envelopeRequests[2] & roomForPickupPackage) |(envelopeRequests[2] & roomForPickupEnvelope)) & next(waitingPackageOutHouse3)=false;
-gar G pickUpThisState = 4 -> atHouse4 & waitingPackageOutHouse4 & ((!envelopeRequests[3] & roomForPickupPackage) |(envelopeRequests[3] & roomForPickupEnvelope)) & next(waitingPackageOutHouse4)=false ;
+gar G pickUpThisState = 1 -> atHouse1 & waitingPackageOutHouse1 & ((!envelopeRequests[0] & roomForPickUpWithDropoffForHouses) |(envelopeRequests[0] & roomForPickupEnvelope)) & next(waitingPackageOutHouse1)=false;
+gar G pickUpThisState = 2 -> atHouse2 & waitingPackageOutHouse2 & ((!envelopeRequests[1] & roomForPickUpWithDropoffForHouses) |(envelopeRequests[1] & roomForPickupEnvelope)) & next(waitingPackageOutHouse2)=false;
+gar G pickUpThisState = 3 -> atHouse3 & waitingPackageOutHouse3 & ((!envelopeRequests[2] & roomForPickUpWithDropoffForHouses) |(envelopeRequests[2] & roomForPickupEnvelope)) & next(waitingPackageOutHouse3)=false;
+gar G pickUpThisState = 4 -> atHouse4 & waitingPackageOutHouse4 & ((!envelopeRequests[3] & roomForPickUpWithDropoffForHouses) |(envelopeRequests[3] & roomForPickupEnvelope)) & next(waitingPackageOutHouse4)=false ;
 
-gar G (!priorityMode | priorityCap=0 | !packageWaitingInWarehouse) & atHouse1 & waitingPackageOutHouse1 & ((!envelopeRequests[0] & roomForPickupPackage) |(envelopeRequests[0] & roomForPickupEnvelope)) -> stay;
-gar G (!priorityMode | priorityCap=0 | !packageWaitingInWarehouse) & atHouse2 & waitingPackageOutHouse2 & ((!envelopeRequests[1] & roomForPickupPackage) |(envelopeRequests[1] & roomForPickupEnvelope)) -> stay;
-gar G (!priorityMode | priorityCap=0 | !packageWaitingInWarehouse) & atHouse3 & waitingPackageOutHouse3 & ((!envelopeRequests[2] & roomForPickupPackage) |(envelopeRequests[2] & roomForPickupEnvelope)) ->stay;
-gar G (!priorityMode | priorityCap=0 | !packageWaitingInWarehouse) & atHouse4 & waitingPackageOutHouse4 & ((!envelopeRequests[3] & roomForPickupPackage) |(envelopeRequests[3] & roomForPickupEnvelope)) ->stay;
+gar G (!priorityMode | priorityCap=0 | !packageWaitingInWarehouse) & atHouse1 & waitingPackageOutHouse1 & ((!envelopeRequests[0] & roomForPickUpWithDropoffForHouses) |(envelopeRequests[0] & roomForPickupEnvelope)) -> stay;
+gar G (!priorityMode | priorityCap=0 | !packageWaitingInWarehouse) & atHouse2 & waitingPackageOutHouse2 & ((!envelopeRequests[1] & roomForPickUpWithDropoffForHouses) |(envelopeRequests[1] & roomForPickupEnvelope)) -> stay;
+gar G (!priorityMode | priorityCap=0 | !packageWaitingInWarehouse) & atHouse3 & waitingPackageOutHouse3 & ((!envelopeRequests[2] & roomForPickUpWithDropoffForHouses) |(envelopeRequests[2] & roomForPickupEnvelope)) ->stay;
+gar G (!priorityMode | priorityCap=0 | !packageWaitingInWarehouse) & atHouse4 & waitingPackageOutHouse4 & ((!envelopeRequests[3] & roomForPickUpWithDropoffForHouses) |(envelopeRequests[3] & roomForPickupEnvelope)) ->stay;
 
 gar G pickUpThisState = 5 -> atWarehouse & waitingPackageInWarehouseToHouse1 & roomForPickupPackage & next(waitingPackageInWarehouseToHouse1)=false;
 gar G pickUpThisState = 6 -> atWarehouse & waitingPackageInWarehouseToHouse2 & roomForPickupPackage & next(waitingPackageInWarehouseToHouse2)=false;
