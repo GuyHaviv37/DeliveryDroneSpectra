@@ -27,11 +27,6 @@ define ENVELOPE_CAPACITY := 6;
 define 
 	housePickedup := pickUpThisState > 0 & pickUpThisState <5 ;
 	warehousePickedup := pickUpThisState > 4 & pickUpThisState <9;
-
-define pickupPackageOnly := (pickUpThisState = 1 & !envelopeRequests[0])
-	| (pickUpThisState = 2 & !envelopeRequests[1])
-	| (pickUpThisState = 3 & !envelopeRequests[2])
-	| (pickUpThisState = 4 & !envelopeRequests[3]) | warehousePickedup;
 	
 define
 	packageDelivered := dropOffThisState > 0 & dropOffThisState<6; 

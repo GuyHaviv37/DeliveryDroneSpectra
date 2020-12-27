@@ -12,8 +12,8 @@ public class Drone {
 	private int droneSize = 125;
 	private BufferedImage droneImg;
 	private int[] location = new int[] { 3, 3 };
-	private int SPEED = 10; // This should mean 15 steps for a next location (fast - 30)
-	private int STOCK_FRAMES = 7; // fast - 2/3
+	private int SPEED = 10; // slow = 10, fast = 30 .This should mean 15 steps for a next location (fast - 30)
+	private int STOCK_FRAMES = 7; // slow = 7, fast - 2/3
 	private DroneAnimationState droneState = DroneAnimationState.IDLE;
 	private int[] stopPosition = new int[] { 3, 3 };
 	/*
@@ -167,6 +167,10 @@ public class Drone {
 	
 	public boolean isCharging() {
 		return this.location[0] == this.chargingStationLocation[0] && this.location[1] == this.chargingStationLocation[1];
+	}
+	
+	public boolean isAtWarehouse(){
+		return this.location[0] == 3 && this.location[1] == 3;
 	}
 	
 
