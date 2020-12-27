@@ -23,11 +23,8 @@ public class AppNoaConsole extends JComponent {
 	// env
 	boolean[] outHousePackages = new boolean[NUM_OF_HOUSES];
 	boolean[] outWarehousePackages = new boolean[NUM_OF_HOUSES];
-	boolean priorityMode = false;
-	boolean envelopeMode1 = false;
-	boolean envelopeMode2 = false;
-	boolean envelopeMode3 = false;
-	boolean envelopeMode4 = false;
+	boolean[] envelopeRequests = new boolean[NUM_OF_HOUSES];
+	//boolean priorityMode = false;
 	// sys
 	int[] drone = new int[2];
 	int pickUpThisState;
@@ -74,41 +71,19 @@ public class AppNoaConsole extends JComponent {
 			}
 
 			if (split_priority.length > 0) {
-				if (Integer.parseInt(split_priority[0]) == 1) {
-					priorityMode = true;
-				}
-				if (Integer.parseInt(split_priority[0]) == 0) {
-					priorityMode = false;
-				}
-				System.out.println("parse priority mode " + split_priority[0] + " " + priorityMode);
+				//				if (Integer.parseInt(split_priority[0]) == 1) {
+				//					priorityMode = true;
+				//				}
+				//				if (Integer.parseInt(split_priority[0]) == 0) {
+				//					priorityMode = false;
+				//				}
+				//				System.out.println("parse priority mode " + split_priority[0] + " " + priorityMode);
 			}
 			for (int i = 0; i < split_envelope.length; i++) {
-				if (Integer.parseInt(split_envelope[i]) == 0) {
-					envelopeMode1 = true;
-				}
-				if (Integer.parseInt(split_envelope[i]) == 1) {
-					envelopeMode2 = true;
-				}
-				if (Integer.parseInt(split_envelope[i]) == 2) {
-					envelopeMode3 = true;
-				}
-				if (Integer.parseInt(split_envelope[i]) == 3) {
-					envelopeMode4 = true;
-				}
+				envelopeRequests[Integer.parseInt(split_envelope[i])] = true;
 			}
 			for (int i = 0; i < split_reset_envelope.length; i++) {
-				if (Integer.parseInt(split_reset_envelope[i]) == 0) {
-					envelopeMode1 = false;
-				}
-				if (Integer.parseInt(split_reset_envelope[i]) == 1) {
-					envelopeMode2 = false;
-				}
-				if (Integer.parseInt(split_reset_envelope[i]) == 2) {
-					envelopeMode3 = false;
-				}
-				if (Integer.parseInt(split_reset_envelope[i]) == 3) {
-					envelopeMode4 = false;
-				}
+				envelopeRequests[Integer.parseInt(split_envelope[i])] = false;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -120,13 +95,11 @@ public class AppNoaConsole extends JComponent {
 		for (int i = 0; i < NUM_OF_HOUSES; i++) {
 			String outHouse = "outHousePackages[" + Integer.toString(i) + "]";
 			String outWarehouse = "outWarehousePackages[" + Integer.toString(i) + "]";
+			String envelope = "outWarehousePackages[" + Integer.toString(i) + "]";
 			inputs.put(outHouse, String.valueOf(outHousePackages[i]));
 			inputs.put(outWarehouse, String.valueOf(outWarehousePackages[i]));
-			inputs.put("priorityMode", String.valueOf(priorityMode));
-			inputs.put("envelopeMode1", String.valueOf(envelopeMode1));
-			inputs.put("envelopeMode2", String.valueOf(envelopeMode2));
-			inputs.put("envelopeMode3", String.valueOf(envelopeMode3));
-			inputs.put("envelopeMode4", String.valueOf(envelopeMode4));
+			inputs.put(envelope, String.valueOf(envelopeRequests[i]));
+			//inputs.put("priorityMode", String.valueOf(priorityMode));
 		}
 	}
 
@@ -155,14 +128,18 @@ public class AppNoaConsole extends JComponent {
 				System.out.print(" | outWarehousePackages[" + Integer.toString(i) + "]= ");
 				System.out.print(outWarehousePackages[i]);
 			}
+		
 		}
+		//		System.out.println();
+		//		System.out.println("priority mode = " + priorityMode);
 		System.out.println();
-		System.out.println("priority mode = " + priorityMode);
-		System.out.println();
-		System.out.println("envelopemode1 = " + envelopeMode1);
-		System.out.println("envelopemode2 = " + envelopeMode2);
-		System.out.println("envelopemode3 = " + envelopeMode3);
-		System.out.println("envelopemode4 = " + envelopeMode4);
+		for (int i = 0; i < NUM_OF_HOUSES; i++) {
+			if (envelopeRequests[i] != false) {
+				System.out.print(" | envelopeRequests[" + Integer.toString(i) + "]= ");
+				System.out.print(envelopeRequests[i]);
+			}
+		
+		}
 		System.out.println();
 	}
 
