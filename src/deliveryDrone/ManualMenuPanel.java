@@ -227,11 +227,17 @@ public class ManualMenuPanel extends JPanel implements ActionListener {
 		} else if (target == warehouseBtn) {
 			this.selectionList.setModel(this.warehouseList);
 			this.selectionList.setSelectedIndex(0);
-		} else if (target == priorityOnBtn || target == priorityOffBtn) {
-			isPriorityMode = !isPriorityMode;
+		} else if (target == priorityOnBtn) {
+			isPriorityMode = true;
 			creationListener.togglePriority(isPriorityMode);
-		} else if (target == windsOnBtn || target == windsOffBtn) {
-			isWindsMode = !isWindsMode;
+		} else if (target == priorityOffBtn){
+			isPriorityMode = false;
+			creationListener.togglePriority(isPriorityMode);
+		} else if (target == windsOnBtn) {
+			isWindsMode = true;
+			creationListener.toggleWinds(isWindsMode);
+		} else if (target == windsOffBtn) {
+			isWindsMode = false;
 			creationListener.toggleWinds(isWindsMode);
 		}
 	}
