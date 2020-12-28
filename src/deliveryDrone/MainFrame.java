@@ -1,8 +1,10 @@
 package deliveryDrone;
 import java.awt.BorderLayout;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 public class MainFrame extends JFrame {
 	private GridPanel gridPanel;
@@ -50,7 +52,7 @@ public class MainFrame extends JFrame {
 		
 		ImageIcon image = new ImageIcon("img/drone_icon.png");
 		this.setIconImage(image.getImage());
-
+		
 		setSize(900, 700);
 		setResizable(false);
 		pack();

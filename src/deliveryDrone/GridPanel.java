@@ -8,13 +8,12 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -83,6 +82,9 @@ public class GridPanel extends JPanel implements ActionListener {
 	BufferedImage redArrowImg;
 	
 	BufferedImage ffIconImg;
+	
+	JLabel leavesGIF1;
+	JLabel leavesGIF2;
 
 	int gridSize = 600;
 	int squareSize = 150;
@@ -118,11 +120,22 @@ public class GridPanel extends JPanel implements ActionListener {
 			redArrowImg = ImageIO.read(new File("img/arrow_red.png"));
 			greenArrowImg = ImageIO.read(new File("img/arrow_green.png"));
 			ffIconImg = ImageIO.read(new File("img/ff_icon.png"));
+			
+	        ImageIcon icon = new ImageIcon(this.parentFrame.getClass().getResource("leaves_colors.gif"));
+	        leavesGIF1 = new JLabel();
+	        leavesGIF2 = new JLabel();
+	        leavesGIF1.setSize(600, 300);
+	        leavesGIF2.setSize(600, 300);
+	        leavesGIF1.setIcon(icon);
+	        leavesGIF2.setIcon(icon);
+			this.add(leavesGIF1);
+			this.add(leavesGIF2);
+			leavesGIF1.setVisible(false);
+			leavesGIF2.setVisible(false);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		// this.timer = new Timer(3000,this);
 		this.timer = new Timer(100, this);
 		repaint();
 		this.timer.start();
@@ -337,6 +350,13 @@ public class GridPanel extends JPanel implements ActionListener {
 
 	public void toggleWinds(boolean newWinds) {
 		this.windsMode = newWinds;
+		if(newWinds) {
+			leavesGIF1.setVisible(true);
+			leavesGIF2.setVisible(true);
+		} else {			
+			leavesGIF1.setVisible(false);
+			leavesGIF2.setVisible(false);
+		}
 		updateEnvironment();
 		// getNewState();
 		repaint();
