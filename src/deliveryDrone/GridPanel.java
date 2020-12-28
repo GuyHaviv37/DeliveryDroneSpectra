@@ -206,26 +206,22 @@ public class GridPanel extends JPanel implements ActionListener {
 
 		// paint environment toggles
 		boolean controllerPriorityMode = Boolean.parseBoolean(controller.getEnvVar("priorityMode"));
-		boolean controllerWindsMode = Boolean.parseBoolean(controller.getEnvVar("windsMode"));
 		g.setColor(Color.BLACK);
 		col = 0;
 		row = 4;
-		g.drawString("Winds-Control: ", col * squareSize + paddingWide, row * squareSize + stringRow1);
-		g.drawImage(controllerWindsMode ? greenLightImg : redLightImg, (col + 1) * squareSize - 30,
-				row * squareSize + stringRow1 - 12, lightControlSize, lightControlSize, null);
-		g.drawString("Priority Mode:", col * squareSize + paddingWide, row * squareSize + stringRow2);
+		g.drawString("Priority Mode:", col * squareSize + paddingWide, row * squareSize + stringRow1);
 		g.drawImage(controllerPriorityMode ? greenLightImg : redLightImg, (col + 1) * squareSize - 30,
-				row * squareSize + stringRow2 - 12, lightControlSize, lightControlSize, null);
+				row * squareSize + stringRow1 - 12, lightControlSize, lightControlSize, null);
 		g.drawString("Priority Cap: " + priorityCap + "/" + MAX_PRIORITY_CAP, col * squareSize + paddingWide,
-				row * squareSize + stringRow3);
-		g.drawString("Stocking:", col * squareSize + paddingWide, row * squareSize + stringRow4);
+				row * squareSize + stringRow2);
+		g.drawString("Stocking:", col * squareSize + paddingWide, row * squareSize + stringRow3);
 		if (drone.isStocking()) {
 			if (pickUpThisState > 0) {
-				g.drawImage(greenArrowImg, (col + 1) * squareSize - 70, row * squareSize + stringRow4 - 12, arrowSize,
+				g.drawImage(greenArrowImg, (col + 1) * squareSize - 70, row * squareSize + stringRow3 - 12, arrowSize,
 						arrowSize, null);
 			}
 			if (dropOffThisState > 0) {
-				g.drawImage(redArrowImg, (col + 1) * squareSize - 50, row * squareSize + stringRow4 - 12, arrowSize,
+				g.drawImage(redArrowImg, (col + 1) * squareSize - 50, row * squareSize + stringRow3 - 12, arrowSize,
 						arrowSize, null);
 			}
 		}
