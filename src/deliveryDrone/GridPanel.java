@@ -122,7 +122,7 @@ public class GridPanel extends JPanel implements ActionListener {
 			greenArrowImg = ImageIO.read(new File("img/arrow_green.png"));
 			ffIconImg = ImageIO.read(new File("img/ff_icon.png"));
 			
-	        ImageIcon icon = new ImageIcon(this.parentFrame.getClass().getResource("leaves_colors.gif"));
+	        ImageIcon icon = new ImageIcon("img/leaves_colors.gif");
 	        leavesGIF1 = new JLabel();
 	        leavesGIF2 = new JLabel();
 	        leavesGIF1.setSize(600, 300);
@@ -483,7 +483,11 @@ public class GridPanel extends JPanel implements ActionListener {
 			}
 			double precentWind = rand.nextDouble();
 			double precentPriority = rand.nextDouble();
-			this.windsMode= (precentWind < 0.002) ? !this.windsMode : this.windsMode;
+			boolean prevWinds = this.windsMode;
+			boolean newWinds = (precentWind < 0.002) ? !prevWinds : prevWinds;
+			if(prevWinds != newWinds) {
+				toggleWinds(newWinds);
+			}
 			this.priorityMode= (precentPriority < 0.002) ? !this.priorityMode : this.priorityMode;
 		} else if (this.isDemo == DemoMode.WAITING) {
 			if(isRequestsClear()) { // check that all a-priory requests are monitored
