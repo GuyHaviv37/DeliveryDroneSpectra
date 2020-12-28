@@ -10,13 +10,12 @@ public class MainFrame extends JFrame {
 	private GridPanel gridPanel;
 	private MenuPanel menuPanel;
 
-	public MainFrame(String appName) {
+	public MainFrame(String appName,boolean priorityFeature,boolean windsFeature,boolean energyFeature) {
 		super(appName);
-		// add image icon
 		setLayout(new BorderLayout());
 		// passing 'this' as parent element of the grid panel
-		this.gridPanel = new GridPanel(this);
-		this.menuPanel = new MenuPanel();
+		this.gridPanel = new GridPanel(this,priorityFeature,windsFeature,energyFeature);
+		this.menuPanel = new MenuPanel(priorityFeature,windsFeature);
 
 		this.menuPanel.setCreationListener(new CreationListener() {
 

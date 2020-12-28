@@ -17,7 +17,7 @@ public class MenuPanel extends JPanel {
 	// component styling
 	private JLabel h1;
 
-	public MenuPanel() {
+	public MenuPanel(boolean priorityFeature, boolean windsFeature) {
 		// Init GridBagLayout
 		setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -30,7 +30,7 @@ public class MenuPanel extends JPanel {
 		setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0), 1));
 
 		// build menus
-		this.manualMenu = new ManualMenuPanel();
+		this.manualMenu = new ManualMenuPanel(priorityFeature,windsFeature);
 		this.scenarioMenu = new ScenarioMenuPanel();
 
 		// manage main menu stylings

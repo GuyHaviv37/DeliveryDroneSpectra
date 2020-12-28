@@ -25,6 +25,9 @@ public class GridPanel extends JPanel implements ActionListener {
 	private static final int MAX_ENVELOPES = 6;
 
 	private MainFrame parentFrame;
+	private boolean priorityFeature;
+	private boolean windsFeature;
+	private boolean energyFeature;
 	private DroneController controller = new DroneController();
 	// ENV in-house variables
 	private boolean[] houseRequests = new boolean[NUM_OF_HOUSES];
@@ -79,8 +82,11 @@ public class GridPanel extends JPanel implements ActionListener {
 	int lightControlSize = 15;
 	int arrowSize = 15;
 
-	public GridPanel(MainFrame parentFrame) {
+	public GridPanel(MainFrame parentFrame,boolean priorityFeature, boolean windsFeature,boolean energyFeature) {
 		this.parentFrame = parentFrame;
+		this.priorityFeature = priorityFeature;
+		this.windsFeature = windsFeature;
+		this.energyFeature = energyFeature;
 		this.drone = new Drone(chargingStationLocation);
 		initRequests();
 
@@ -130,7 +136,7 @@ public class GridPanel extends JPanel implements ActionListener {
 
 	private void paintBackground(Graphics g) {
 		g.drawImage(im.getImage("backgroundImg"), 0, 0, gridSize, gridSize, null);
-		if(setWindsOn && !(drone.isMoving())) {
+		if(setWindsOn && !(drone.isMoving()) && windsFeature) {
 			this.leavesGIF1.setVisible(true);
 			this.leavesGIF2.setVisible(true);
 			setWindsOn = false;
@@ -140,7 +146,6 @@ public class GridPanel extends JPanel implements ActionListener {
 	private void paintControlPanel(Graphics g) {
 		int row, col;
 		int paddingWide = 10;
-		// Color lightPrimary = new Color(167, 184, 212);
 		Color primary = new Color(99, 118, 150);
 		Color darkPrimary = new Color(59, 74, 99);
 		int stringRow1 = 25, stringRow2 = 45, stringRow3 = 65, stringRow4 = 85;
@@ -148,7 +153,7 @@ public class GridPanel extends JPanel implements ActionListener {
 		g.setFont(new Font("MV Boli", Font.BOLD, 14));
 		// Border
 		g.setColor(Color.BLACK);
-		g.drawLine(0, 600, 594, 600);
+		g.drawLine(0, 600, 594, 600); 
 		// Background
 		g.setColor(darkPrimary);
 		g.fillRect(0, 600, 594, 100);
@@ -156,23 +161,25 @@ public class GridPanel extends JPanel implements ActionListener {
 		g.fillRect(10, 610, 574, 80);
 
 		// paint environment toggles
-		boolean controllerPriorityMode = Boolean.parseBoolean(controller.getEnvVar("priorityMode"));
 		g.setColor(Color.BLACK);
 		col = 0;
 		row = 4;
-		g.drawString("Priority Mode:", col * squareSize + paddingWide, row * squareSize + stringRow1);
-		g.drawImage(controllerPriorityMode ? im.getImage("greenLightImg") : im.getImage("redLightImg"), (col + 1) * squareSize - 30,
-				row * squareSize + stringRow1 - 12, lightControlSize, lightControlSize, null);
-		g.drawString("Priority Cap: " + priorityCap + "/" + MAX_PRIORITY_CAP, col * squareSize + paddingWide,
-				row * squareSize + stringRow2);
-		g.drawString("Stocking:", col * squareSize + paddingWide, row * squareSize + stringRow3);
+		if(priorityFeature) {
+			boolean controllerPriorityMode = Boolean.parseBoolean(controller.getEnvVar("priorityMode"));
+			g.drawString("Priority Mode:", col * squareSize + paddingWide, row * squareSize + stringRow1);
+			g.drawImage(controllerPriorityMode ? im.getImage("greenLightImg") : im.getImage("redLightImg"), (col + 1) * squareSize - 30,
+					row * squareSize + stringRow1 - 12, lightControlSize, lightControlSize, null);
+			g.drawString("Priority Cap: " + priorityCap + "/" + MAX_PRIORITY_CAP, col * squareSize + paddingWide,
+					row * squareSize + stringRow2);			
+		}
+		g.drawString("Stocking:", col * squareSize + paddingWide, row * squareSize + stringRow4);
 		if (drone.isStocking()) {
 			if (pickUpThisState > 0) {
-				g.drawImage(im.getImage("greenArrowImg"), (col + 1) * squareSize - 70, row * squareSize + stringRow3 - 12, arrowSize,
+				g.drawImage(im.getImage("greenArrowImg"), (col + 1) * squareSize - 70, row * squareSize + stringRow4 - 12, arrowSize,
 						arrowSize, null);
 			}
 			if (dropOffThisState > 0) {
-				g.drawImage(im.getImage("redArrowImg"), (col + 1) * squareSize - 50, row * squareSize + stringRow3 - 12, arrowSize,
+				g.drawImage(im.getImage("redArrowImg"), (col + 1) * squareSize - 50, row * squareSize + stringRow4 - 12, arrowSize,
 						arrowSize, null);
 			}
 		}
@@ -195,14 +202,16 @@ public class GridPanel extends JPanel implements ActionListener {
 
 		// paint charging bar
 		col = 3;
-		g.drawString("Battery: ", col * squareSize + 40, row * squareSize + 35);
-		g.drawImage(im.getImage("lightningImg"), col * squareSize + 15, row * squareSize + 20, lightningSize, lightningSize, null);
-		g.drawRect(col * squareSize + paddingWide, row * squareSize + 60, squareSize - 35, 20);
-		float batteryFilled = 1 - (this.energy / (float) MAX_ENERGY);
-		Color currentBatteryColor = batteryFilled > 0.6 ? Color.green : batteryFilled < 0.2 ? Color.red : Color.orange;
-		g.setColor(currentBatteryColor);
-		g.fillRect(col * squareSize + paddingWide, row * squareSize + 60,
-				Math.round((batteryFilled * (squareSize - 35))) + 5, 20);
+		if(energyFeature) {
+			g.drawString("Battery: ", col * squareSize + 40, row * squareSize + 35);
+			g.drawImage(im.getImage("lightningImg"), col * squareSize + 15, row * squareSize + 20, lightningSize, lightningSize, null);
+			g.drawRect(col * squareSize + paddingWide, row * squareSize + 60, squareSize - 35, 20);
+			float batteryFilled = 1 - (this.energy / (float) MAX_ENERGY);
+			Color currentBatteryColor = batteryFilled > 0.6 ? Color.green : batteryFilled < 0.2 ? Color.red : Color.orange;
+			g.setColor(currentBatteryColor);
+			g.fillRect(col * squareSize + paddingWide, row * squareSize + 60,
+					Math.round((batteryFilled * (squareSize - 35))) + 5, 20);			
+		}
 
 	}
 

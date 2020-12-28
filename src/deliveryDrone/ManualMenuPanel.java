@@ -46,7 +46,12 @@ public class ManualMenuPanel extends JPanel implements ActionListener {
 	private MenuListener menuListener; // maybe redundant
 	private CreationListener creationListener;
 
-	public ManualMenuPanel() {
+	private boolean priorityFeature;
+	private boolean windsFeature;
+
+	public ManualMenuPanel(boolean priorityFeature,boolean windsFeature) {
+		this.priorityFeature = priorityFeature;
+		this.windsFeature = windsFeature;
 		String[] houseRequests = generateHouseRequests();
 		String[] warehouseRequests = generateWarehouseRequests();
 		setLayout(new GridBagLayout());
@@ -214,7 +219,14 @@ public class ManualMenuPanel extends JPanel implements ActionListener {
 		gbc.gridx = 0;
 		gbc.gridy++;
 
-		
+		if(!priorityFeature) {
+			this.priorityOnBtn.setEnabled(false);
+			this.priorityOffBtn.setEnabled(false);
+		}
+		if(!windsFeature) {
+			this.windsOnBtn.setEnabled(false);
+			this.windsOffBtn.setEnabled(false);
+		}
 
 	}
 
@@ -275,10 +287,14 @@ public class ManualMenuPanel extends JPanel implements ActionListener {
 		this.selectionList.setEnabled(enabled);
 		this.addBtn.setEnabled(enabled);
 		this.randomAddBtn.setEnabled(enabled);
-		this.priorityOnBtn.setEnabled(enabled);
-		this.priorityOffBtn.setEnabled(enabled);
-		this.windsOnBtn.setEnabled(enabled);
-		this.windsOffBtn.setEnabled(enabled);
+		if(priorityFeature) {
+			this.priorityOnBtn.setEnabled(enabled);
+			this.priorityOffBtn.setEnabled(enabled);			
+		}
+		if(windsFeature) {
+			this.windsOnBtn.setEnabled(enabled);
+			this.windsOffBtn.setEnabled(enabled);			
+		}
 	}
 
 	public void updateModeButtons(boolean priorityMode, boolean windsMode) {

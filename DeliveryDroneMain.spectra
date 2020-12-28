@@ -218,30 +218,34 @@ gar pRespondsToS(totalEnvelopesToWH > 0,atWarehouse);
 
 
 /* ================================ WINDS LOGIC ======================================== */	
+// To turn off priority comment the marked lines
 env boolean windsMode;
-asm windsMode=false;
+asm windsMode=false; // *turn-off
 
-gar droneMovesWithWind:
-	G moveDir(drone[0]) & moveDir(drone[1]) -> !windsMode;
+gar droneMovesWithWind: // *turn-off
+	G moveDir(drone[0]) & moveDir(drone[1]) -> !windsMode; // *turn-off
 
 /* ================================ PRIORITY LOGIC ======================================== */	
+// To turn off priority comment the marked lines
 env boolean priorityMode;
-asm priorityMode=false;
+asm priorityMode=false; // *turn-off
 
 counter priorityCap(0..1){
 	priorityCap=0; 
-	inc: housePickedup & priorityMode & packageWaitingInWarehouse;
+	inc: housePickedup & priorityMode & packageWaitingInWarehouse; // *turn-off
 	reset: warehousePickedup;
 	overflow: false; 
 }
 gar G priorityCap <= 1;
 
 /*================================ ENERGY LOGIC  =================================== */
+// To turn off priority comment the marked lines
 define MAX_ENERGY:= 7;
 
 counter energy (0..MAX_ENERGY){
 	energy=0;
-	inc: (pickUpThisState=1 & !envelopeRequests[0])| (pickUpThisState=2 & !envelopeRequests[1])|(pickUpThisState=3 & !envelopeRequests[2])|(pickUpThisState=4 & !envelopeRequests[3])  | warehousePickedup;
+	// turn-off inc to turn off energy
+	inc: (pickUpThisState=1 & !envelopeRequests[0])| (pickUpThisState=2 & !envelopeRequests[1])|(pickUpThisState=3 & !envelopeRequests[2])|(pickUpThisState=4 & !envelopeRequests[3])  | warehousePickedup; // *turn-off
 	reset: atChargingStation;
 	overflow: false;
 }
