@@ -82,6 +82,7 @@ public class GridPanel extends JPanel implements ActionListener {
 	BufferedImage redArrowImg;
 	
 	BufferedImage ffIconImg;
+	boolean setWindsOn = false;
 	
 	JLabel leavesGIF1;
 	JLabel leavesGIF2;
@@ -178,6 +179,11 @@ public class GridPanel extends JPanel implements ActionListener {
 
 	private void paintBackground(Graphics g) {
 		g.drawImage(this.backgroundImg, 0, 0, gridSize, gridSize, null);
+		if(setWindsOn && !(drone.isMoving())) {
+			this.leavesGIF1.setVisible(true);
+			this.leavesGIF2.setVisible(true);
+			setWindsOn = false;
+		}
 	}
 
 	private void paintControlPanel(Graphics g) {
@@ -351,8 +357,9 @@ public class GridPanel extends JPanel implements ActionListener {
 	public void toggleWinds(boolean newWinds) {
 		this.windsMode = newWinds;
 		if(newWinds) {
-			leavesGIF1.setVisible(true);
-			leavesGIF2.setVisible(true);
+//			leavesGIF1.setVisible(true);
+//			leavesGIF2.setVisible(true);
+			setWindsOn = true;
 		} else {			
 			leavesGIF1.setVisible(false);
 			leavesGIF2.setVisible(false);
