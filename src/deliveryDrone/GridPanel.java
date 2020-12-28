@@ -6,12 +6,9 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.Queue;
 import java.util.Random;
 
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -66,26 +63,10 @@ public class GridPanel extends JPanel implements ActionListener {
 	int[][] houseLocations = new int[][] { { 0, 0 }, { 0, 2 }, { 2, 0 }, { 2, 2 } };
 	int[] warehouseLocation = new int[] { 3, 3 };
 	int[] chargingStationLocation = new int[] { 3, 2 };
-	BufferedImage backgroundImg;
-	BufferedImage houseImg;
-	BufferedImage warehouseImg;
-	BufferedImage chargingStationImg;
-
-	BufferedImage packageImg_TH;
-	BufferedImage packageImg_TWH;
-	BufferedImage envelopeImg;
-
-	BufferedImage lightningImg;
-	BufferedImage greenLightImg;
-	BufferedImage redLightImg;
-	BufferedImage greenArrowImg;
-	BufferedImage redArrowImg;
-	
-	BufferedImage ffIconImg;
-	boolean setWindsOn = false;
-	
+	ImageManager im;
 	JLabel leavesGIF1;
 	JLabel leavesGIF2;
+	boolean setWindsOn = false;
 
 	int gridSize = 600;
 	int squareSize = 150;
@@ -105,38 +86,8 @@ public class GridPanel extends JPanel implements ActionListener {
 
 		setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0), 1));
 		setPreferredSize(new Dimension(594, 700));
-		try {
-			backgroundImg = ImageIO.read(new File("img/background_grass.jpeg"));
-			houseImg = ImageIO.read(new File("img/red_house_gray.png"));
-			warehouseImg = ImageIO.read(new File("img/warehouse.png"));
-			chargingStationImg = ImageIO.read(new File("img/charging_station.png"));
-
-			packageImg_TWH = ImageIO.read(new File("img/package_small.png"));
-			packageImg_TH = ImageIO.read(new File("img/package_bright_color.png"));
-			envelopeImg = ImageIO.read(new File("img/envelopes_red_blue.png"));
-
-			lightningImg = ImageIO.read(new File("img/lightning.png"));
-			redLightImg = ImageIO.read(new File("img/RED_LED.png"));
-			greenLightImg = ImageIO.read(new File("img/GREEN_LED.png"));
-			redArrowImg = ImageIO.read(new File("img/arrow_red.png"));
-			greenArrowImg = ImageIO.read(new File("img/arrow_green.png"));
-			ffIconImg = ImageIO.read(new File("img/ff_icon.png"));
-			
-	        ImageIcon icon = new ImageIcon("img/leaves_colors.gif");
-	        leavesGIF1 = new JLabel();
-	        leavesGIF2 = new JLabel();
-	        leavesGIF1.setSize(600, 300);
-	        leavesGIF2.setSize(600, 300);
-	        leavesGIF1.setIcon(icon);
-	        leavesGIF2.setIcon(icon);
-			this.add(leavesGIF1);
-			this.add(leavesGIF2);
-			leavesGIF1.setVisible(false);
-			leavesGIF2.setVisible(false);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
+		im = new ImageManager();
+		loadWindsGIFs();
 		this.timer = new Timer(100, this);
 		repaint();
 		this.timer.start();
@@ -166,7 +117,7 @@ public class GridPanel extends JPanel implements ActionListener {
 	}
 
 	private void paintFFHeader(Graphics g) {
-		g.drawImage(ffIconImg, 250, 250, 100, 100, null);
+		g.drawImage(im.getImage("ffIconImg"), 250, 250, 100, 100, null);
 	}
 
 	private void paintLoadingHeader(Graphics g) {
@@ -178,7 +129,7 @@ public class GridPanel extends JPanel implements ActionListener {
 	}
 
 	private void paintBackground(Graphics g) {
-		g.drawImage(this.backgroundImg, 0, 0, gridSize, gridSize, null);
+		g.drawImage(im.getImage("backgroundImg"), 0, 0, gridSize, gridSize, null);
 		if(setWindsOn && !(drone.isMoving())) {
 			this.leavesGIF1.setVisible(true);
 			this.leavesGIF2.setVisible(true);
@@ -210,18 +161,18 @@ public class GridPanel extends JPanel implements ActionListener {
 		col = 0;
 		row = 4;
 		g.drawString("Priority Mode:", col * squareSize + paddingWide, row * squareSize + stringRow1);
-		g.drawImage(controllerPriorityMode ? greenLightImg : redLightImg, (col + 1) * squareSize - 30,
+		g.drawImage(controllerPriorityMode ? im.getImage("greenLightImg") : im.getImage("redLightImg"), (col + 1) * squareSize - 30,
 				row * squareSize + stringRow1 - 12, lightControlSize, lightControlSize, null);
 		g.drawString("Priority Cap: " + priorityCap + "/" + MAX_PRIORITY_CAP, col * squareSize + paddingWide,
 				row * squareSize + stringRow2);
 		g.drawString("Stocking:", col * squareSize + paddingWide, row * squareSize + stringRow3);
 		if (drone.isStocking()) {
 			if (pickUpThisState > 0) {
-				g.drawImage(greenArrowImg, (col + 1) * squareSize - 70, row * squareSize + stringRow3 - 12, arrowSize,
+				g.drawImage(im.getImage("greenArrowImg"), (col + 1) * squareSize - 70, row * squareSize + stringRow3 - 12, arrowSize,
 						arrowSize, null);
 			}
 			if (dropOffThisState > 0) {
-				g.drawImage(redArrowImg, (col + 1) * squareSize - 50, row * squareSize + stringRow3 - 12, arrowSize,
+				g.drawImage(im.getImage("redArrowImg"), (col + 1) * squareSize - 50, row * squareSize + stringRow3 - 12, arrowSize,
 						arrowSize, null);
 			}
 		}
@@ -245,7 +196,7 @@ public class GridPanel extends JPanel implements ActionListener {
 		// paint charging bar
 		col = 3;
 		g.drawString("Battery: ", col * squareSize + 40, row * squareSize + 35);
-		g.drawImage(lightningImg, col * squareSize + 15, row * squareSize + 20, lightningSize, lightningSize, null);
+		g.drawImage(im.getImage("lightningImg"), col * squareSize + 15, row * squareSize + 20, lightningSize, lightningSize, null);
 		g.drawRect(col * squareSize + paddingWide, row * squareSize + 60, squareSize - 35, 20);
 		float batteryFilled = 1 - (this.energy / (float) MAX_ENERGY);
 		Color currentBatteryColor = batteryFilled > 0.6 ? Color.green : batteryFilled < 0.2 ? Color.red : Color.orange;
@@ -264,18 +215,18 @@ public class GridPanel extends JPanel implements ActionListener {
 		for (int[] location : houseLocations) {
 			row = location[0];
 			col = location[1];
-			g.drawImage(houseImg, col * squareSize, row * squareSize, squareSize, squareSize, null);
+			g.drawImage(im.getImage("houseImg"), col * squareSize, row * squareSize, squareSize, squareSize, null);
 			g.setColor(Color.black);
 			g.drawString("" + (houseNum + 1), (col + 1) * squareSize - 15, row * squareSize + 45);
 
 			if (houseMonitors[houseNum]) {
-				BufferedImage waitingImg = envelopeRequests[houseNum] ? envelopeImg : packageImg_TWH;
+				BufferedImage waitingImg = envelopeRequests[houseNum] ? im.getImage("envelopeImg") : im.getImage("packageImg_TWH");
 				g.drawImage(waitingImg, col * squareSize + 10, (row + 1) * squareSize - 60, packageSize_Big,
 						packageSize_Big, null);
 			}
 			if (drone.isStocking()) {
 				if (dropOffThisState == (houseNum + 1)) {
-					g.drawImage(packageImg_TH, (col + 1) * squareSize - (packageSize_Big + 10),
+					g.drawImage(im.getImage("packageImg_TH"), (col + 1) * squareSize - (packageSize_Big + 10),
 							(row + 1) * squareSize - 60, packageSize_Big, packageSize_Big, null);
 				}
 			}
@@ -288,7 +239,7 @@ public class GridPanel extends JPanel implements ActionListener {
 		// "paint charging station"
 		row = chargingStationLocation[0];
 		col = chargingStationLocation[1];
-		g.drawImage(chargingStationImg, col * squareSize + (squareSize - chargingStationSize),
+		g.drawImage(im.getImage("chargingStationImg"), col * squareSize + (squareSize - chargingStationSize),
 				row * squareSize + (squareSize - chargingStationSize), chargingStationSize, chargingStationSize, null);
 	}
 
@@ -297,13 +248,13 @@ public class GridPanel extends JPanel implements ActionListener {
 		// "paint warehouse"
 		row = warehouseLocation[0];
 		col = warehouseLocation[1];
-		g.drawImage(warehouseImg, col * squareSize, row * squareSize, squareSize, squareSize, null);
+		g.drawImage(im.getImage("warehouseImg"), col * squareSize, row * squareSize, squareSize, squareSize, null);
 		if (drone.isStocking()) {
 			if (dropOffThisState == 5) {
-				g.drawImage(packageImg_TWH, (col + 1) * squareSize - (packageSize_Big + 10),
+				g.drawImage(im.getImage("packageImg_TWH"), (col + 1) * squareSize - (packageSize_Big + 10),
 						(row + 1) * squareSize - 60, packageSize_Big, packageSize_Big, null);
 			} else if (dropOffThisState == 6) {
-				g.drawImage(envelopeImg, (col + 1) * squareSize - (packageSize_Big + 10),
+				g.drawImage(im.getImage("envelopeImg"), (col + 1) * squareSize - (packageSize_Big + 10),
 						(row + 1) * squareSize - 60, packageSize_Big, packageSize_Big, null);
 			}
 		}
@@ -319,7 +270,7 @@ public class GridPanel extends JPanel implements ActionListener {
 			g.drawString("H" + (houseNum + 1) + ":", col * squareSize + 10,
 					row * squareSize + 20 * (houseNum + 2) + paddingHigh);
 			if (warehouseMonitors[houseNum]) {
-				g.drawImage(packageImg_TH, col * squareSize + 37,
+				g.drawImage(im.getImage("packageImg_TH"), col * squareSize + 37,
 						row * squareSize + 20 * (houseNum + 2) + (paddingHigh - 15), packageSize_Small,
 						packageSize_Small, null);
 			}
@@ -588,6 +539,20 @@ public class GridPanel extends JPanel implements ActionListener {
 		// After every new state reset the requests env. variables
 		initRequests();
 
+	}
+	
+	private void loadWindsGIFs() {
+		ImageIcon icon = new ImageIcon("img/leaves_colors.gif");
+		leavesGIF1 = new JLabel();
+		leavesGIF2 = new JLabel();
+		leavesGIF1.setSize(600, 300);
+		leavesGIF2.setSize(600, 300);
+		leavesGIF1.setIcon(icon);
+		leavesGIF2.setIcon(icon);
+		this.add(leavesGIF1);
+		this.add(leavesGIF2);
+		leavesGIF1.setVisible(false);
+		leavesGIF2.setVisible(false);
 	}
 
 	private void initRequests() {
