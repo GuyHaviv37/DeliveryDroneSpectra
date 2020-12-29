@@ -341,7 +341,7 @@ public class GridPanel extends JPanel implements ActionListener {
 	public void createScenario(int scenarioNumber) {
 		if(scenarioNumber > 0) {
 			this.currentScenario = ScenarioManager.getScenario(scenarioNumber);
-		} else {
+		} else if (scenarioNumber < 0 && !afterScenarioEffect){
 			this.turnOnTurbo = true;
 			this.isSkip = true;
 		}
@@ -382,9 +382,11 @@ public class GridPanel extends JPanel implements ActionListener {
 		if (!currentStep.HasStarted()) { // update all the env variable by the current step
 			if(currentStep.getStepNumber() == 0) {
 				if(!(drone.isMoving() || drone.isStocking())) {
-					this.drone.setTurboMode(true);					
+					this.drone.setTurboMode(true);	
+					
 				}
 				resetModes();
+				
 				this.isLoading = true;
 				this.parentFrame.updateButtonsEnabled(false);
 				this.parentFrame.enableRunScenarioBtn(false,"Fast Forward Step");
@@ -589,7 +591,8 @@ public class GridPanel extends JPanel implements ActionListener {
 	
 	private void resetModes() {
 		this.priorityMode = false;
-		this.windsMode = false;
+//		this.windsMode = false;
+		toggleWinds(false);
 		this.parentFrame.updateModeButtons(priorityMode, windsMode);
 	}
 
