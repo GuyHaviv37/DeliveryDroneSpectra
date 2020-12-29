@@ -10,44 +10,46 @@ public class App {
 		boolean winds = false; 
 		boolean energy = false; 
 		JFrame frame = new JFrame("Config");
-		final String[] options = { "default- priority, energy, wind","priority, wind","priority, energy","wind, energy","prirotiy", "wind", "energy","None of them"};
+		final String[] options = { "Default - All Features Enabled","Priority and Winds Mode Only",
+				"Priority Mode and Energy Only","Winds Mode and Energy Only",
+				"Priority Mode Only", "Winds Mode Only",
+				"Energy Only","No Extra Features"};
 		String selected = (String) JOptionPane.showInputDialog(frame, 
-				"Which features do you use?",
+				"Which Features Does Your Specification Use?",
 				"Config",
 				JOptionPane.QUESTION_MESSAGE, 
 				null, 
 				options, 
 				options[0]);
-		System.out.println(selected);
 		if(selected!= null) {
 			switch (selected) {
-			case "default- priority, energy, wind" :
+			case "Default - All Features Enabled" :
 				priority=true;
 				winds=true;
 				energy=true;
 				break;
-			case "priority, wind":
+			case "Priority and Winds Mode Only":
 				priority=true;
 				winds=true;
 				break;
-			case "priority, energy":
+			case "Priority Mode and Energy Only":
 				priority=true;
 				energy=true;
 				break;
-			case "wind, energy":
+			case "Winds Mode and Energy Only":
 				winds=true;
 				energy=true;
 				break;
-			case "prirotiy":
+			case "Priority Mode Only":
 				priority=true;
 				break;
-			case "wind":
+			case "Winds Mode Only":
 				winds=true;
 				break;
-			case "energy":
+			case "Energy Only":
 				energy=true;
 				break;
-			case "None of them":
+			case "No Extra Features":
 				break;
 			}
 		}

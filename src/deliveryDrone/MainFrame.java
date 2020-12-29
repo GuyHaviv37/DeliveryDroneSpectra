@@ -1,11 +1,10 @@
 package deliveryDrone;
 import java.awt.BorderLayout;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 
+@SuppressWarnings("serial")
 public class MainFrame extends JFrame {
 	private GridPanel gridPanel;
 	private MenuPanel menuPanel;
