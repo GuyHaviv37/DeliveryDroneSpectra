@@ -55,9 +55,7 @@ public class ModulizeFeature {
 			}
 		}
 		else {
-			priority=true;
-			winds=true;
-			energy=true;
+			return null;
 		}
 		result[0]=priority;
 		result[1]= winds;
