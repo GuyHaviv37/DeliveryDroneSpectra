@@ -6,9 +6,6 @@ import javax.swing.JOptionPane;
 public class App {
 
 	public static void main(String[] args) {
-		// HERE YOU CAN CHANGE THE GUI TO COMPANION A MODULIZED SPECTRA FILE
-		// I.E. IF YOU REMOVE PRIORITY FEATURE AT THE SPEC. MAKE IT 'FALSE' HERE
-	
 		boolean priority = false ;
 		boolean winds = false; 
 		boolean energy = false; 
@@ -61,7 +58,7 @@ public class App {
 		}
 		final boolean priorityFeature = priority; 
 		final boolean windsFeature = winds; 
-		final boolean energyFeature = priority; 
+		final boolean energyFeature = energy; 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				new MainFrame("DeliveryDrone",priorityFeature,windsFeature,energyFeature);
