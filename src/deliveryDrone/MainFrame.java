@@ -11,13 +11,12 @@ public class MainFrame extends JFrame {
 
 	public MainFrame(String appName,boolean priorityFeature,boolean windsFeature,boolean energyFeature) {
 		super(appName);
-		setLayout(new BorderLayout());
-		// passing 'this' as parent element of the grid panel
 		this.gridPanel = new GridPanel(this,priorityFeature,windsFeature,energyFeature);
 		this.menuPanel = new MenuPanel(priorityFeature,windsFeature);
-
+		setLayout(new BorderLayout());
+		
+		// Implement a CreationListener: connection between the menus and GridPanel
 		this.menuPanel.setCreationListener(new CreationListener() {
-
 			@Override
 			public void addRequest(int requestNumber) {
 				gridPanel.addPickupRequest(requestNumber);
@@ -57,8 +56,6 @@ public class MainFrame extends JFrame {
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
-
-		// junction project added up cleanup of gridPanel.
 	}
 
 	public void updateButtonsEnabled(boolean b) {

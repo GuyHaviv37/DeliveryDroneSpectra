@@ -17,9 +17,7 @@ import javax.swing.JToggleButton;
 
 @SuppressWarnings("serial")
 public class ManualMenuPanel extends JPanel implements ActionListener {
-
-	// GLOBAL
-	private static final int NUM_OF_HOUSES = 4;
+	private int NUM_OF_HOUSES = GridPanel.NUM_OF_HOUSES; 
 
 	private JToggleButton houseBtn;
 	private JToggleButton warehouseBtn;

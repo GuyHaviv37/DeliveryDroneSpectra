@@ -8,8 +8,6 @@ public class DroneState {
 	private HashMap<String, String> envValues = new HashMap<>();
 
 	public DroneState() {
-		// Init both maps to have clear definitions of keys it can accept, with default
-		// values.
 		initEnvValues();
 		initSysValues();
 	}

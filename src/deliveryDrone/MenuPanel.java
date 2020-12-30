@@ -15,7 +15,6 @@ public class MenuPanel extends JPanel {
 
 	private ManualMenuPanel manualMenu;
 	private ScenarioMenuPanel scenarioMenu;
-	// component styling
 	private JLabel h1;
 
 	public MenuPanel(boolean priorityFeature, boolean windsFeature) {
@@ -34,7 +33,7 @@ public class MenuPanel extends JPanel {
 		this.manualMenu = new ManualMenuPanel(priorityFeature,windsFeature);
 		this.scenarioMenu = new ScenarioMenuPanel();
 
-		// manage main menu stylings
+		// manage main menu styling
 		this.h1 = new JLabel("Delievery Drone Simulator");
 		this.h1.setFont(new Font("Arial", Font.BOLD, 20));
 		gbc.insets = new Insets(0, 20, 0, 20);
@@ -44,9 +43,8 @@ public class MenuPanel extends JPanel {
 		add(this.manualMenu, gbc);
 		gbc.gridy++;
 		add(this.scenarioMenu, gbc);
-		// more labels and such if needed later.
 
-		// add event listener to all of the child menus - manual and scenario
+		// Add listener for enabling cross-menus updates
 		MenuListener menuListener = new MenuListener() {
 
 			@Override

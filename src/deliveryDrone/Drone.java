@@ -11,8 +11,8 @@ public class Drone {
 	private int y;
 	private int droneSize = 125;
 	private BufferedImage droneImg;
-	private int[] location = new int[] { 3, 3 };
-	private int SPEED = 10; // slow = 10, fast = 30 .This should mean 15 steps for a next location (fast - 30)
+	private int[] location = new int[] { 3, 3 }; // This specifies the starting location
+	private int SPEED = 10; // slow = 10, fast = 30 .SPEED = 10 means 15 steps for a next location
 	private int STOCK_FRAMES = 7; // slow = 7, fast - 2/3
 	private DroneAnimationState droneState = DroneAnimationState.IDLE;
 	private int[] stopPosition = new int[] { 3, 3 };
@@ -172,14 +172,6 @@ public class Drone {
 	public boolean isAtWarehouse(){
 		return this.location[0] == 3 && this.location[1] == 3;
 	}
-	
-
-	/* DEBUGGING */
-	@Override
-	public String toString() {
-		return "Drone [x=" + x + ", y=" + y + ", location=" + Arrays.toString(location) + ", droneState=" + droneState
-				+ ", stopPosition=" + Arrays.toString(stopPosition) + ", direction=" + direction + "]";
-	}
 
 	public void setTurboMode(boolean faster) {
 		if(faster) {
@@ -189,6 +181,13 @@ public class Drone {
 			this.SPEED = 10;
 			this.STOCK_FRAMES = 7;
 		}
+	}
+	
+	/* DEBUGGING */
+	@Override
+	public String toString() {
+		return "Drone [x=" + x + ", y=" + y + ", location=" + Arrays.toString(location) + ", droneState=" + droneState
+				+ ", stopPosition=" + Arrays.toString(stopPosition) + ", direction=" + direction + "]";
 	}
 }
 
