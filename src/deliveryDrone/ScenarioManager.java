@@ -75,7 +75,6 @@ public class ScenarioManager {
 			@Override
 			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
 				if(pickUpThisState == randomNum+5) {
-					System.out.println("scenario #1 - step #0 is finished");
 					return true;
 				}
 				return false;
@@ -88,7 +87,6 @@ public class ScenarioManager {
 			@Override
 			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
 				if(dropOffThisState == randomNum+1) {
-					System.out.println("scenario #1 - final step (step #1) is finished");
 					return true;
 				}
 				return false;
@@ -137,7 +135,6 @@ public class ScenarioManager {
 						return false;
 					}
 				}
-				System.out.println("scenario #2 - final step (step #0) is finished");
 				return true;
 			}
 		};
@@ -171,7 +168,6 @@ public class ScenarioManager {
 					break;
 				}
 				if(this.getPrivateData()[2] && this.getPrivateData()[0]) {
-					System.out.println("scenario #3 - final step (step #0) is finished");
 					return true;
 				}
 				return false;
@@ -221,7 +217,6 @@ public class ScenarioManager {
 				}
 
 				if(this.getPrivateData()[0] && this.getPrivateData()[2] && this.getPrivateData()[5]&& this.getPrivateData()[6]&&this.getPrivateData()[7]) {
-					System.out.println("scenario #4 - final step (step #0) is finished");
 					return true;
 				}
 				return false;
@@ -255,7 +250,6 @@ public class ScenarioManager {
 				}
 				else {
 					if(this.getPrivateData()[0]) {
-						System.out.println("scenario #5 - step #0 is finished");
 						return true;
 					}
 				}
@@ -274,7 +268,6 @@ public class ScenarioManager {
 				}
 				else {
 					if(this.getPrivateData()[0]) {
-						System.out.println("scenario #5 - step #1 is finished");
 						return true;
 					}
 				}
@@ -293,7 +286,6 @@ public class ScenarioManager {
 				}
 				else {
 					if(this.getPrivateData()[0]) {
-						System.out.println("scenario #5 - step #2 is finished");
 						return true;
 					}
 				}
@@ -312,7 +304,6 @@ public class ScenarioManager {
 				}
 				else {
 					if(this.getPrivateData()[0]) {
-						System.out.println("scenario #5 - step #3 is finished");
 						return true;
 					}
 				}
@@ -331,7 +322,6 @@ public class ScenarioManager {
 				}
 				else {
 					if(this.getPrivateData()[0]) {
-						System.out.println("scenario #5 - step #4 is finished");
 						return true;
 					}
 				}
@@ -349,7 +339,6 @@ public class ScenarioManager {
 
 				}
 				if((droneToWarehouseCap + totalEnvelopes)==1 && dropOffThisState>0) {
-					System.out.println("scenario #5 -final step (step #5) is finished");
 					return true;
 				}
 				return false;
@@ -418,7 +407,6 @@ public class ScenarioManager {
 					totalCap+= droneToHouseCap[i];
 				}
 				if(totalCap==1 && dropOffThisState>0) {
-					System.out.println("scenario #6 -final step (step #5) is finished");
 					return true;
 				}
 				return false;
@@ -453,7 +441,6 @@ public class ScenarioManager {
 				}
 				else {
 					if(this.getPrivateData()[0]) {
-						System.out.println("scenario #7 - step #0 is finished");
 						return true;
 					}
 				}
@@ -474,7 +461,6 @@ public class ScenarioManager {
 				}
 				else {
 					if(this.getPrivateData()[0]) {
-						System.out.println("scenario #7 - step #1 is finished");
 						return true;
 					}
 				}
@@ -495,7 +481,6 @@ public class ScenarioManager {
 				}
 				else {
 					if(this.getPrivateData()[0]) {
-						System.out.println("scenario #7 - step #2 is finished");
 						return true;
 					}
 				}
@@ -516,7 +501,6 @@ public class ScenarioManager {
 				}
 				else {
 					if(this.getPrivateData()[0]) {
-						System.out.println("scenario #7 - step #3 is finished");
 						return true;
 					}
 				}
@@ -533,7 +517,6 @@ public class ScenarioManager {
 					}
 				}
 				if((droneToWarehouseCap + totalEnvelopes)==1 && dropOffThisState>0) {
-					System.out.println("scenario #7 -final step (step #4) is finished");
 					return true;
 				}
 				return false;
@@ -561,7 +544,6 @@ public class ScenarioManager {
 			@Override
 			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
 				if(pickUpThisState == randomNum+5) {
-					System.out.println("scenario #8 - step #0 is finished");
 					return true;
 				}
 				return false;
@@ -576,7 +558,6 @@ public class ScenarioManager {
 			@Override
 			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
 				if(pickUpThisState == randomNum+1) {
-					System.out.println("scenario #8 - final step (step #1) is finished");
 					return true;
 				}
 				return false;
