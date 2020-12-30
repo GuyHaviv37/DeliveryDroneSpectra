@@ -111,13 +111,6 @@ public class GridPanel extends JPanel implements ActionListener {
 		if(isLoading) paintLoadingHeader(g);
 		if(isSkip) paintFFHeader(g);
 
-		// paint state details
-		g.setFont(new Font("MV Boli", Font.BOLD, 14));
-		g.setColor(Color.black);
-		row = 0;
-		col = 3;
-		g.drawString("State #: " + stateNum, col * squareSize + 20, row * squareSize + 20);
-
 		// paint drone by it's new x,y coordinates
 		g.drawImage(drone.getImage(), drone.getX(), drone.getY(), drone.getSize(), drone.getSize(), null);
 	}
