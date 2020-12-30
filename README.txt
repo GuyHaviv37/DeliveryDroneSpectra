@@ -1,4 +1,4 @@
-DeliveryDroneSprint3:
+DeliveryDrone:
 To run our project:
 * Create a Just-In-Time controller for the DeliveryDroneMain.spectra specification
 * Run App.java as java program
