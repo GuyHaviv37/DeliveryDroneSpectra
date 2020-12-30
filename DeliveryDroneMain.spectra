@@ -61,11 +61,12 @@ asm initHousesEmpty:
 forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
 		outHousePackages[i] = false;
 
-// Init houses output to be empty at start of the simulation
+// Init warehouse output to be empty at start of the simulation
 asm initWarehouseEmpty:
 forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
 		outWarehousePackages[i] = false;
-
+		
+// Init envelope to be false at start of the simulation
 asm initEnvelopeModeOff:
 forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
 		envelopeRequests[i] = false;
@@ -220,19 +221,19 @@ gar pRespondsToS(totalEnvelopesToWH > 0,atWarehouse);
 /* ================================ WINDS LOGIC ======================================== */	
 // To turn off priority comment the marked lines
 env boolean windsMode;
-asm windsMode=false; // *turn-off
+asm windsMode=false; // *comment out
 
-gar droneMovesWithWind: // *turn-off
-	G moveDir(drone[0]) & moveDir(drone[1]) -> !windsMode; // *turn-off
+gar droneMovesWithWind: // *comment out
+	G moveDir(drone[0]) & moveDir(drone[1]) -> !windsMode; // *comment out
 
 /* ================================ PRIORITY LOGIC ======================================== */	
 // To turn off priority comment the marked lines
 env boolean priorityMode;
-asm priorityMode=false; // *turn-off
+asm priorityMode=false; // *comment out
 
 counter priorityCap(0..1){
 	priorityCap=0; 
-	inc: housePickedup & priorityMode & packageWaitingInWarehouse; // *turn-off
+	inc: housePickedup & priorityMode & packageWaitingInWarehouse; // *comment out
 	reset: warehousePickedup;
 	overflow: false; 
 }
@@ -244,7 +245,7 @@ define MAX_ENERGY:= 7;
 
 counter energy (0..MAX_ENERGY){
 	energy=0;
-	// turn-off inc to turn off energy
+	//comment out inc to turn off energy
 	inc: (pickUpThisState=1 & !envelopeRequests[0])| (pickUpThisState=2 & !envelopeRequests[1])|(pickUpThisState=3 & !envelopeRequests[2])|(pickUpThisState=4 & !envelopeRequests[3])  | warehousePickedup; // *turn-off
 	reset: atChargingStation;
 	overflow: false;
