@@ -185,11 +185,6 @@ gar G pickUpThisState = 2 -> atHouse2 & waitingPackageOutHouse2 & ((!envelopeReq
 gar G pickUpThisState = 3 -> atHouse3 & waitingPackageOutHouse3 & ((!envelopeRequests[2] & roomForPickUpWithDropoffForHouses) |(envelopeRequests[2] & roomForPickupEnvelope)) & next(waitingPackageOutHouse3)=false;
 gar G pickUpThisState = 4 -> atHouse4 & waitingPackageOutHouse4 & ((!envelopeRequests[3] & roomForPickUpWithDropoffForHouses) |(envelopeRequests[3] & roomForPickupEnvelope)) & next(waitingPackageOutHouse4)=false ;
 
-gar G (!priorityMode | priorityCap=0 | !packageWaitingInWarehouse) & atHouse1 & waitingPackageOutHouse1 & ((!envelopeRequests[0] & roomForPickUpWithDropoffForHouses) |(envelopeRequests[0] & roomForPickupEnvelope)) -> stay;
-gar G (!priorityMode | priorityCap=0 | !packageWaitingInWarehouse) & atHouse2 & waitingPackageOutHouse2 & ((!envelopeRequests[1] & roomForPickUpWithDropoffForHouses) |(envelopeRequests[1] & roomForPickupEnvelope)) -> stay;
-gar G (!priorityMode | priorityCap=0 | !packageWaitingInWarehouse) & atHouse3 & waitingPackageOutHouse3 & ((!envelopeRequests[2] & roomForPickUpWithDropoffForHouses) |(envelopeRequests[2] & roomForPickupEnvelope)) ->stay;
-gar G (!priorityMode | priorityCap=0 | !packageWaitingInWarehouse) & atHouse4 & waitingPackageOutHouse4 & ((!envelopeRequests[3] & roomForPickUpWithDropoffForHouses) |(envelopeRequests[3] & roomForPickupEnvelope)) ->stay;
-
 gar G pickUpThisState = 5 -> atWarehouse & waitingPackageInWarehouseToHouse1 & roomForPickupPackage & next(waitingPackageInWarehouseToHouse1)=false;
 gar G pickUpThisState = 6 -> atWarehouse & waitingPackageInWarehouseToHouse2 & roomForPickupPackage & next(waitingPackageInWarehouseToHouse2)=false;
 gar G pickUpThisState = 7 -> atWarehouse & waitingPackageInWarehouseToHouse3 & roomForPickupPackage & next(waitingPackageInWarehouseToHouse3)=false ;
@@ -222,21 +217,27 @@ gar pRespondsToS(droneToHouseCap4 > 0,atHouse4);
 gar pRespondsToS(droneToWarehouseCap > 0,atWarehouse);
 gar pRespondsToS(totalEnvelopesToWH > 0,atWarehouse);
 
+/*======================================== MUST PICKUP LOGIC  ===================================== */
+
+gar G atHouse1 & waitingPackageOutHouse1 & ((!envelopeRequests[0] & roomForPickUpWithDropoffForHouses) |(envelopeRequests[0] & roomForPickupEnvelope)) -> stay;
+gar G atHouse2 & waitingPackageOutHouse2 & ((!envelopeRequests[1] & roomForPickUpWithDropoffForHouses) |(envelopeRequests[1] & roomForPickupEnvelope)) -> stay;
+gar G atHouse3 & waitingPackageOutHouse3 & ((!envelopeRequests[2] & roomForPickUpWithDropoffForHouses) |(envelopeRequests[2] & roomForPickupEnvelope)) ->stay;
+gar G atHouse4 & waitingPackageOutHouse4 & ((!envelopeRequests[3] & roomForPickUpWithDropoffForHouses) |(envelopeRequests[3] & roomForPickupEnvelope)) ->stay;
 
 /* ================================ WINDS LOGIC ======================================== */	
 env boolean windsMode;
-asm windsMode=false;
-
-gar droneMovesWithWind:
-	G moveDir(drone[0]) & moveDir(drone[1]) -> !windsMode;
+//asm windsMode=false;
+//
+//gar droneMovesWithWind:
+//	G moveDir(drone[0]) & moveDir(drone[1]) -> !windsMode;
 
 /* ================================ PRIORITY LOGIC ======================================== */	
 env boolean priorityMode;
-asm priorityMode=false;
+//asm priorityMode=false;
 
 counter priorityCap(0..1){
 	priorityCap=0; 
-	inc: housePickedup & priorityMode & packageWaitingInWarehouse;
+	//inc: housePickedup & priorityMode & packageWaitingInWarehouse;
 	reset: warehousePickedup;
 	overflow: false; 
 }
@@ -247,7 +248,7 @@ define MAX_ENERGY:= 7;
 
 counter energy (0..MAX_ENERGY){
 	energy=0;
-	inc: (pickUpThisState=1 & !envelopeRequests[0])| (pickUpThisState=2 & !envelopeRequests[1])|(pickUpThisState=3 & !envelopeRequests[2])|(pickUpThisState=4 & !envelopeRequests[3])  | warehousePickedup;
+	//inc: (pickUpThisState=1 & !envelopeRequests[0])| (pickUpThisState=2 & !envelopeRequests[1])|(pickUpThisState=3 & !envelopeRequests[2])|(pickUpThisState=4 & !envelopeRequests[3])  | warehousePickedup;
 	reset: atChargingStation;
 	overflow: false;
 }
