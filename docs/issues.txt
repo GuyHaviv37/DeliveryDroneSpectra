@@ -1,5 +1,12 @@
-While working on the envelopes feature we hit large computing times for realizability and for a controller computation.
-The solution came unexpectedly - as ADDING another feature - "Must-Drop-Off" actually reduced computing times significantly.
-We assume that it restrics the controllers optional moves (for sys variables next state) hence reducing it's computation time.
+MustPickup -
+Unrealizabilty - our initial attempt to make this feature was to add guarantees that when the drone has the correct conditions to pick up a waiting package/envelope then it must stay at that location untill pickup.
+This became unrealizble - by now we realized that this cannot be enforced in the case that priority mode is on - there can be a state where the drone's local conditions for a pickup (at location, there's a request waiting and has space in inventory),
+are not enough to enforce a pickup - since a global condition - such as priority - can disqualify those conditions.
+Compute time - once we solved the first issue, we encounted that adding this feature to the main specification increased the computing time tremendously.
+The simple soultion was to strip the specification of features - which can be adjusted to the GUI.
 
-Other minor issues was integrated the demo and scenario states into the GUI, synchronizing between both the grid and menu panel.
+Triggers - 
+When developing the Triggers variant of the spec. we found it very difficult to attain complex and rich requirements
+using triggers only.
+Once the rule consisted of regular expressions that indicate more than the drone's location it was made either unrealizable or did not achieve the expected results.
+As we still wanted to have a variant using triggers, we did come up with simple, yet meaningful, uses of this spec. feature.

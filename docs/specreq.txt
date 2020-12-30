@@ -21,7 +21,9 @@ REQUESTS / PICKUP / DROP-OFF MECHANISM
 * A package (src,dest) is DROPPED-OFF only if the drone is at (dest) and there is a packaged intended for (dest) at the drone's inventory.
 * The system guarantee that while there are packages intended for (dest) at the drone's inventory,
 the drone will respond by going to (dest)'s location.
-* (New Feature) "Must-Drop-Off" when the drone is at a location for which it has a package to deliver - it must drop-off that package.
+* "Must-Drop-Off" when the drone is at a location for which it has a package to deliver - it must drop-off that package.
+* (Variant) "Must-Pickup" - if the drone is at a house where there's a package/envelope waiting, and he has the capabilty to pick it up - then it must do so.
+** This is implemented by adding a guarantee to each house pickup conditions set.
 
 INVENTORY MANAGEMENT:
 The entire inventory management is implemented with counters:
@@ -46,4 +48,11 @@ The drone can pick up at most PRIORITY_CAP number of packages from Houses before
 
 BATTERY & ENERGY:
 * The drone can make at most MAX_ENERGY pickups before it passes through the Charging Station.
+(Variant) * "Charge-When-Needed" - Do not pass by the charging station unless some amount of eneregy had been used.
+** This is implemented by a single guarantee s.t. you can be at the chargining station only if the sys variable energy is at a ceration threshold.
+
+(Variant) TRIGGERS:
+* If charging (and did not come from warehouse) - pass by the warehouse.
+* "House visit fairness" - If at a house, after 2 "safety" states (for pickup/drop-off) , do not visit the same house for at least 5 states.
+
 

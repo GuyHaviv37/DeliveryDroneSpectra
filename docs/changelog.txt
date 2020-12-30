@@ -1,7 +1,13 @@
-From Second Sprint:
+From Third Sprint:
 
-* Added the envelopes feature.
-* Added Automate Mode (Demo Mode).
-* Built scenario menu.
-* Built scenario management + 3 basic scenarios.
-* Integrated 'Must-Drop-Off' feature to the main specification.
+* Added more scenarios.
+* Added Tooltips to scenario menu (information about each scenario), as well as general buttons.
+* Added 'Triggers' specification variant.
+* Added 'Charge only when needed' specification variant (that can be parameterized).
+* Added 'MustPickup' specification variants (full and "basic" - based on the most basic specification).
+** In addition, an unrealizable version we encountered.
+* Added GUI Winds animation.
+* Added 'Random Request' abilities.
+* Added 'Fast Forward Step' functionality to scenarios.
+* Added Modularity GUI and Spec. features.
+

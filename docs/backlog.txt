@@ -17,6 +17,17 @@ Front-end:
 * Add Automate Mode (Demo Mode)
 * Built scenario management + 3 basic scenarios.
 * Built scenario menu.
+* Add more scenarios.
+** Built 5 more scenarios (for a total of 8)
+* Add Tooltips to scenario menu, as well as general buttons.
+** For scenario dropdown - short description of the scenario.
+* Add GUI Winds animation.
+* Add 'Random Request' Button - addes a random package/envelope at a random location.
+* Added 'Fast Forward Step' functionality to scenarios - this speeds up the drone and can be used to fast forward to the next step of the scenario.
+* Add Modularity Features (GUI):
+** Upon program start and based on the current spec. synthesized - adjust the features to be shown on the GUI (priority, winds, energy).
+** This is done by a pop-up window at the start of the program.
+
 
 Specification:
 * Create the basic Drone mechanism : Request Delivery, Pickup , Drop-off packages from/to houses and warehouse.
@@ -33,13 +44,30 @@ s.t. the drone can make an at most X amount of pickups without being charged (re
 * Added 'envelopes' - light-weight packages.
 * Integrated 'Must-Drop-Off' feature to the main specification.
 
+* Variants:
+
+** Added 'Triggers' specification variant.
+*** Includes a simple use of triggers to enforce specific movement of the drone:
+**** If charging (and did not come from warehouse) - pass by the warehouse.
+**** "House visit fairness" - If at a house, after 2 "safety" states (for pickup/drop-off) , do not visit the same house for at least 5 states.
+
+** Added 'Charge only when needed' specification variant.
+*** Do not pass by the charging station unless some amount of eneregy had been used.
+*** This amount is parameterized and can be changed in the spec. file (can be anything from 0 to MAX_ENERGY-1).
+
+** Added 'MustPickup' specification variants.
+*** In this spec. if the drone is at a house where there's a package/envelope waiting, and he has the capabilty to pick it up - then it must do so.
+*** Since this guarantee added to the main spec. increased computing time significantly (about an hour), we added 2 options:
+**** Full - the main spec. file with the added functionality.
+**** Basic - a basic drone spec. file (no priority, winds nor energy) with the added functionality (about 4 min. of compute time).
+*** In addition, an unrealizable version we encountered.
+
+* Add Modularity Features (Specification):
+** Since we built our main spec. with 3 non-basic features (priority, winds, energy) that are non-dependent, we wanted to add the user the ability to turn them on/off easily.
+** I.e. you can see in the spec. file where to "comment out" a specific feature.
+** This is backed up by the GUI modulization pop-up that adjusts the GUI to your spec needs.
+** This adds up to 7 new variants of the main specification - for the new combinations of these 3 features.
+
 
 -------------------
-Left To Do (Sprint 4):
-Front-end:
-* Add more scenarios.
-* Add scenario tooltips to the scenario menu (information about each scenario).
-* Refactoring.
-
-Specification:
--
+Left To Do: N/A
