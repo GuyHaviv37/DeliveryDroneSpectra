@@ -19,6 +19,8 @@ Front-end:
 * Built scenario menu.
 * Add more scenarios.
 ** Built 5 more scenarios (for a total of 8)
+** Built the 'loading screen' before starting a scenario.
+*** Before each scenario is executed we clear the state of the environment to be empty (as in the init state).
 * Add Tooltips to scenario menu, as well as general buttons.
 ** For scenario dropdown - short description of the scenario.
 * Add GUI Winds animation.
