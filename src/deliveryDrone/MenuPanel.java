@@ -10,6 +10,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+@SuppressWarnings("serial")
 public class MenuPanel extends JPanel {
 
 	private ManualMenuPanel manualMenu;
@@ -53,11 +54,8 @@ public class MenuPanel extends JPanel {
 				manualMenu.setButtonsEnabled(enabled);
 				scenarioMenu.setButtonsEnabled(enabled);
 			}
-			
-			
 		};
 
-		this.manualMenu.setMenuListener(menuListener);
 		this.scenarioMenu.setMenuListener(menuListener);
 	}
 

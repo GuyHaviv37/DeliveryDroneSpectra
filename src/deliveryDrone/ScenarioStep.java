@@ -1,7 +1,5 @@
 package deliveryDrone;
 
-import java.util.Queue;
-
 abstract class ScenarioStep {
 	private ScenarioNumber scenarioID; 
 	private boolean[] houseRequestsValue; // house request this step

@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
+@SuppressWarnings("serial")
 public class ComboboxToolTipRenderer extends DefaultListCellRenderer {
     List<String> tooltips;
 

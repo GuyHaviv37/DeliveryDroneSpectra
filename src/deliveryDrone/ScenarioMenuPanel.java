@@ -11,8 +11,8 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JToggleButton;
 
+@SuppressWarnings("serial")
 public class ScenarioMenuPanel extends JPanel implements ActionListener {
 	
 	public JComboBox<String> selectionList;

@@ -4,18 +4,18 @@ import javax.swing.SwingUtilities;
 public class App {
 
 	public static void main(String[] args) {
-		Object[] features = ModulizeFeature.getFeature();
+		boolean[] features = ModulizeFeature.getFeatures();
 		if(features==null) {
-			System.out.println("you don't choose any option- exit the program");
+			System.out.println("You must choose a feature set to continue");
 			System.exit(0);
 		}
-		final boolean priorityFeature =(boolean) features[0]; 
-		final boolean windsFeature = (boolean)features[1]; 
-		final boolean energyFeature = (boolean)features[2]; 
-		String mode= (String)features[3];
+		final boolean priorityFeature = features[0]; 
+		final boolean windsFeature = features[1]; 
+		final boolean energyFeature = features[2]; 
+		String mode = ModulizeFeature.getTextChoice();
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				new MainFrame("DeliveryDrone- "+mode,priorityFeature,windsFeature,energyFeature);
+				new MainFrame("DeliveryDrone - "+mode,priorityFeature,windsFeature,energyFeature);
 			}
 		});
 	}

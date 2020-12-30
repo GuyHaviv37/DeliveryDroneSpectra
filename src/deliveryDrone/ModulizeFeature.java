@@ -5,9 +5,11 @@ import javax.swing.JOptionPane;
 
 public class ModulizeFeature {
 	
-	public static Object[] getFeature(){
-		Object[] result = new Object[4];
-		boolean priority = false ;
+	static String textChoice;
+	
+	public static boolean[] getFeatures(){
+		boolean[] result = new boolean[3];
+		boolean priority = false;
 		boolean winds = false; 
 		boolean energy = false; 
 		JFrame frame = new JFrame("Config");
@@ -63,8 +65,12 @@ public class ModulizeFeature {
 		if(selected == "Default - All Features Enabled") {
 			selected="";
 		}
-		result[3]= selected;
+		textChoice = selected;
 		return result;
+	}
+	
+	public static String getTextChoice() {
+		return textChoice;
 	}
 
 }

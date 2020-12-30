@@ -1,6 +1,4 @@
 package deliveryDrone;
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -9,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.concurrent.ThreadLocalRandom;
 
-import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -18,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
+@SuppressWarnings("serial")
 public class ManualMenuPanel extends JPanel implements ActionListener {
 
 	// GLOBAL
@@ -43,7 +41,6 @@ public class ManualMenuPanel extends JPanel implements ActionListener {
 	private boolean isWindsMode = false;
 
 	// listeners
-	private MenuListener menuListener; // maybe redundant
 	private CreationListener creationListener;
 
 	private boolean priorityFeature;
@@ -252,10 +249,6 @@ public class ManualMenuPanel extends JPanel implements ActionListener {
 			isWindsMode = false;
 			creationListener.toggleWinds(isWindsMode);
 		}
-	}
-
-	public void setMenuListener(MenuListener menuListener) {
-		this.menuListener = menuListener;
 	}
 
 	public void setCreationListener(CreationListener creationListener) {
