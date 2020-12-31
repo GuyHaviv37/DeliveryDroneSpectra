@@ -27,6 +27,7 @@ define ENVELOPE_CAPACITY := 6;
 define 
 	housePickedup := pickUpThisState > 0 & pickUpThisState <5 ;
 	warehousePickedup := pickUpThisState > 4 & pickUpThisState <9;
+	housePackagePickup:= (pickUpThisState=1 & !envelopeRequests[0])| (pickUpThisState=2 & !envelopeRequests[1])|(pickUpThisState=3 & !envelopeRequests[2])|(pickUpThisState=4 & !envelopeRequests[3]);
 	
 define
 	packageDelivered := dropOffThisState > 0 & dropOffThisState<6; 
@@ -75,28 +76,28 @@ forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
 //all packages on the drone
 counter totalPackages(0..PACKAGE_CAPACITY){ 
 	totalPackages =0;
-	inc: (pickUpThisState=1 & !envelopeRequests[0])| (pickUpThisState=2 & !envelopeRequests[1])|(pickUpThisState=3 & !envelopeRequests[2])|(pickUpThisState=4 & !envelopeRequests[3]) | warehousePickedup;
+	inc: housePackagePickup | warehousePickedup;
 	dec: packageDelivered;
 	overflow:false;
 	underflow:false;
 }
-// counter for envelopes from Houses -> Warehouse
+// all envelopes on the drone
 counter totalEnvelopesToWH(0..ENVELOPE_CAPACITY){ 
 	totalEnvelopesToWH =0;
-	inc: (pickUpThisState=1 & envelopeRequests[0])| (pickUpThisState=2 & envelopeRequests[1])|(pickUpThisState=3 & envelopeRequests[2])|(pickUpThisState=4 & envelopeRequests[3]) ;
+	inc: housePickedup& !housePackagePickup;
 	dec: envelopeDelivered;
 	overflow:false;
 	underflow:false;
 }
-// counter for packages from Houses -> Warehouse
+// counter packages from Houses -> Warehouse
 counter droneToWarehouseCap(0..PACKAGE_CAPACITY){
 	droneToWarehouseCap = 0;
-	inc: (pickUpThisState=1 & !envelopeRequests[0])| (pickUpThisState=2 & !envelopeRequests[1])|(pickUpThisState=3 & !envelopeRequests[2])|(pickUpThisState=4 & !envelopeRequests[3]) ;
+	inc: housePackagePickup ;
 	dec: dropOffThisState =5;
 	overflow:false;
 	underflow:false;
 }
-// counters for packages from Warehouse -> Houses
+// counters packages from Warehouse -> Houses#
 counter droneToHouseCap1(0..PACKAGE_CAPACITY){
 	droneToHouseCap1 = 0;
 	inc: pickUpThisState =5;
@@ -219,7 +220,7 @@ gar pRespondsToS(totalEnvelopesToWH > 0,atWarehouse);
 
 
 /* ================================ WINDS LOGIC ======================================== */	
-// To turn off priority comment the marked lines
+// To turn off winds comment the marked lines
 env boolean windsMode;
 asm windsMode=false; // *comment out
 
@@ -240,13 +241,12 @@ counter priorityCap(0..1){
 gar G priorityCap <= 1;
 
 /*================================ ENERGY LOGIC  =================================== */
-// To turn off priority comment the marked lines
+// To turn off energy comment the marked lines
 define MAX_ENERGY:= 7;
 
 counter energy (0..MAX_ENERGY){
 	energy=0;
-	//comment out inc to turn off energy
-	inc: (pickUpThisState=1 & !envelopeRequests[0])| (pickUpThisState=2 & !envelopeRequests[1])|(pickUpThisState=3 & !envelopeRequests[2])|(pickUpThisState=4 & !envelopeRequests[3])  | warehousePickedup; // *turn-off
+	inc: housePackagePickup | warehousePickedup; // *comment out
 	reset: atChargingStation;
 	overflow: false;
 }
