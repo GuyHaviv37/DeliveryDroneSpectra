@@ -27,6 +27,8 @@ define ENVELOPE_CAPACITY := 6;
 define 
 	housePickedup := pickUpThisState > 0 & pickUpThisState <5 ;
 	warehousePickedup := pickUpThisState > 4 & pickUpThisState <9;
+    housePackagePickup:= (pickUpThisState=1 & !envelopeRequests[0])| (pickUpThisState=2 & !envelopeRequests[1])|(pickUpThisState=3 & !envelopeRequests[2])|(pickUpThisState=4 & !envelopeRequests[3]);
+	
 	
 define
 	packageDelivered := dropOffThisState > 0 & dropOffThisState<6; 
@@ -74,7 +76,7 @@ forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
 //all packages on the drone
 counter totalPackages(0..PACKAGE_CAPACITY){ 
 	totalPackages =0;
-	inc: (pickUpThisState=1 & !envelopeRequests[0])| (pickUpThisState=2 & !envelopeRequests[1])|(pickUpThisState=3 & !envelopeRequests[2])|(pickUpThisState=4 & !envelopeRequests[3]) | warehousePickedup;
+	inc: housePackagePickup | warehousePickedup;
 	dec: packageDelivered;
 	overflow:false;
 	underflow:false;
@@ -82,7 +84,7 @@ counter totalPackages(0..PACKAGE_CAPACITY){
 // counter for envelopes from Houses -> Warehouse
 counter totalEnvelopesToWH(0..ENVELOPE_CAPACITY){ 
 	totalEnvelopesToWH =0;
-	inc: (pickUpThisState=1 & envelopeRequests[0])| (pickUpThisState=2 & envelopeRequests[1])|(pickUpThisState=3 & envelopeRequests[2])|(pickUpThisState=4 & envelopeRequests[3]) ;
+	inc: housePickedup& !housePackagePickup;
 	dec: envelopeDelivered;
 	overflow:false;
 	underflow:false;
@@ -90,7 +92,7 @@ counter totalEnvelopesToWH(0..ENVELOPE_CAPACITY){
 // counter for packages from Houses -> Warehouse
 counter droneToWarehouseCap(0..PACKAGE_CAPACITY){
 	droneToWarehouseCap = 0;
-	inc: (pickUpThisState=1 & !envelopeRequests[0])| (pickUpThisState=2 & !envelopeRequests[1])|(pickUpThisState=3 & !envelopeRequests[2])|(pickUpThisState=4 & !envelopeRequests[3]) ;
+	inc: housePackagePickup ;
 	dec: dropOffThisState =5;
 	overflow:false;
 	underflow:false;
@@ -176,7 +178,7 @@ gar initDropOffThisState:
 gar droneMoves:
 	G moveDir(drone[0]) & moveDir(drone[1]) | (notMoveDir(drone[0]) & moveDir(drone[1])) | (moveDir(drone[0]) & notMoveDir(drone[1])) | (notMoveDir(drone[0]) & notMoveDir(drone[1]));
 
-// ================================== PICKUP , DROP-OFF LOGIC ======================================
+// ================================== PICKUP LOGIC ======================================
 
 // guarantees when a pickup can be made + implications on monitor
 gar G pickUpThisState = 1 -> atHouse1 & waitingPackageOutHouse1 & ((!envelopeRequests[0] & roomForPickupPackage) |(envelopeRequests[0] & roomForPickupEnvelope)) & next(waitingPackageOutHouse1)=false;
@@ -200,6 +202,7 @@ gar pRespondsToS(waitingPackageInWarehouseToHouse2, pickUpThisState = 6);
 gar pRespondsToS(waitingPackageInWarehouseToHouse3, pickUpThisState = 7);
 gar pRespondsToS(waitingPackageInWarehouseToHouse4, pickUpThisState = 8);
 
+// ================================== DROP OFF LOGIC ======================================
 // guarantees when a drop-off can be made
 gar G dropOffThisState = 1 -> atHouse1 & droneToHouseCap1 > 0;
 gar G dropOffThisState = 2 -> atHouse2 & droneToHouseCap2 > 0;
@@ -241,7 +244,7 @@ define MAX_ENERGY:= 7;
 
 counter energy (0..MAX_ENERGY){
 	energy=0;
-	inc: (pickUpThisState=1 & !envelopeRequests[0])| (pickUpThisState=2 & !envelopeRequests[1])|(pickUpThisState=3 & !envelopeRequests[2])|(pickUpThisState=4 & !envelopeRequests[3])  | warehousePickedup;
+	inc: housePackagePickup | warehousePickedup; 
 	reset: atChargingStation;
 	overflow: false;
 }

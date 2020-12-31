@@ -27,6 +27,7 @@ define ENVELOPE_CAPACITY := 6;
 define 
 	housePickedup := pickUpThisState > 0 & pickUpThisState <5 ;
 	warehousePickedup := pickUpThisState > 4 & pickUpThisState <9;
+	housePackagePickup:= (pickUpThisState=1 & !envelopeRequests[0])| (pickUpThisState=2 & !envelopeRequests[1])|(pickUpThisState=3 & !envelopeRequests[2])|(pickUpThisState=4 & !envelopeRequests[3]);
 	
 define
 	packageDelivered := dropOffThisState > 0 & dropOffThisState<6; 
@@ -36,6 +37,8 @@ define roomForPickupPackage := totalPackages + 1 <= PACKAGE_CAPACITY;
 		roomForPickupEnvelope := totalEnvelopesToWH + 1 <= ENVELOPE_CAPACITY; 
 		
 define packageWaitingInWarehouse := waitingPackageInWarehouseToHouse1 | waitingPackageInWarehouseToHouse2 |waitingPackageInWarehouseToHouse3 | waitingPackageInWarehouseToHouse4;
+
+define stay :=  next(drone[0]) = drone[0] & next(drone[1])= drone[1];
 
 /* ======================================== PREDICATES ==============================================*/
 predicate moveDir(Cord pos):
@@ -61,11 +64,12 @@ asm initHousesEmpty:
 forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
 		outHousePackages[i] = false;
 
-// Init houses output to be empty at start of the simulation
+// Init warehouse output to be empty at start of the simulation
 asm initWarehouseEmpty:
 forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
 		outWarehousePackages[i] = false;
-
+		
+// Init envelope to be false at start of the simulation
 asm initEnvelopeModeOff:
 forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
 		envelopeRequests[i] = false;
@@ -74,28 +78,28 @@ forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
 //all packages on the drone
 counter totalPackages(0..PACKAGE_CAPACITY){ 
 	totalPackages =0;
-	inc: (pickUpThisState=1 & !envelopeRequests[0])| (pickUpThisState=2 & !envelopeRequests[1])|(pickUpThisState=3 & !envelopeRequests[2])|(pickUpThisState=4 & !envelopeRequests[3]) | warehousePickedup;
+	inc: housePackagePickup | warehousePickedup;
 	dec: packageDelivered;
 	overflow:false;
 	underflow:false;
 }
-// counter for envelopes from Houses -> Warehouse
+// all envelopes on the drone
 counter totalEnvelopesToWH(0..ENVELOPE_CAPACITY){ 
 	totalEnvelopesToWH =0;
-	inc: (pickUpThisState=1 & envelopeRequests[0])| (pickUpThisState=2 & envelopeRequests[1])|(pickUpThisState=3 & envelopeRequests[2])|(pickUpThisState=4 & envelopeRequests[3]) ;
+	inc: housePickedup& !housePackagePickup;
 	dec: envelopeDelivered;
 	overflow:false;
 	underflow:false;
 }
-// counter for packages from Houses -> Warehouse
+// counter packages from Houses -> Warehouse
 counter droneToWarehouseCap(0..PACKAGE_CAPACITY){
 	droneToWarehouseCap = 0;
-	inc: (pickUpThisState=1 & !envelopeRequests[0])| (pickUpThisState=2 & !envelopeRequests[1])|(pickUpThisState=3 & !envelopeRequests[2])|(pickUpThisState=4 & !envelopeRequests[3]) ;
+	inc: housePackagePickup ;
 	dec: dropOffThisState =5;
 	overflow:false;
 	underflow:false;
 }
-// counters for packages from Warehouse -> Houses
+// counters packages from Warehouse -> Houses#
 counter droneToHouseCap1(0..PACKAGE_CAPACITY){
 	droneToHouseCap1 = 0;
 	inc: pickUpThisState =5;
@@ -176,18 +180,12 @@ gar initDropOffThisState:
 gar droneMoves:
 	G moveDir(drone[0]) & moveDir(drone[1]) | (notMoveDir(drone[0]) & moveDir(drone[1])) | (moveDir(drone[0]) & notMoveDir(drone[1])) | (notMoveDir(drone[0]) & notMoveDir(drone[1]));
 
-// ================================== PICKUP , DROP-OFF LOGIC ======================================
-
+// ================================== PICKUP LOGIC ======================================
 // guarantees when a pickup can be made + implications on monitor
 gar G pickUpThisState = 1 -> atHouse1 & waitingPackageOutHouse1 & ((!envelopeRequests[0] & roomForPickupPackage) |(envelopeRequests[0] & roomForPickupEnvelope)) & next(waitingPackageOutHouse1)=false;
 gar G pickUpThisState = 2 -> atHouse2 & waitingPackageOutHouse2 & ((!envelopeRequests[1] & roomForPickupPackage) |(envelopeRequests[1] & roomForPickupEnvelope)) & next(waitingPackageOutHouse2)=false;
 gar G pickUpThisState = 3 -> atHouse3 & waitingPackageOutHouse3 & ((!envelopeRequests[2] & roomForPickupPackage) |(envelopeRequests[2] & roomForPickupEnvelope)) & next(waitingPackageOutHouse3)=false;
 gar G pickUpThisState = 4 -> atHouse4 & waitingPackageOutHouse4 & ((!envelopeRequests[3] & roomForPickupPackage) |(envelopeRequests[3] & roomForPickupEnvelope)) & next(waitingPackageOutHouse4)=false ;
-
-gar G atHouse1 & waitingPackageOutHouse1 & ((!envelopeRequests[0] & roomForPickupPackage) |(envelopeRequests[0] & roomForPickupEnvelope)) -> stay;
-gar G atHouse2 & waitingPackageOutHouse2 & ((!envelopeRequests[1] & roomForPickupPackage) |(envelopeRequests[1] & roomForPickupEnvelope)) -> stay;
-gar G atHouse3 & waitingPackageOutHouse3 & ((!envelopeRequests[2] & roomForPickupPackage) |(envelopeRequests[2] & roomForPickupEnvelope)) ->stay;
-gar G atHouse4 & waitingPackageOutHouse4 & ((!envelopeRequests[3] & roomForPickupPackage) |(envelopeRequests[3] & roomForPickupEnvelope)) ->stay;
 
 gar G pickUpThisState = 5 -> atWarehouse & waitingPackageInWarehouseToHouse1 & roomForPickupPackage & next(waitingPackageInWarehouseToHouse1)=false;
 gar G pickUpThisState = 6 -> atWarehouse & waitingPackageInWarehouseToHouse2 & roomForPickupPackage & next(waitingPackageInWarehouseToHouse2)=false;
@@ -205,13 +203,19 @@ gar pRespondsToS(waitingPackageInWarehouseToHouse2, pickUpThisState = 6);
 gar pRespondsToS(waitingPackageInWarehouseToHouse3, pickUpThisState = 7);
 gar pRespondsToS(waitingPackageInWarehouseToHouse4, pickUpThisState = 8);
 
+// ================================== MUST PICKUP LOGIC ======================================
+gar G atHouse1 & waitingPackageOutHouse1 & ((!envelopeRequests[0] & roomForPickupPackage) |(envelopeRequests[0] & roomForPickupEnvelope)) -> stay;
+gar G atHouse2 & waitingPackageOutHouse2 & ((!envelopeRequests[1] & roomForPickupPackage) |(envelopeRequests[1] & roomForPickupEnvelope)) -> stay;
+gar G atHouse3 & waitingPackageOutHouse3 & ((!envelopeRequests[2] & roomForPickupPackage) |(envelopeRequests[2] & roomForPickupEnvelope)) ->stay;
+gar G atHouse4 & waitingPackageOutHouse4 & ((!envelopeRequests[3] & roomForPickupPackage) |(envelopeRequests[3] & roomForPickupEnvelope)) ->stay;
+// ================================== MUST DROP OFF LOGIC ======================================
 // guarantees when a drop-off can be made
-gar G dropOffThisState = 1 -> atHouse1 & droneToHouseCap1 > 0;
-gar G dropOffThisState = 2 -> atHouse2 & droneToHouseCap2 > 0;
-gar G dropOffThisState = 3 -> atHouse3 & droneToHouseCap3 > 0;
-gar G dropOffThisState = 4 -> atHouse4 & droneToHouseCap4 > 0;
-gar G dropOffThisState = 5 -> atWarehouse & droneToWarehouseCap > 0;
-gar G dropOffThisState = 6 -> atWarehouse & totalEnvelopesToWH > 0;
+gar G dropOffThisState = 1 iff atHouse1 & droneToHouseCap1 > 0;
+gar G dropOffThisState = 2 iff atHouse2 & droneToHouseCap2 > 0;
+gar G dropOffThisState = 3 iff atHouse3 & droneToHouseCap3 > 0;
+gar G dropOffThisState = 4 iff atHouse4 & droneToHouseCap4 > 0;
+gar G dropOffThisState = 5 iff atWarehouse & droneToWarehouseCap > 0;
+gar G dropOffThisState = 6 iff atWarehouse & totalEnvelopesToWH > 0;
 
 // always eventually drop-off packages that are carried by the drone
 gar pRespondsToS(droneToHouseCap1 > 0,atHouse1);
@@ -221,54 +225,42 @@ gar pRespondsToS(droneToHouseCap4 > 0,atHouse4);
 gar pRespondsToS(droneToWarehouseCap > 0,atWarehouse);
 gar pRespondsToS(totalEnvelopesToWH > 0,atWarehouse);
 
-
-/* ================================ WINDS LOGIC ======================================== */	
-env boolean windsMode;
-asm windsMode=false;
-
-gar droneMovesWithWind:
-	G moveDir(drone[0]) & moveDir(drone[1]) -> !windsMode;
-
-/* ================================ PRIORITY LOGIC ======================================== */	
-env boolean priorityMode;
-asm priorityMode=false;
-
-counter priorityCap(0..1){
-	priorityCap=0; 
-	inc: housePickedup & priorityMode & packageWaitingInWarehouse;
-	reset: warehousePickedup;
-	overflow: false; 
-}
-gar G priorityCap <= 1;
-
-/*================================ ENERGY LOGIC  =================================== */
-define MAX_ENERGY:= 7;
-
-counter energy (0..MAX_ENERGY){
-	energy=0;
-	inc: (pickUpThisState=1 & !envelopeRequests[0])| (pickUpThisState=2 & !envelopeRequests[1])|(pickUpThisState=3 & !envelopeRequests[2])|(pickUpThisState=4 & !envelopeRequests[3])  | warehousePickedup;
-	reset: atChargingStation;
-	overflow: false;
-}
-gar G energy <= MAX_ENERGY;
-
-/*================================ MUST DROP OFF LOGIC  =================================== */
-
-define stay :=  next(drone[0]) = drone[0] & next(drone[1])= drone[1];
-
-// guarantees when a drop-off can be made- drop off
-gar G dropOffThisState = 1 iff atHouse1 & droneToHouseCap1 > 0;
-gar G dropOffThisState = 2 iff atHouse2 & droneToHouseCap2 > 0;
-gar G dropOffThisState = 3 iff atHouse3 & droneToHouseCap3 > 0;
-gar G dropOffThisState = 4 iff atHouse4 & droneToHouseCap4 > 0;
-gar G dropOffThisState = 5 iff atWarehouse & droneToWarehouseCap > 0;
-gar G dropOffThisState = 6 iff atWarehouse & totalEnvelopesToWH > 0;
-
 // drone have to drop-off all packages before leaving the house/warehouse
 gar G atHouse1 & droneToHouseCap1 > 1 | 
 	atHouse2 & droneToHouseCap2 > 1 | 
 	atHouse3 & droneToHouseCap3 > 1 | 
 	atHouse4 & droneToHouseCap4 > 1 |
 	atWarehouse & droneToWarehouseCap > 1 | atWarehouse & totalEnvelopesToWH > 1 -> stay;
-	
 
+/* ================================ WINDS LOGIC ======================================== */	
+// To turn off winds comment the marked lines
+env boolean windsMode;
+asm windsMode=false; // *comment out
+
+gar droneMovesWithWind: // *comment out
+	G moveDir(drone[0]) & moveDir(drone[1]) -> !windsMode; // *comment out
+
+/* ================================ PRIORITY LOGIC ======================================== */	
+// To turn off priority comment the marked lines
+env boolean priorityMode;
+asm priorityMode=false; // *comment out
+
+counter priorityCap(0..1){
+	priorityCap=0; 
+	inc: housePickedup & priorityMode & packageWaitingInWarehouse; // *comment out
+	reset: warehousePickedup;
+	overflow: false; 
+}
+gar G priorityCap <= 1;
+
+/*================================ ENERGY LOGIC  =================================== */
+// To turn off energy comment the marked lines
+define MAX_ENERGY:= 7;
+
+counter energy (0..MAX_ENERGY){
+	energy=0;
+	inc: housePackagePickup | warehousePickedup; // *comment out
+	reset: atChargingStation;
+	overflow: false;
+}
+gar G energy <= MAX_ENERGY;
