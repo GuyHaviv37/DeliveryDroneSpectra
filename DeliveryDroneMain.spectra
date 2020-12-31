@@ -38,6 +38,8 @@ define roomForPickupPackage := totalPackages + 1 <= PACKAGE_CAPACITY;
 		
 define packageWaitingInWarehouse := waitingPackageInWarehouseToHouse1 | waitingPackageInWarehouseToHouse2 |waitingPackageInWarehouseToHouse3 | waitingPackageInWarehouseToHouse4;
 
+define stay :=  next(drone[0]) = drone[0] & next(drone[1])= drone[1];
+
 /* ======================================== PREDICATES ==============================================*/
 predicate moveDir(Cord pos):
   pos+1 = next(pos) |
@@ -178,8 +180,7 @@ gar initDropOffThisState:
 gar droneMoves:
 	G moveDir(drone[0]) & moveDir(drone[1]) | (notMoveDir(drone[0]) & moveDir(drone[1])) | (moveDir(drone[0]) & notMoveDir(drone[1])) | (notMoveDir(drone[0]) & notMoveDir(drone[1]));
 
-// ================================== PICKUP , DROP-OFF LOGIC ======================================
-
+// ================================== PICKUP LOGIC ======================================
 // guarantees when a pickup can be made + implications on monitor
 gar G pickUpThisState = 1 -> atHouse1 & waitingPackageOutHouse1 & ((!envelopeRequests[0] & roomForPickupPackage) |(envelopeRequests[0] & roomForPickupEnvelope)) & next(waitingPackageOutHouse1)=false;
 gar G pickUpThisState = 2 -> atHouse2 & waitingPackageOutHouse2 & ((!envelopeRequests[1] & roomForPickupPackage) |(envelopeRequests[1] & roomForPickupEnvelope)) & next(waitingPackageOutHouse2)=false;
@@ -202,13 +203,14 @@ gar pRespondsToS(waitingPackageInWarehouseToHouse2, pickUpThisState = 6);
 gar pRespondsToS(waitingPackageInWarehouseToHouse3, pickUpThisState = 7);
 gar pRespondsToS(waitingPackageInWarehouseToHouse4, pickUpThisState = 8);
 
+// ================================== MUST DROP OFF LOGIC ======================================
 // guarantees when a drop-off can be made
-gar G dropOffThisState = 1 -> atHouse1 & droneToHouseCap1 > 0;
-gar G dropOffThisState = 2 -> atHouse2 & droneToHouseCap2 > 0;
-gar G dropOffThisState = 3 -> atHouse3 & droneToHouseCap3 > 0;
-gar G dropOffThisState = 4 -> atHouse4 & droneToHouseCap4 > 0;
-gar G dropOffThisState = 5 -> atWarehouse & droneToWarehouseCap > 0;
-gar G dropOffThisState = 6 -> atWarehouse & totalEnvelopesToWH > 0;
+gar G dropOffThisState = 1 iff atHouse1 & droneToHouseCap1 > 0;
+gar G dropOffThisState = 2 iff atHouse2 & droneToHouseCap2 > 0;
+gar G dropOffThisState = 3 iff atHouse3 & droneToHouseCap3 > 0;
+gar G dropOffThisState = 4 iff atHouse4 & droneToHouseCap4 > 0;
+gar G dropOffThisState = 5 iff atWarehouse & droneToWarehouseCap > 0;
+gar G dropOffThisState = 6 iff atWarehouse & totalEnvelopesToWH > 0;
 
 // always eventually drop-off packages that are carried by the drone
 gar pRespondsToS(droneToHouseCap1 > 0,atHouse1);
@@ -218,6 +220,12 @@ gar pRespondsToS(droneToHouseCap4 > 0,atHouse4);
 gar pRespondsToS(droneToWarehouseCap > 0,atWarehouse);
 gar pRespondsToS(totalEnvelopesToWH > 0,atWarehouse);
 
+// drone have to drop-off all packages before leaving the house/warehouse
+gar G atHouse1 & droneToHouseCap1 > 1 | 
+	atHouse2 & droneToHouseCap2 > 1 | 
+	atHouse3 & droneToHouseCap3 > 1 | 
+	atHouse4 & droneToHouseCap4 > 1 |
+	atWarehouse & droneToWarehouseCap > 1 | atWarehouse & totalEnvelopesToWH > 1 -> stay;
 
 /* ================================ WINDS LOGIC ======================================== */	
 // To turn off winds comment the marked lines
@@ -251,22 +259,3 @@ counter energy (0..MAX_ENERGY){
 	overflow: false;
 }
 gar G energy <= MAX_ENERGY;
-
-/*================================ MUST DROP OFF LOGIC  =================================== */
-
-define stay :=  next(drone[0]) = drone[0] & next(drone[1])= drone[1];
-
-// guarantees when a drop-off can be made- drop off
-gar G dropOffThisState = 1 iff atHouse1 & droneToHouseCap1 > 0;
-gar G dropOffThisState = 2 iff atHouse2 & droneToHouseCap2 > 0;
-gar G dropOffThisState = 3 iff atHouse3 & droneToHouseCap3 > 0;
-gar G dropOffThisState = 4 iff atHouse4 & droneToHouseCap4 > 0;
-gar G dropOffThisState = 5 iff atWarehouse & droneToWarehouseCap > 0;
-gar G dropOffThisState = 6 iff atWarehouse & totalEnvelopesToWH > 0;
-
-// drone have to drop-off all packages before leaving the house/warehouse
-gar G atHouse1 & droneToHouseCap1 > 1 | 
-	atHouse2 & droneToHouseCap2 > 1 | 
-	atHouse3 & droneToHouseCap3 > 1 | 
-	atHouse4 & droneToHouseCap4 > 1 |
-	atWarehouse & droneToWarehouseCap > 1 | atWarehouse & totalEnvelopesToWH > 1 -> stay;
