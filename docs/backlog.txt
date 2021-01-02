@@ -59,9 +59,8 @@ s.t. the drone can make an at most X amount of pickups without being charged (re
 
 ** Added 'MustPickup' specification variants.
 *** In this spec. if the drone is at a house where there's a package/envelope waiting, and he has the capabilty to pick it up - then it must do so.
-*** Since this guarantee added to the main spec. increased computing time significantly (about an hour), we added 2 options:
-**** Full - the main spec. file with the added functionality.
-**** Basic - a basic drone spec. file (no priority, winds nor energy) with the added functionality (about 6 min. of compute time).
+*** Since this guarantee added to the main spec. increased computing time significantly (about an hour), we created basic option:
+**** A basic drone spec. file (no priority, winds nor energy) with the added functionality (about 6 min. of compute time).
 *** In addition, an unrealizable version we encountered.
 
 * Add Modularity Features (Specification):

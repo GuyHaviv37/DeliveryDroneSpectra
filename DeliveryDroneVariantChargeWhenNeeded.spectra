@@ -251,7 +251,7 @@ gar G priorityCap <= 1;
 /*================================ ENERGY LOGIC  =================================== */
 // To turn off energy comment the marked lines
 define MAX_ENERGY:= 7;
-define DONT_CHARGR_BEFORE_PICKUPS:= 2; // number belongs to the group {0,...,(MAX_ENERGY-1)} 
+define DONT_CHARGR_BEFORE_PICKUPS:= 6; // number belongs to the group {0,...,(MAX_ENERGY-1)} 
 
 counter energy (0..MAX_ENERGY){
 	energy=0;

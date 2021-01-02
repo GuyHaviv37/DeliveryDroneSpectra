@@ -4,7 +4,7 @@ From Third Sprint:
 * Added Tooltips to scenario menu (information about each scenario), as well as general buttons.
 * Added 'Triggers' specification variant.
 * Added 'Charge only when needed' specification variant (that can be parameterized).
-* Added 'MustPickup' specification variants (full and "basic" - based on the most basic specification).
+* Added 'MustPickup' specification variants ("basic" - based on the most basic specification).
 ** In addition, an unrealizable version we encountered.
 * Added GUI Winds animation.
 * Added 'Random Request' abilities.
