@@ -18,6 +18,10 @@ import javax.swing.Timer;
 @SuppressWarnings("serial")
 public class GridPanel extends JPanel implements ActionListener {
 
+	// Locations & Final Defines - These can be modified in accordance with the specification
+	int[][] houseLocations = new int[][] { { 0, 0 }, { 0, 2 }, { 2, 0 }, { 2, 2 } };
+	int[] warehouseLocation = new int[] { 3, 3 };
+	int[] chargingStationLocation = new int[] { 3, 2 };
 	public static final int NUM_OF_HOUSES = 4;
 	private static final int MAX_ENERGY = 7;
 	private static final int MAX_CAPACITY = 2;
@@ -63,9 +67,6 @@ public class GridPanel extends JPanel implements ActionListener {
 	boolean isSkip = false;
 	boolean afterScenarioEffect = false;
 	boolean turnOnTurbo = false;
-	int[][] houseLocations = new int[][] { { 0, 0 }, { 0, 2 }, { 2, 0 }, { 2, 2 } };
-	int[] warehouseLocation = new int[] { 3, 3 };
-	int[] chargingStationLocation = new int[] { 3, 2 };
 	ImageManager im;
 	JLabel leavesGIF1;
 	JLabel leavesGIF2;
