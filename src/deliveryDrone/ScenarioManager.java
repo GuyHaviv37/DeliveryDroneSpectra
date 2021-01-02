@@ -57,10 +57,10 @@ enum ScenarioNumber{
 public class ScenarioManager {
 
 	/*
-	 * Scenario #1 - 'One package from warehouse to house #4'
+	 * Scenario #1 - 'A package is sent from the warehouse to a random house'
 	 * This scenario has two steps. 
 	 * The first step is finished whenever the drone pickup the package from warehouse.
-	 * The second step is finished whenever the drone drop off the package at house #4.
+	 * The second step is finished whenever the drone drop off the package at house the house.
 	 */
 	private static Queue<ScenarioStep> createScenarioOne() {
 		Queue<ScenarioStep> scenarioSteps = new LinkedList<>();
@@ -97,9 +97,9 @@ public class ScenarioManager {
 	}
 
 	/*
-	 * Scenario #2 - 'each house send one package or envelope to warehouse'
+	 * Scenario #2 - 'All houses request a package or an envelope delivery'
 	 * This scenario has one step. 
-	 * The step is finished whenever the drone pickup the packages from all the houses.
+	 * The step is finished whenever the drone pickup the requests from all the houses.
 	 */
 	private static Queue<ScenarioStep> createScenarioTwo() {
 		Queue<ScenarioStep> scenarioSteps = new LinkedList<>();
@@ -142,7 +142,7 @@ public class ScenarioManager {
 		return scenarioSteps;
 	}
 	/*
-	 * Scenario #3 - 'priority without warehouse packages'
+	 * Scenario #3 - 'Priority mode, with no warehouse packages'
 	 * This scenario has one step. 
 	 * The step is finished whenever the drone pickup the package from house#1 and the envelope from house #3.
 	 */
@@ -177,7 +177,7 @@ public class ScenarioManager {
 		return scenarioSteps;
 	}
 	/*
-	 * Scenario #4 - '3 packages in warehouse, 2 envelopes at houses- priority mode on- till all requests picked up'
+	 * Scenario #4 - 'Pickup: 3 WH packages, 2 house envelopes - with Priority Mode'
 	 * This scenario has one step. 
 	 * The step is finished whenever the drone pickup all the requests
 	 * */
@@ -226,7 +226,7 @@ public class ScenarioManager {
 		return scenarioSteps;
 	}
 	/*
-	 * Scenario #5 - 'each house send package, there if refill of 4 new packages (one after each pickup), winds- on part of the time'
+	 * Scenario #5 - 'Pickup: all houses request package delivery, with a 4 package refill after a pickup. Partial use of Winds Mode'
 	 * This scenario has 5 steps. 
 	 * step#0 is finished whenever the drone pickup the first package from house.
 	 * step#1 is finished whenever the drone pickup the second package from house.
@@ -348,7 +348,7 @@ public class ScenarioManager {
 		return scenarioSteps;
 	}
 	/*
-	 * Scenario #6 - '4 packages in warehouse, 4 requests from houses- winds mode on- till all requests drop off'
+	 * Scenario #6 - 'Full Grid, Full Delivery - All houses request delivery, Warehouse full as well. with Winds Mode'
 	 * This scenario has one step. 
 	 * The step is finished whenever the drone drop off all the requests
 	 * */
@@ -416,7 +416,7 @@ public class ScenarioManager {
 		return scenarioSteps;
 	}
 	/*
-	 * Scenario #7 - 'circle of packages from houses- till all drop off'
+	 * Scenario #7 - 'Carousel of house packages (Requests in cycle) - Full Delivery'
 	 * This scenario has 5 steps. 
 	 * step#0 is finished whenever the drone pickup the package from house #1.
 	 * step#1 is finished whenever the drone pickup the package from house #2.
@@ -526,10 +526,10 @@ public class ScenarioManager {
 		return scenarioSteps;
 	}
 	/*
-	 * Scenario #8 - 'one random package from warehouse, when pickup request from the same house. finish when pickup from house'
+	 * Scenario #8 - 'On-the-way Pickup: Random WH request to a house, upon pickup - add delivery request from that house. Full Delivery of house request'
 	 * This scenario has two steps. 
 	 * The first step is finished whenever the drone pickup the package from warehouse.
-	 * The second step is finished whenever the drone drop off the package at house #4.
+	 * The second step is finished whenever the drone drop off the package at house .
 	 */
 	private static Queue<ScenarioStep> createScenarioEight() {
 		Queue<ScenarioStep> scenarioSteps = new LinkedList<>();
