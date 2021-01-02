@@ -9,7 +9,8 @@ type Cord = Int(0..GRID_DIM);
 // drone[0] is row , drone[1] is column
 define
 	GRID_DIM := 3; //actually 3+1
-// Specify locations of warehouse, charging station and houses on the grid
+// Specify locations of warehouse, charging station and houses on the grid, and drone capacity
+//These can be modified in accordance with the GridPanel.java
 define
 	atWarehouse := drone[0] = 3 & drone[1] = 3;
 	atChargingStation := drone[0] = 3 & drone[1] = 2;
@@ -17,12 +18,12 @@ define
 	atHouse2 := drone[0] = 0 & drone[1] = 2;
 	atHouse3 := drone[0] = 2 & drone[1] = 0;
 	atHouse4 := drone[0] = 2 & drone[1] = 2;
+define PACKAGE_CAPACITY := 2; 
+define ENVELOPE_CAPACITY := 6;
+
 define
 	NUM_OF_HOUSES := 4;
 	NUM_OF_HOUSES_MINUS_ONE := 3;
-
-define PACKAGE_CAPACITY := 2; 
-define ENVELOPE_CAPACITY := 6;
 
 define 
 	housePickedup := pickUpThisState > 0 & pickUpThisState <5 ;
