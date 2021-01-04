@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.Queue;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -445,19 +446,12 @@ public class GridPanel extends JPanel implements ActionListener {
 	
 
 	private void updateDemo() {
-		// could consider inserting guaranteed randomized choice every X time.
 		if(this.isDemo == DemoMode.RUNNING) {
 			Random rand = new Random();
-			for(int i = 0; i < this.houseRequests.length; i++) {
-				double precentHouse = rand.nextDouble();
-				double precentWarehouse = rand.nextDouble();
-				boolean before= this.houseRequests[i];
-				this.houseRequests[i]= (precentHouse < 0.025) ? true : false;
-				if(this.houseRequests[i] && !before) {
-					double precentEnvelope = rand.nextDouble();
-					this.envelopeRequests[i]= (precentEnvelope < 0.2) ? !this.envelopeRequests[i] : this.envelopeRequests[i];
-				}
-				this.warehouseRequests[i]= (precentWarehouse < 0.025) ? true : false;
+			double precentNewRequest = rand.nextDouble();
+			if(precentNewRequest < 0.025) {
+				int randomInt = ThreadLocalRandom.current().nextInt(1, 13);
+				addPickupRequest(randomInt);
 			}
 			double precentWind = rand.nextDouble();
 			double precentPriority = rand.nextDouble();
@@ -469,10 +463,13 @@ public class GridPanel extends JPanel implements ActionListener {
 			this.priorityMode= (precentPriority < 0.002) ? !this.priorityMode : this.priorityMode;
 		} else if (this.isDemo == DemoMode.WAITING) {
 			// TODO - make sure this is the right check after request changes
-			if(isRequestsClear()) { // check that all a-priory requests are monitored
-				this.isDemo = DemoMode.RUNNING;
-				this.parentFrame.enableDemoBtn(true);				
-			}
+			// I think this is no redundant since no loss can be made by turning on demo mode
+//			if(isRequestsClear()) { // check that all a-priory requests are monitored
+//				this.isDemo = DemoMode.RUNNING;
+//				this.parentFrame.enableDemoBtn(true);				
+//			}
+			this.isDemo = DemoMode.RUNNING;
+			this.parentFrame.enableDemoBtn(true);
 		}
 	}
 	
