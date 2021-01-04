@@ -1,6 +1,6 @@
 import "./imports/DwyerPatterns.spectra"
 
-spec DeliveryDroneMain
+spec DeliveryDroneMainVariantLessMoves //Computation time: 190ms
 
 /* ======================================== TYPES ==============================================*/
 type Cord = Int(0..GRID_DIM);
@@ -19,7 +19,7 @@ define
 	atHouse3 := drone[0] = 2 & drone[1] = 0;
 	atHouse4 := drone[0] = 2 & drone[1] = 2;
 define PACKAGE_CAPACITY := 2; 
-define ENVELOPE_CAPACITY := 6;
+define ENVELOPE_CAPACITY := 5;
 
 define
 	NUM_OF_HOUSES := 4;
@@ -37,7 +37,8 @@ define
 define roomForPickupPackage := totalPackages + 1 <= PACKAGE_CAPACITY; 
 		roomForPickupEnvelope := totalEnvelopesToWH + 1 <= ENVELOPE_CAPACITY; 
 		
-define packageWaitingInWarehouse := waitingPackageInWarehouseToHouse1 | waitingPackageInWarehouseToHouse2 |waitingPackageInWarehouseToHouse3 | waitingPackageInWarehouseToHouse4;
+define packageWaitingInWarehouse := outWarehousePackages[0] | outWarehousePackages[1] |outWarehousePackages[2] | outWarehousePackages[3];
+	packageWaitingInHouses := outHousePackages[0] | outHousePackages[1] | outHousePackages[2] | outHousePackages[3];
 
 define stay :=  next(drone[0]) = drone[0] & next(drone[1])= drone[1];
 
@@ -74,6 +75,15 @@ forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
 asm initEnvelopeModeOff:
 forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
 		envelopeRequests[i] = false;
+	
+asm G outWarehousePackages[0] -> next(outWarehousePackages[0]) | pickUpThisState=5;
+asm G outWarehousePackages[1] -> next(outWarehousePackages[1]) | pickUpThisState=6;
+asm G outWarehousePackages[2] -> next(outWarehousePackages[2]) | pickUpThisState=7;
+asm G outWarehousePackages[3] -> next(outWarehousePackages[3]) | pickUpThisState=8;	
+asm G outHousePackages[0] -> next(outHousePackages[0]) | pickUpThisState=1;
+asm G outHousePackages[1] -> next(outHousePackages[1]) | pickUpThisState=2;
+asm G outHousePackages[2] -> next(outHousePackages[2]) | pickUpThisState=3;
+asm G outHousePackages[3] -> next(outHousePackages[3]) | pickUpThisState=4;
 
 /* ======================================== INVENTORY ==============================================*/
 //all packages on the drone
@@ -130,79 +140,46 @@ counter droneToHouseCap4(0..PACKAGE_CAPACITY){
 	underflow:false;
 }
 	
-/* ==================== MONITORS TO WATCH PACKAGES WAIT TILL PICKED UP FROM OUT-HOUSE ============================*/
-
-monitor boolean waitingPackageOutHouse1{ 
-	!waitingPackageOutHouse1;
-	G next(waitingPackageOutHouse1) = ((outHousePackages[0]| waitingPackageOutHouse1) & !(pickUpThisState=1));	
-}
-monitor boolean waitingPackageOutHouse2{
-	!waitingPackageOutHouse2;
-	G next(waitingPackageOutHouse2) = ((outHousePackages[1]| waitingPackageOutHouse2) & !(pickUpThisState=2));	
-}
-monitor boolean waitingPackageOutHouse3{
-	!waitingPackageOutHouse3;
-	G next(waitingPackageOutHouse3) = ((outHousePackages[2]| waitingPackageOutHouse3) & !(pickUpThisState=3));	
-}
-monitor boolean waitingPackageOutHouse4{
-	!waitingPackageOutHouse4;
-	G next(waitingPackageOutHouse4) = ((outHousePackages[3]| waitingPackageOutHouse4) & !(pickUpThisState=4));	
-}
-/*======================== MONITORS TO WATCH PACKAGES WAIT TILL PICKED UP FROM WAREHOUSE ==========================*/
-monitor boolean waitingPackageInWarehouseToHouse1{
-	!waitingPackageInWarehouseToHouse1;
-	G next(waitingPackageInWarehouseToHouse1) = ((outWarehousePackages[0]| waitingPackageInWarehouseToHouse1) & !(pickUpThisState=5));	
-}
-monitor boolean waitingPackageInWarehouseToHouse2{
-	!waitingPackageInWarehouseToHouse2;
-	G next(waitingPackageInWarehouseToHouse2) = ((outWarehousePackages[1]| waitingPackageInWarehouseToHouse2) & !(pickUpThisState=6));	
-}
-monitor boolean waitingPackageInWarehouseToHouse3{
-	!waitingPackageInWarehouseToHouse3;
-	G next(waitingPackageInWarehouseToHouse3) = ((outWarehousePackages[2]| waitingPackageInWarehouseToHouse3) & !(pickUpThisState=7));	
-}
-monitor boolean waitingPackageInWarehouseToHouse4{
-	!waitingPackageInWarehouseToHouse4;
-	G next(waitingPackageInWarehouseToHouse4) = ((outWarehousePackages[3]| waitingPackageInWarehouseToHouse4) & !(pickUpThisState=8));	
-}
-
 /* ============================================ GUARANTEES ================================== */
-// Init location of drone at the start of the simulation
-gar startAtChargingStation:
-	atWarehouse;
-
-// Init pickup/dropoff states
-gar initPickUpThisState:
-	pickUpThisState = 0;
-gar initDropOffThisState:
-	dropOffThisState = 0;
+// Init location of drone and no pick up and no drop off
+gar atWarehouse;
+gar pickUpThisState = 0;
+gar dropOffThisState = 0;
 	
+/*========================================== DRONE MOVEMENT LOGIC  =================================== */
 // Ensure at every step drone has to decide if to make a move in both row and col directions
 gar droneMoves:
 	G moveDir(drone[0]) & moveDir(drone[1]) | (notMoveDir(drone[0]) & moveDir(drone[1])) | (moveDir(drone[0]) & notMoveDir(drone[1])) | (notMoveDir(drone[0]) & notMoveDir(drone[1]));
+//Drone does not move if there nothing to do
+gar G !packageWaitingInWarehouse & !packageWaitingInHouses & totalEnvelopesToWH=0 & totalPackages=0 -> stay;
+gar G dropOffThisState>0 -> stay;
+
+// set maximum steps drone can make between pickup and drop off
+gar trig [true]*[(pickUpThisState>0)] |=> [pickUpThisState=0]{0,5}[(dropOffThisState>0)]; 
+gar G !(pickUpThisState>0 &dropOffThisState>0); 
 
 // ================================== PICKUP LOGIC ======================================
 // guarantees when a pickup can be made + implications on monitor
-gar G pickUpThisState = 1 -> atHouse1 & waitingPackageOutHouse1 & ((!envelopeRequests[0] & roomForPickupPackage) |(envelopeRequests[0] & roomForPickupEnvelope));
-gar G pickUpThisState = 2 -> atHouse2 & waitingPackageOutHouse2 & ((!envelopeRequests[1] & roomForPickupPackage) |(envelopeRequests[1] & roomForPickupEnvelope));
-gar G pickUpThisState = 3 -> atHouse3 & waitingPackageOutHouse3 & ((!envelopeRequests[2] & roomForPickupPackage) |(envelopeRequests[2] & roomForPickupEnvelope));
-gar G pickUpThisState = 4 -> atHouse4 & waitingPackageOutHouse4 & ((!envelopeRequests[3] & roomForPickupPackage) |(envelopeRequests[3] & roomForPickupEnvelope));
+gar G pickUpThisState = 1 -> atHouse1 & outHousePackages[0] & ((!envelopeRequests[0] & roomForPickupPackage) |(envelopeRequests[0] & roomForPickupEnvelope));
+gar G pickUpThisState = 2 -> atHouse2 & outHousePackages[1] & ((!envelopeRequests[1] & roomForPickupPackage) |(envelopeRequests[1] & roomForPickupEnvelope));
+gar G pickUpThisState = 3 -> atHouse3 & outHousePackages[2] & ((!envelopeRequests[2] & roomForPickupPackage) |(envelopeRequests[2] & roomForPickupEnvelope));
+gar G pickUpThisState = 4 -> atHouse4 & outHousePackages[3] & ((!envelopeRequests[3] & roomForPickupPackage) |(envelopeRequests[3] & roomForPickupEnvelope));
 
-gar G pickUpThisState = 5 -> atWarehouse & waitingPackageInWarehouseToHouse1 & roomForPickupPackage;
-gar G pickUpThisState = 6 -> atWarehouse & waitingPackageInWarehouseToHouse2 & roomForPickupPackage;
-gar G pickUpThisState = 7 -> atWarehouse & waitingPackageInWarehouseToHouse3 & roomForPickupPackage;
-gar G pickUpThisState = 8 -> atWarehouse & waitingPackageInWarehouseToHouse4 & roomForPickupPackage;
+gar G pickUpThisState = 5 -> atWarehouse & outWarehousePackages[0] & roomForPickupPackage;
+gar G pickUpThisState = 6 -> atWarehouse & outWarehousePackages[1] & roomForPickupPackage;
+gar G pickUpThisState = 7 -> atWarehouse & outWarehousePackages[2] & roomForPickupPackage;
+gar G pickUpThisState = 8 -> atWarehouse & outWarehousePackages[3] & roomForPickupPackage;
 
 // always eventually pick up a waiting package	
-gar pRespondsToS(waitingPackageOutHouse1, pickUpThisState = 1);
-gar pRespondsToS(waitingPackageOutHouse2, pickUpThisState = 2);
-gar pRespondsToS(waitingPackageOutHouse3, pickUpThisState = 3);
-gar pRespondsToS(waitingPackageOutHouse4, pickUpThisState = 4);
+gar pRespondsToS(outHousePackages[0], pickUpThisState = 1);
+gar pRespondsToS(outHousePackages[1], pickUpThisState = 2);
+gar pRespondsToS(outHousePackages[2], pickUpThisState = 3);
+gar pRespondsToS(outHousePackages[3], pickUpThisState = 4);
 
-gar pRespondsToS(waitingPackageInWarehouseToHouse1, pickUpThisState = 5);
-gar pRespondsToS(waitingPackageInWarehouseToHouse2, pickUpThisState = 6);
-gar pRespondsToS(waitingPackageInWarehouseToHouse3, pickUpThisState = 7);
-gar pRespondsToS(waitingPackageInWarehouseToHouse4, pickUpThisState = 8);
+gar pRespondsToS(outWarehousePackages[0], pickUpThisState = 5);
+gar pRespondsToS(outWarehousePackages[1], pickUpThisState = 6);
+gar pRespondsToS(outWarehousePackages[2], pickUpThisState = 7);
+gar pRespondsToS(outWarehousePackages[3], pickUpThisState = 8);
 
 // ================================== MUST DROP OFF LOGIC ======================================
 // guarantees when a drop-off can be made
@@ -231,19 +208,18 @@ gar G atHouse1 & droneToHouseCap1 > 1 |
 /* ================================ WINDS LOGIC ======================================== */	
 // To turn off winds comment the marked lines
 env boolean windsMode;
-//asm windsMode=false; // *comment out
+asm windsMode=false; // *comment out
 
-//gar droneMovesWithWind: // *comment out
-//	G moveDir(drone[0]) & moveDir(drone[1]) -> !windsMode; // *comment out
+gar G moveDir(drone[0]) & moveDir(drone[1]) -> !windsMode; // *comment out
 
 /* ================================ PRIORITY LOGIC ======================================== */	
 // To turn off priority comment the marked lines
 env boolean priorityMode;
-//asm priorityMode=false; // *comment out
+asm priorityMode=false; // *comment out
 
 counter priorityCap(0..1){
 	priorityCap=0; 
-	//inc: housePickedup & priorityMode & packageWaitingInWarehouse; // *comment out
+	inc: housePickedup & priorityMode & packageWaitingInWarehouse; // *comment out
 	reset: warehousePickedup;
 	overflow: false; 
 }
@@ -255,33 +231,8 @@ define MAX_ENERGY:= 7;
 
 counter energy (0..MAX_ENERGY){
 	energy=0;
-	//inc: housePackagePickup | warehousePickedup; // *comment out
+	inc: housePackagePickup | warehousePickedup; // *comment out
 	reset: atChargingStation;
 	overflow: false;
 }
 gar G energy <= MAX_ENERGY;
-/*================================ MINSTEP LOGIC  =================================== */
-gar stay-> (atChargingStation|atWarehouse|atHouse1|atHouse2|atHouse3|atHouse4);
-//counter minStep (0..6){
-//	minStep=0;
-//	inc: !stay;
-//	reset: pickUpThisState>0 | dropOffThisState>0 ;
-//	overflow: false;
-//}
-//gar G minStep<=6;
-//gar trig [true]*[(atChargingStation | pickUpThisState>0 | dropOffThisState>0)] |=> [(minStep<=6)]*[(atWarehouse|atHouse1|atHouse2|atHouse3|atHouse4)];
-//gar G pattern10(pickUpThisState=1 , dropOffThisState=1,minStep<=7);
-
-//gar trig [true]*[(pickUpThisState=1)] |=> [!((dropOffThisState=5) |(dropOffThisState=6))]{1,7}[((dropOffThisState=5) |(dropOffThisState=6))];
-//gar trig [true]*[(pickUpThisState=2)] |=> [!((dropOffThisState=5) |(dropOffThisState=6))]{1,7}[((dropOffThisState=5) |(dropOffThisState=6))];
-//gar trig [true]*[(pickUpThisState=3)] |=> [!((dropOffThisState=5) |(dropOffThisState=6))]{1,7}[((dropOffThisState=5) |(dropOffThisState=6))];
-//gar trig [true]*[(pickUpThisState=4)] |=> [!((dropOffThisState=5) |(dropOffThisState=6))]{1,7}[((dropOffThisState=5) |(dropOffThisState=6))];
-//gar trig [true]*[(pickUpThisState=5)] |=> [!((dropOffThisState=1))]{1,7}[(dropOffThisState=1)];
-//gar trig [true]*[(pickUpThisState=6)] |=> [!((dropOffThisState=2))]{1,7}[(dropOffThisState=2)];
-//gar trig [true]*[(pickUpThisState=7)] |=> [!((dropOffThisState=3))]{1,7}[(dropOffThisState=3)];
-//gar trig [true]*[(pickUpThisState=8)] |=> [!((dropOffThisState=4))]{1,7}[(dropOffThisState=4)];
-
-
-
-
-
