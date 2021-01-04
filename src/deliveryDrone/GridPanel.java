@@ -419,7 +419,7 @@ public class GridPanel extends JPanel implements ActionListener {
 			this.windsMode= currentStep.getIsWinds();
 			this.priorityMode = currentStep.getIsPriority();
 			currentStep.setHasStarted(true);
-		} // TODO - replace monitors on the isFinished call (now null) 
+		} 
 		else if (currentStep.isFinished(this.droneToHouseCap, this.droneToWarehouseCap,this.totalEnvelopes,
 				this.houseRequests, this.pickUpThisState, this.dropOffThisState)) { // step finished, get the next step
 			this.drone.setTurboMode(false);
