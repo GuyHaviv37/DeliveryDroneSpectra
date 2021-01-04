@@ -236,8 +236,8 @@ counter energy (0..MAX_ENERGY){
 gar G energy <= MAX_ENERGY;
 /*================================ MINSTEP LOGIC  =================================== */
 gar G !packageWaitingInWarehouse & !packageWaitingInHouses & totalEnvelopesToWH=0 & totalPackages=0 -> stay;
-
-gar trig [true]*[(pickUpThisState>0)] |=> [true]{0,7}[(dropOffThisState>0)];
+//
+//gar trig [true]*[(pickUpThisState>0)] |=> [true]{0,7}[(dropOffThisState>0)];
 
 
 
