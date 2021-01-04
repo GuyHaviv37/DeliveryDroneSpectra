@@ -190,8 +190,8 @@ public class Drone {
 				+ ", stopPosition=" + Arrays.toString(stopPosition) + ", direction=" + direction + "]";
 	}
 	
-	public int getStockFrame() {
-		return currStockFrame;
+	public boolean isInLastStockFrame() {
+		return this.currStockFrame+1 == this.STOCK_FRAMES;
 	}
 }
 

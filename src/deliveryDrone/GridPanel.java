@@ -311,13 +311,17 @@ public class GridPanel extends JPanel implements ActionListener {
 
 	public void addPickupRequest(int requestNumber) {
 		if (requestNumber >= 1 && requestNumber <= 4) {
-			this.houseRequests[requestNumber - 1] = true;
-			this.envelopeRequests[requestNumber - 1] = false;
+			if(!this.houseRequests[requestNumber-1]) {
+				this.houseRequests[requestNumber - 1] = true;
+				this.envelopeRequests[requestNumber - 1] = false;				
+			}
 		} else if (requestNumber >= 5 && requestNumber <= 8) {
 			this.warehouseRequests[requestNumber - 5] = true;
 		} else if (requestNumber >= 9 && requestNumber <= 12) {
-			this.houseRequests[requestNumber - 9] = true;
-			this.envelopeRequests[requestNumber - 9] = true;
+			if(!this.houseRequests[requestNumber-9]) {
+				this.houseRequests[requestNumber - 9] = true;
+				this.envelopeRequests[requestNumber - 9] = true;	
+			}
 		}
 		updateEnvironment();
 		// getNewState();
@@ -383,7 +387,7 @@ public class GridPanel extends JPanel implements ActionListener {
 		repaint();
 		// When we have animation we will check that no animation is running before
 		// getting new state
-		if(drone.isStocking() && drone.getStockFrame() == 6) {
+		if(drone.isStocking() && drone.isInLastStockFrame()) {
 			System.out.println("PUTS: "+ pickUpThisState);
 			clearPickedRequests();
 		}
@@ -423,7 +427,12 @@ public class GridPanel extends JPanel implements ActionListener {
 					return ;
 				}
 			}
-			this.houseRequests = currentStep.getHouseRequestValue();
+			boolean[] stepRequests = currentStep.getHouseRequestValue();
+			for(int i=0;i<stepRequests.length;i++) {
+				if(stepRequests[i]) {
+					addPickupRequest(i+1);					
+				}
+			}
 			this.warehouseRequests = currentStep.getWarehouseRequestValue();
 			this.envelopeRequests = currentStep.getEnvelopeModeValue();
 			this.windsMode= currentStep.getIsWinds();
