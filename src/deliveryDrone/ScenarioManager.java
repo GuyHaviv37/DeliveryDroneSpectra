@@ -73,7 +73,7 @@ public class ScenarioManager {
 		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.ONE,stepNumber++, house, warehouse0) {
 
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests,  int pickUpThisState, int dropOffThisState) {
 				if(pickUpThisState == randomNum+5) {
 					return true;
 				}
@@ -85,7 +85,7 @@ public class ScenarioManager {
 		ScenarioStep scenarioStep1 = new ScenarioStep(ScenarioNumber.ONE,stepNumber++, house, warehouse1) {
 
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests,  int pickUpThisState, int dropOffThisState) {
 				if(dropOffThisState == randomNum+1) {
 					return true;
 				}
@@ -115,7 +115,7 @@ public class ScenarioManager {
 		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.TWO,stepNumber++, house, warehouse0, false, false, envelope) {
 
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests,  int pickUpThisState, int dropOffThisState) {
 				switch (pickUpThisState) {
 				case 1:
 					this.getPrivateData()[0]=true;
@@ -158,7 +158,7 @@ public class ScenarioManager {
 		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.THREE,stepNumber++, house, warehouse0,false, true, envelope) {
 
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests,  int pickUpThisState, int dropOffThisState) {
 				switch (pickUpThisState) {
 				case 1:
 					this.getPrivateData()[0]=true;
@@ -197,7 +197,7 @@ public class ScenarioManager {
 		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.FOUR,stepNumber++, house, warehouse0,false, true, envelope) {
 
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests,  int pickUpThisState, int dropOffThisState) {
 				switch (pickUpThisState) {
 				case 1:
 					this.getPrivateData()[0]=true;
@@ -243,7 +243,7 @@ public class ScenarioManager {
 		Arrays.fill(house, Boolean.TRUE);
 		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house, warehouse0) {
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
 				if(pickUpThisState>0) {
 					this.getPrivateData()[0]=true;
 					return false;
@@ -261,7 +261,7 @@ public class ScenarioManager {
 		Arrays.fill(house1, Boolean.TRUE);
 		ScenarioStep scenarioStep1 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house1, warehouse0) {
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
 				if(pickUpThisState>0) {
 					this.getPrivateData()[0]=true;
 					return false;
@@ -279,7 +279,7 @@ public class ScenarioManager {
 		Arrays.fill(house2, Boolean.TRUE);
 		ScenarioStep scenarioStep2 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house2, warehouse0,true,false,envelope) {
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
 				if(pickUpThisState>0) {
 					this.getPrivateData()[0]=true;
 					return false;
@@ -297,7 +297,7 @@ public class ScenarioManager {
 		Arrays.fill(house3, Boolean.TRUE);
 		ScenarioStep scenarioStep3 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house3, warehouse0,true,false,envelope) {
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
 				if(pickUpThisState>0) {
 					this.getPrivateData()[0]=true;
 					return false;
@@ -315,7 +315,7 @@ public class ScenarioManager {
 		Arrays.fill(house4, Boolean.TRUE);
 		ScenarioStep scenarioStep4 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house4, warehouse0,true,false,envelope) {
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
 				if(pickUpThisState>0) {
 					this.getPrivateData()[0]=true;
 					return false;
@@ -331,9 +331,9 @@ public class ScenarioManager {
 		scenarioSteps.offer(scenarioStep4); 
 		ScenarioStep scenarioStep5 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house, warehouse0) {
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
 				for(int i=0; i< GridPanel.NUM_OF_HOUSES;i++) {
-					if(houseMonitors[i]) {
+					if(houseRequests[i]) {
 						return false;
 					}
 
@@ -369,7 +369,7 @@ public class ScenarioManager {
 		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.SIX,stepNumber++, house, warehouse,true, false, envelope) {
 
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
 
 				switch (pickUpThisState) {
 				case 1:
@@ -434,7 +434,7 @@ public class ScenarioManager {
 		envelope[0]=true;
 		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.SEVEN,stepNumber++, house, warehouse0,false,false, envelope) {
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
 				if(pickUpThisState>0) {
 					this.getPrivateData()[0]=true;
 					return false;
@@ -454,7 +454,7 @@ public class ScenarioManager {
 		envelope1[1]=true;
 		ScenarioStep scenarioStep1 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house1, warehouse0, false,false, envelope1) {
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
 				if(pickUpThisState>0) {
 					this.getPrivateData()[0]=true;
 					return false;
@@ -474,7 +474,7 @@ public class ScenarioManager {
 		envelope2[3]=true;
 		ScenarioStep scenarioStep2 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house2, warehouse0, false,false, envelope2) {
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
 				if(pickUpThisState>0) {
 					this.getPrivateData()[0]=true;
 					return false;
@@ -494,7 +494,7 @@ public class ScenarioManager {
 		envelope3[2]=true;
 		ScenarioStep scenarioStep3 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house3, warehouse0, false,false,envelope3) {
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
 				if(pickUpThisState>0) {
 					this.getPrivateData()[0]=true;
 					return false;
@@ -510,9 +510,9 @@ public class ScenarioManager {
 		scenarioSteps.offer(scenarioStep3); 
 		ScenarioStep scenarioStep4 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house, warehouse0) {
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
 				for(int i=0; i< GridPanel.NUM_OF_HOUSES;i++) {
-					if(houseMonitors[i]) {
+					if(houseRequests[i]) {
 						return false;
 					}
 				}
@@ -542,7 +542,7 @@ public class ScenarioManager {
 		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.EIGHT,stepNumber++, house, warehouse0) {
 
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
 				if(pickUpThisState == randomNum+5) {
 					return true;
 				}
@@ -556,7 +556,7 @@ public class ScenarioManager {
 		ScenarioStep scenarioStep1 = new ScenarioStep(ScenarioNumber.EIGHT,stepNumber++, house1, warehouse1) {
 
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseMonitors, boolean[] warehouseMonitors,  int pickUpThisState, int dropOffThisState) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
 				if(pickUpThisState == randomNum+1) {
 					return true;
 				}

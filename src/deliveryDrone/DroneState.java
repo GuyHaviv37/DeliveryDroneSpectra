@@ -24,7 +24,7 @@ public class DroneState {
 
 	private void initSysValues() {
 		// drone location
-		sysValues.put("drone[0]", "2");
+		sysValues.put("drone[0]", "3");
 		sysValues.put("drone[1]", "3");
 		// PUTS , DOTS
 		sysValues.put("pickUpThisState", "0");

@@ -143,7 +143,7 @@ public class GridPanel extends JPanel implements ActionListener {
 		Color darkPrimary = new Color(59, 74, 99);
 		int stringRow1 = 25, stringRow2 = 45, stringRow3 = 65, stringRow4 = 85;
 		// fill "CONTROL PANEL"
-		g.setFont(new Font("Calibri", Font.PLAIN,16));
+		g.setFont(new Font("Calibri", Font.BOLD,16));
 		// Border
 		g.setColor(Color.BLACK);
 		g.drawLine(0, 600, 594, 600); 
@@ -421,8 +421,7 @@ public class GridPanel extends JPanel implements ActionListener {
 			currentStep.setHasStarted(true);
 		} // TODO - replace monitors on the isFinished call (now null) 
 		else if (currentStep.isFinished(this.droneToHouseCap, this.droneToWarehouseCap,this.totalEnvelopes,
-				null, null, this.pickUpThisState,
-				this.dropOffThisState)) { // step finished, get the next step
+				this.houseRequests, this.pickUpThisState, this.dropOffThisState)) { // step finished, get the next step
 			this.drone.setTurboMode(false);
 			if(this.isSkip) {
 				this.isSkip = false;
