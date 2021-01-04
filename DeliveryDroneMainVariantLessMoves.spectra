@@ -1,6 +1,6 @@
 import "./imports/DwyerPatterns.spectra"
 
-spec DeliveryDroneMainVariantLessMoves //Computation time: 190ms
+spec DeliveryDroneMainVariantLessMoves //Computation time: 190s
 
 /* ======================================== TYPES ==============================================*/
 type Cord = Int(0..GRID_DIM);
@@ -155,8 +155,9 @@ gar G !packageWaitingInWarehouse & !packageWaitingInHouses & totalEnvelopesToWH=
 gar G dropOffThisState>0 -> stay;
 
 // set maximum steps drone can make between pickup and drop off
-gar trig [true]*[(pickUpThisState>0)] |=> [pickUpThisState=0]{0,5}[(dropOffThisState>0)]; 
-gar G !(pickUpThisState>0 &dropOffThisState>0); 
+gar trig [true]*[(pickUpThisState>0)] |=> [pickUpThisState=0]{0,2}[(dropOffThisState>0)]; 
+gar G !(pickUpThisState>0 &dropOffThisState>0);
+gar trig [true]*[(packageWaitingInWarehouse | packageWaitingInHouses) & (totalEnvelopesToWH=0 & totalPackages=0)] |=>[true]{0,2}[pickUpThisState>0];
 
 // ================================== PICKUP LOGIC ======================================
 // guarantees when a pickup can be made + implications on monitor
@@ -208,9 +209,9 @@ gar G atHouse1 & droneToHouseCap1 > 1 |
 /* ================================ WINDS LOGIC ======================================== */	
 // To turn off winds comment the marked lines
 env boolean windsMode;
-asm windsMode=false; // *comment out
+//asm windsMode=false; // *comment out
 
-gar G moveDir(drone[0]) & moveDir(drone[1]) -> !windsMode; // *comment out
+//gar G moveDir(drone[0]) & moveDir(drone[1]) -> !windsMode; // *comment out
 
 /* ================================ PRIORITY LOGIC ======================================== */	
 // To turn off priority comment the marked lines

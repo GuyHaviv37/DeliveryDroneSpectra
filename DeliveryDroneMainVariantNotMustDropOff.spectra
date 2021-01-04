@@ -1,6 +1,6 @@
 import "./imports/DwyerPatterns.spectra"
 
-spec DeliveryDroneMainVariantNotMustDropOff //Computation time: 49ms
+spec DeliveryDroneMainVariantNotMustDropOff //Computation time: 49s
 
 /* ======================================== TYPES ==============================================*/
 type Cord = Int(0..GRID_DIM);
