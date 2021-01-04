@@ -64,6 +64,8 @@ public class GridPanel extends JPanel implements ActionListener {
 	private Queue<ScenarioStep> currentScenario;
 
 	// SIMULATION VARIABLES
+	private boolean[] housePackageDisplay = new boolean[NUM_OF_HOUSES];
+	private boolean[] warehousePackageDisplay = new boolean[NUM_OF_HOUSES];
 	boolean isLoading = false;
 	boolean isSkip = false;
 	boolean afterScenarioEffect = false;
@@ -135,6 +137,8 @@ public class GridPanel extends JPanel implements ActionListener {
 			this.leavesGIF2.setVisible(true);
 			setWindsOn = false;
 		}
+		// TODO - debugging
+		//g.drawString("State #: " + stateNum, 3 * squareSize + 20, 0 * squareSize + 20);
 	}
 
 	private void paintControlPanel(Graphics g) {
@@ -144,7 +148,7 @@ public class GridPanel extends JPanel implements ActionListener {
 		Color darkPrimary = new Color(59, 74, 99);
 		int stringRow1 = 25, stringRow2 = 45, stringRow3 = 65, stringRow4 = 85;
 		// fill "CONTROL PANEL"
-		g.setFont(new Font("Calibri", Font.BOLD,16));
+		g.setFont(new Font("Calibri", Font.PLAIN,16));
 		// Border
 		g.setColor(Color.BLACK);
 		g.drawLine(0, 600, 594, 600); 
@@ -239,8 +243,13 @@ public class GridPanel extends JPanel implements ActionListener {
 			g.drawImage(im.getImage("houseImg"), col * squareSize, row * squareSize, squareSize, squareSize, null);
 			g.setColor(Color.black);
 			g.drawString("" + (houseNum + 1), (col + 1) * squareSize - 15, row * squareSize + 45);
-
-			if(houseRequests[houseNum]) {
+			boolean houseRequest = Boolean.parseBoolean(controller.getEnvVar("outHousePackages[" + houseNum + "]"));
+//			if(houseRequests[houseNum]) {
+//				BufferedImage waitingImg = envelopeRequests[houseNum] ? im.getImage("envelopeImg") : im.getImage("packageImg_TWH");
+//				g.drawImage(waitingImg, col * squareSize + 10, (row + 1) * squareSize - 60, packageSize_Big,
+//						packageSize_Big, null);
+//			}
+			if(housePackageDisplay[houseNum]) {
 				BufferedImage waitingImg = envelopeRequests[houseNum] ? im.getImage("envelopeImg") : im.getImage("packageImg_TWH");
 				g.drawImage(waitingImg, col * squareSize + 10, (row + 1) * squareSize - 60, packageSize_Big,
 						packageSize_Big, null);
@@ -252,10 +261,6 @@ public class GridPanel extends JPanel implements ActionListener {
 				}
 			}
 			houseNum++;
-		}
-		// clear picked requests
-		if (drone.isStocking() && pickUpThisState > 0){
-			clearPickedRequests();
 		}
 	}
 
@@ -378,6 +383,10 @@ public class GridPanel extends JPanel implements ActionListener {
 		repaint();
 		// When we have animation we will check that no animation is running before
 		// getting new state
+		if(drone.isStocking() && drone.getStockFrame() == 6) {
+			System.out.println("PUTS: "+ pickUpThisState);
+			clearPickedRequests();
+		}
 		if (!(drone.isMoving() || drone.isStocking())) {
 			getNewState();
 		}
@@ -551,6 +560,11 @@ public class GridPanel extends JPanel implements ActionListener {
 		this.energy = Integer.parseInt(controller.getSysVar("energy"));
 		// Priority
 		this.priorityCap = Integer.parseInt(controller.getSysVar("priorityCap"));
+		// House Displays
+		for (i = 0; i < NUM_OF_HOUSES; i++) {
+			this.housePackageDisplay[i] = Boolean.parseBoolean(controller.getEnvVar("outHousePackages["+i+"]"));
+			this.warehousePackageDisplay[i] = Boolean.parseBoolean(controller.getEnvVar("outWarehousePackages["+i+"]"));
+		}
 	}
 	
 	private void loadWindsGIFs() {
@@ -579,6 +593,7 @@ public class GridPanel extends JPanel implements ActionListener {
 		if (pickUpThisState >= 1 && pickUpThisState <= 4) {
 			this.houseRequests[pickUpThisState - 1] = false;
 			this.envelopeRequests[pickUpThisState - 1] = false;
+			this.housePackageDisplay[pickUpThisState - 1] = false;
 		} else if (pickUpThisState >= 5 && pickUpThisState <= 8) {
 			this.warehouseRequests[pickUpThisState - 5] = false;
 		}
@@ -596,9 +611,9 @@ public class GridPanel extends JPanel implements ActionListener {
 	private boolean isGridClear() {
 		if(totalPackages > 0 || totalEnvelopes > 0) return false;
 		// TODO check if grid has waiting packages - only used in scenarios !
-//		for(int i=0;i<houseMonitors.length;i++) {
-//			if(houseMonitors[i] || warehouseMonitors[i]) return false;
-//		}
+		for(int i=0;i<houseRequests.length;i++) {
+			if(houseRequests[i] || warehouseRequests[i]) return false;
+		}
 		return true;
 	}
 	

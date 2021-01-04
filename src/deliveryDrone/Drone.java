@@ -189,6 +189,10 @@ public class Drone {
 		return "Drone [x=" + x + ", y=" + y + ", location=" + Arrays.toString(location) + ", droneState=" + droneState
 				+ ", stopPosition=" + Arrays.toString(stopPosition) + ", direction=" + direction + "]";
 	}
+	
+	public int getStockFrame() {
+		return currStockFrame;
+	}
 }
 
 enum DroneAnimationState {
