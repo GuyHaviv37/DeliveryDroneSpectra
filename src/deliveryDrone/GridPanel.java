@@ -49,8 +49,8 @@ public class GridPanel extends JPanel implements ActionListener {
 	private int[] droneToHouseCap = new int[NUM_OF_HOUSES];
 	private int droneToWarehouseCap;
 	private int totalEnvelopes;
-	private boolean[] houseMonitors = new boolean[NUM_OF_HOUSES];
-	private boolean[] warehouseMonitors = new boolean[NUM_OF_HOUSES];
+//	private boolean[] houseMonitors = new boolean[NUM_OF_HOUSES];
+//	private boolean[] warehouseMonitors = new boolean[NUM_OF_HOUSES];
 	private int energy = 0;
 	private int priorityCap = 0;
 
@@ -102,7 +102,6 @@ public class GridPanel extends JPanel implements ActionListener {
 
 	@Override
 	public void paintComponent(Graphics g) {
-		int row, col;
 		paintBackground(g);
 		paintControlPanel(g);
 		paintHouses(g);
@@ -229,7 +228,8 @@ public class GridPanel extends JPanel implements ActionListener {
 	private void paintHouses(Graphics g) {
 		int row, col;
 		g.setFont(new Font("Calibri", Font.BOLD, 16));
-
+		
+		
 		// "paint houses"
 		int houseNum = 0;
 		for (int[] location : houseLocations) {
@@ -239,7 +239,7 @@ public class GridPanel extends JPanel implements ActionListener {
 			g.setColor(Color.black);
 			g.drawString("" + (houseNum + 1), (col + 1) * squareSize - 15, row * squareSize + 45);
 
-			if (houseMonitors[houseNum]) {
+			if(houseRequests[houseNum]) {
 				BufferedImage waitingImg = envelopeRequests[houseNum] ? im.getImage("envelopeImg") : im.getImage("packageImg_TWH");
 				g.drawImage(waitingImg, col * squareSize + 10, (row + 1) * squareSize - 60, packageSize_Big,
 						packageSize_Big, null);
@@ -251,6 +251,10 @@ public class GridPanel extends JPanel implements ActionListener {
 				}
 			}
 			houseNum++;
+		}
+		// clear picked requests
+		if (drone.isStocking() && pickUpThisState > 0){
+			clearPickedRequests();
 		}
 	}
 
@@ -289,10 +293,10 @@ public class GridPanel extends JPanel implements ActionListener {
 		for (houseNum = 0; houseNum < 4; houseNum++) {
 			g.drawString("H" + (houseNum + 1) + ":", col * squareSize + 10,
 					row * squareSize + 20 * (houseNum + 2) + paddingHigh);
-			if (warehouseMonitors[houseNum]) {
+			if(warehouseRequests[houseNum]) {
 				g.drawImage(im.getImage("packageImg_TH"), col * squareSize + 37,
-						row * squareSize + 20 * (houseNum + 2) + (paddingHigh - 15), packageSize_Small,
-						packageSize_Small, null);
+				row * squareSize + 20 * (houseNum + 2) + (paddingHigh - 15), packageSize_Small,
+				packageSize_Small, null);	
 			}
 		}
 	}
@@ -415,8 +419,9 @@ public class GridPanel extends JPanel implements ActionListener {
 			this.windsMode= currentStep.getIsWinds();
 			this.priorityMode = currentStep.getIsPriority();
 			currentStep.setHasStarted(true);
-		} else if (currentStep.isFinished(this.droneToHouseCap, this.droneToWarehouseCap,this.totalEnvelopes,
-				this.houseMonitors, this.warehouseMonitors, this.pickUpThisState,
+		} // TODO - replace monitors on the isFinished call (now null) 
+		else if (currentStep.isFinished(this.droneToHouseCap, this.droneToWarehouseCap,this.totalEnvelopes,
+				null, null, this.pickUpThisState,
 				this.dropOffThisState)) { // step finished, get the next step
 			this.drone.setTurboMode(false);
 			if(this.isSkip) {
@@ -463,6 +468,7 @@ public class GridPanel extends JPanel implements ActionListener {
 			}
 			this.priorityMode= (precentPriority < 0.002) ? !this.priorityMode : this.priorityMode;
 		} else if (this.isDemo == DemoMode.WAITING) {
+			// TODO - make sure this is the right check after request changes
 			if(isRequestsClear()) { // check that all a-priory requests are monitored
 				this.isDemo = DemoMode.RUNNING;
 				this.parentFrame.enableDemoBtn(true);				
@@ -545,22 +551,10 @@ public class GridPanel extends JPanel implements ActionListener {
 		}
 		this.droneToWarehouseCap = Integer.parseInt(controller.getSysVar("droneToWarehouseCap"));
 		this.totalEnvelopes = Integer.parseInt(controller.getSysVar("totalEnvelopesToWH"));
-		// Monitors
-		for (i = 0; i < NUM_OF_HOUSES; i++) {
-			this.houseMonitors[i] = Boolean.parseBoolean(controller.getSysVar("waitingPackageOutHouse" + (i + 1)));
-		}
-		for (i = 0; i < NUM_OF_HOUSES; i++) {
-			this.warehouseMonitors[i] = Boolean
-					.parseBoolean(controller.getSysVar("waitingPackageInWarehouseToHouse" + (i + 1)));
-		}
 		// Energy
 		this.energy = Integer.parseInt(controller.getSysVar("energy"));
 		// Priority
 		this.priorityCap = Integer.parseInt(controller.getSysVar("priorityCap"));
-
-		// After every new state reset the requests env. variables
-		initRequests();
-
 	}
 	
 	private void loadWindsGIFs() {
@@ -585,6 +579,17 @@ public class GridPanel extends JPanel implements ActionListener {
 		}
 	}
 	
+	private void clearPickedRequests() {
+		if (pickUpThisState >= 1 && pickUpThisState <= 4) {
+			this.houseRequests[pickUpThisState - 1] = false;
+			this.envelopeRequests[pickUpThisState - 1] = false;
+		} else if (pickUpThisState >= 5 && pickUpThisState <= 8) {
+			this.warehouseRequests[pickUpThisState - 5] = false;
+		}
+		updateEnvironment();
+		repaint();
+	}
+	
 	private boolean isRequestsClear() {
 		for(int i=0;i < houseRequests.length; i++) {
 			if(this.houseRequests[i] || this.warehouseRequests[i]) return false;
@@ -594,15 +599,15 @@ public class GridPanel extends JPanel implements ActionListener {
 	
 	private boolean isGridClear() {
 		if(totalPackages > 0 || totalEnvelopes > 0) return false;
-		for(int i=0;i<houseMonitors.length;i++) {
-			if(houseMonitors[i] || warehouseMonitors[i]) return false;
-		}
+		// TODO check if grid has waiting packages - only used in scenarios !
+//		for(int i=0;i<houseMonitors.length;i++) {
+//			if(houseMonitors[i] || warehouseMonitors[i]) return false;
+//		}
 		return true;
 	}
 	
 	private void resetModes() {
 		this.priorityMode = false;
-//		this.windsMode = false;
 		toggleWinds(false);
 		this.parentFrame.updateModeButtons(priorityMode, windsMode);
 	}

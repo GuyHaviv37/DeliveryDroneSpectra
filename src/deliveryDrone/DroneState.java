@@ -38,15 +38,6 @@ public class DroneState {
 		sysValues.put("droneToHouseCap4", "0");
 		// Envelopes counter
 		sysValues.put("totalEnvelopesToWH","0");
-		// Monitors
-		sysValues.put("waitingPackageOutHouse1", "false");
-		sysValues.put("waitingPackageOutHouse2", "false");
-		sysValues.put("waitingPackageOutHouse3", "false");
-		sysValues.put("waitingPackageOutHouse4", "false");
-		sysValues.put("waitingPackageInWarehouseToHouse1", "false");
-		sysValues.put("waitingPackageInWarehouseToHouse2", "false");
-		sysValues.put("waitingPackageInWarehouseToHouse3", "false");
-		sysValues.put("waitingPackageInWarehouseToHouse4", "false");
 		// Energy 
 		sysValues.put("energy", "0");
 		// Priority
