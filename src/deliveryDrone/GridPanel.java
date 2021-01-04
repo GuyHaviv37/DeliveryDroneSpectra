@@ -27,7 +27,7 @@ public class GridPanel extends JPanel implements ActionListener {
 	private static final int MAX_ENERGY = 7;
 	private static final int MAX_CAPACITY = 2;
 	private static final int MAX_PRIORITY_CAP = 1;
-	private static final int MAX_ENVELOPES = 6;
+	private static final int MAX_ENVELOPES = 5;
 
 	private MainFrame parentFrame;
 	private boolean priorityFeature;
