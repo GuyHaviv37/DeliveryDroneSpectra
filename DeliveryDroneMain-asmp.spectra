@@ -74,7 +74,7 @@ forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
 asm initEnvelopeModeOff:
 forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
 		envelopeRequests[i] = false;
-		
+	
 asm G outWarehousePackages[0] -> next(outWarehousePackages[0]) | pickUpThisState=5;
 asm G outWarehousePackages[1] -> next(outWarehousePackages[1]) | pickUpThisState=6;
 asm G outWarehousePackages[2] -> next(outWarehousePackages[2]) | pickUpThisState=7;
@@ -236,7 +236,6 @@ counter energy (0..MAX_ENERGY){
 gar G energy <= MAX_ENERGY;
 /*================================ MINSTEP LOGIC  =================================== */
 gar G !packageWaitingInWarehouse & !packageWaitingInHouses & totalEnvelopesToWH=0 & totalPackages=0 -> stay;
-//
 //gar trig [true]*[(pickUpThisState>0)] |=> [true]{0,7}[(dropOffThisState>0)];
 
 
