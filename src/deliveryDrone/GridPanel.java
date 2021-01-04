@@ -124,7 +124,7 @@ public class GridPanel extends JPanel implements ActionListener {
 		g.setColor(Color.BLACK);
 		g.fillRect(225, 290, 125, 40);
 		g.setColor(Color.white);
-		g.setFont(new Font("MV Boli", Font.BOLD, 20));
+		g.setFont(new Font("Calibri", Font.BOLD, 20));
 		g.drawString("Loading...",235, 317);
 	}
 
@@ -140,19 +140,19 @@ public class GridPanel extends JPanel implements ActionListener {
 	private void paintControlPanel(Graphics g) {
 		int row, col;
 		int paddingWide = 10;
-		Color primary = new Color(99, 118, 150);
+//		Color primary = new Color(99, 118, 150);
 		Color darkPrimary = new Color(59, 74, 99);
 		int stringRow1 = 25, stringRow2 = 45, stringRow3 = 65, stringRow4 = 85;
 		// fill "CONTROL PANEL"
-		g.setFont(new Font("MV Boli", Font.BOLD, 14));
+		g.setFont(new Font("Calibri", Font.PLAIN,16));
 		// Border
 		g.setColor(Color.BLACK);
 		g.drawLine(0, 600, 594, 600); 
 		// Background
 		g.setColor(darkPrimary);
 		g.fillRect(0, 600, 594, 100);
-		g.setColor(primary);
-		g.fillRect(10, 610, 574, 80);
+		g.setColor(Color.WHITE);
+		g.fillRect(10, 610, 594-squareSize, 80);
 
 		// paint environment toggles
 		g.setColor(Color.BLACK);
@@ -161,7 +161,7 @@ public class GridPanel extends JPanel implements ActionListener {
 		if(priorityFeature) {
 			boolean controllerPriorityMode = Boolean.parseBoolean(controller.getEnvVar("priorityMode"));
 			g.drawString("Priority Mode:", col * squareSize + paddingWide, row * squareSize + stringRow1);
-			g.drawImage(controllerPriorityMode ? im.getImage("greenLightImg") : im.getImage("redLightImg"), (col + 1) * squareSize - 30,
+			g.drawImage(controllerPriorityMode ? im.getImage("greenLightImg") : im.getImage("redLightImg"), (col + 1) * squareSize - 40,
 					row * squareSize + stringRow1 - 12, lightControlSize, lightControlSize, null);
 			g.drawString("Priority Cap: " + priorityCap + "/" + MAX_PRIORITY_CAP, col * squareSize + paddingWide,
 					row * squareSize + stringRow2);			
@@ -181,23 +181,40 @@ public class GridPanel extends JPanel implements ActionListener {
 		int houseNum;
 		// paint drone details
 		col = 1;
-		g.drawString("Package Inventory:", col * squareSize + paddingWide, row * squareSize + stringRow1);
-		g.drawString("Total:" + totalPackages + "/" + MAX_CAPACITY, col * squareSize + paddingWide,
+		g.drawString("Package Inventory:",
+				col * squareSize + paddingWide,
+				row * squareSize + stringRow1);
+		g.setColor(totalPackages == MAX_CAPACITY ? Color.red : Color.black);
+		g.drawString("Total Packages: " + totalPackages + "/" + MAX_CAPACITY,
+				col * squareSize + paddingWide,
 				row * squareSize + stringRow2);
-		g.drawString("To-WH:" + droneToWarehouseCap, col * squareSize + paddingWide, row * squareSize + stringRow3);
-		for (houseNum = 0; houseNum < 4; houseNum++) {
-			int gapWide, gapHigh;
-			gapWide = houseNum < 2 ? 80 : 150;
-			gapHigh = houseNum % 2 == 0 ? stringRow2 : stringRow3;
-			g.drawString("To-H" + (houseNum + 1) + ":" + droneToHouseCap[houseNum],
-					col * squareSize + paddingWide + gapWide, row * squareSize + gapHigh);
+		g.setColor(totalEnvelopes == MAX_ENVELOPES ? Color.red : Color.black);
+		g.drawString("Total Envelopes: "+totalEnvelopes+"/"+MAX_ENVELOPES,
+				(col+1) * squareSize + paddingWide,
+				row * squareSize + stringRow2);
+		g.setColor(Color.black);
+		g.drawString("Packages By Destination:",
+				col * squareSize + paddingWide, 
+				row * squareSize + stringRow3);
+		g.drawString("WH: " + droneToWarehouseCap+",",
+				col * squareSize + paddingWide,
+				row * squareSize + stringRow4);
+		int gapWide = 45;
+		for(houseNum = 0; houseNum < 4; houseNum++) {
+			g.drawString("H"+(houseNum+1)+": "+droneToHouseCap[houseNum]+ 
+					(houseNum < 3 ? "," : ""),
+					col * squareSize + paddingWide+10 + gapWide,
+					row * squareSize + stringRow4);
+			gapWide += 45;
 		}
-		g.drawString("Envelopes: "+totalEnvelopes+"/"+MAX_ENVELOPES, col * squareSize + paddingWide, row * squareSize + stringRow4);
 
 		// paint charging bar
 		col = 3;
+		g.setFont(new Font("Calibri",Font.BOLD,20));
+		g.setColor(Color.white);
 		if(energyFeature) {
 			g.drawString("Battery: ", col * squareSize + 40, row * squareSize + 35);
+			g.setColor(Color.black);
 			g.drawImage(im.getImage("lightningImg"), col * squareSize + 15, row * squareSize + 20, lightningSize, lightningSize, null);
 			g.drawRect(col * squareSize + paddingWide, row * squareSize + 60, squareSize - 35, 20);
 			float batteryFilled = 1 - (this.energy / (float) MAX_ENERGY);
@@ -211,7 +228,7 @@ public class GridPanel extends JPanel implements ActionListener {
 
 	private void paintHouses(Graphics g) {
 		int row, col;
-		g.setFont(new Font("MV Boli", Font.BOLD, 14));
+		g.setFont(new Font("Calibri", Font.BOLD, 16));
 
 		// "paint houses"
 		int houseNum = 0;
