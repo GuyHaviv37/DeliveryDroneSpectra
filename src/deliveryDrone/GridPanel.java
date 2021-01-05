@@ -49,7 +49,7 @@ public class GridPanel extends JPanel implements ActionListener {
 	private int totalPackages = 0;
 	private int[] droneToHouseCap = new int[NUM_OF_HOUSES];
 	private int droneToWarehouseCap;
-	private int totalEnvelopes;
+	private int totalEnvelopes = 0;
 	private int energy = 0;
 	private int priorityCap = 0;
 
@@ -91,7 +91,6 @@ public class GridPanel extends JPanel implements ActionListener {
 		this.windsFeature = windsFeature;
 		this.energyFeature = energyFeature;
 		this.drone = new Drone(chargingStationLocation);
-		initRequests();
 
 		setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0), 1));
 		setPreferredSize(new Dimension(594, 700));
@@ -136,15 +135,12 @@ public class GridPanel extends JPanel implements ActionListener {
 			this.leavesGIF2.setVisible(true);
 			setWindsOn = false;
 		}
-		// TODO - debugging
-		//g.drawString("State #: " + stateNum, 3 * squareSize + 20, 0 * squareSize + 20);
 	}
 
 	private void paintControlPanel(Graphics g) {
 		int row, col;
 		int paddingWide = 10;
-//		Color primary = new Color(99, 118, 150);
-		Color darkPrimary = new Color(59, 74, 99);
+		Color cpColor = new Color(59, 74, 99);
 		int stringRow1 = 25, stringRow2 = 45, stringRow3 = 65, stringRow4 = 85;
 		// fill "CONTROL PANEL"
 		g.setFont(new Font("Calibri", Font.PLAIN,16));
@@ -152,7 +148,7 @@ public class GridPanel extends JPanel implements ActionListener {
 		g.setColor(Color.BLACK);
 		g.drawLine(0, 600, 594, 600); 
 		// Background
-		g.setColor(darkPrimary);
+		g.setColor(cpColor);
 		g.fillRect(0, 600, 594, 100);
 		g.setColor(Color.WHITE);
 		g.fillRect(10, 610, 594-squareSize, 80);
@@ -171,12 +167,10 @@ public class GridPanel extends JPanel implements ActionListener {
 		}
 		g.drawString("Stocking:", col * squareSize + paddingWide, row * squareSize + stringRow4);
 		if (drone.isStocking()) {
-			// pickUpThisState > 0
 			if (pickUpThisState != PickUp.NO_PICKUP) {
 				g.drawImage(im.getImage("greenArrowImg"), (col + 1) * squareSize - 70, row * squareSize + stringRow4 - 12, arrowSize,
 						arrowSize, null);
 			}
-			// dropOffThisState > 0
 			if (dropOffThisState != DropOff.NO_DROPOFF) {
 				g.drawImage(im.getImage("redArrowImg"), (col + 1) * squareSize - 50, row * squareSize + stringRow4 - 12, arrowSize,
 						arrowSize, null);
@@ -319,14 +313,12 @@ public class GridPanel extends JPanel implements ActionListener {
 			}
 		}
 		updateEnvironment();
-		// getNewState();
 		repaint();
 	}
 
 	public void togglePriority(boolean newPriority) {
 		this.priorityMode = newPriority;
 		updateEnvironment();
-		// getNewState();
 		repaint();
 	}
 
@@ -341,7 +333,6 @@ public class GridPanel extends JPanel implements ActionListener {
 			setWindsOn = false;
 		}
 		updateEnvironment();
-		// getNewState();
 		repaint();
 	}
 	
@@ -455,8 +446,6 @@ public class GridPanel extends JPanel implements ActionListener {
 		}
 	}
 
-	
-
 	private void updateDemo() {
 		if(this.isDemo == DemoMode.RUNNING) {
 			Random rand = new Random();
@@ -474,12 +463,6 @@ public class GridPanel extends JPanel implements ActionListener {
 			}
 			this.priorityMode= (precentPriority < 0.002) ? !this.priorityMode : this.priorityMode;
 		} else if (this.isDemo == DemoMode.WAITING) {
-			// TODO - make sure this is the right check after request changes
-			// I think this is no redundant since no loss can be made by turning on demo mode
-//			if(isRequestsClear()) { // check that all a-priory requests are monitored
-//				this.isDemo = DemoMode.RUNNING;
-//				this.parentFrame.enableDemoBtn(true);				
-//			}
 			this.isDemo = DemoMode.RUNNING;
 			this.parentFrame.enableDemoBtn(true);
 		}
@@ -516,8 +499,6 @@ public class GridPanel extends JPanel implements ActionListener {
 	}
 
 	private void updateRequests() {
-		// I assume that resetting a true package as true is ok, since we aggregate them
-		// anyways
 		for (int i = 0; i < houseRequests.length; i++) {
 			controller.setEnvVar("outHousePackages[" + i + "]", Boolean.toString(houseRequests[i]));
 		}
@@ -584,14 +565,6 @@ public class GridPanel extends JPanel implements ActionListener {
 		leavesGIF1.setVisible(false);
 		leavesGIF2.setVisible(false);
 	}
-
-	private void initRequests() {
-		for (int i = 0; i < houseRequests.length; i++) {
-			houseRequests[i] = false;
-			warehouseRequests[i] = false;
-			// envelopes are not reset since they works as toggles
-		}
-	}
 	
 	private void clearPickedRequests() {
 		int pickupIndex = pickUpThisState.getIndex();
@@ -614,27 +587,13 @@ public class GridPanel extends JPanel implements ActionListener {
 		default:
 			break;
 		}
-//		if (pickUpThisState >= 1 && pickUpThisState <= 4) {
-//			this.houseRequests[pickUpThisState - 1] = false;
-//			this.envelopeRequests[pickUpThisState - 1] = false;
-//			this.housePackageDisplay[pickUpThisState - 1] = false;
-//		} else if (pickUpThisState >= 5 && pickUpThisState <= 8) {
-//			this.warehouseRequests[pickUpThisState - 5] = false;
-//		}
 		updateEnvironment();
 		repaint();
 	}
 	
-	private boolean isRequestsClear() {
-		for(int i=0;i < houseRequests.length; i++) {
-			if(this.houseRequests[i] || this.warehouseRequests[i]) return false;
-		}
-		return true;
-	}
 	
 	private boolean isGridClear() {
 		if(totalPackages > 0 || totalEnvelopes > 0) return false;
-		// TODO check if grid has waiting packages - only used in scenarios !
 		for(int i=0;i<houseRequests.length;i++) {
 			if(houseRequests[i] || warehouseRequests[i]) return false;
 		}
