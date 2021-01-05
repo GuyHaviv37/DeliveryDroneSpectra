@@ -1,6 +1,6 @@
 import "./imports/DwyerPatterns.spectra"
 
-spec DeliveryDroneMainVariantLessMoves //Computation time: ~158s without asm, with asm does not finish in 5 min
+spec DeliveryDroneMainVariantLessMoves //Computation time: ~158s 
 /*This spec file include:
  * Drone must come back to the warehouse when it nothing to do - no new requests to pick up and nothing to drop off
  * Don't stagger in a house - when visiting a house, after 1 safety states for stocking, do not visit that house for 4 states.

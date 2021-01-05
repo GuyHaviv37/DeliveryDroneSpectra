@@ -1,8 +1,6 @@
 import "./imports/DwyerPatterns.spectra"
 
-spec DeliveryDroneMain //Computation time: ~177s with enum + drop off changes + asm
-						//Computation time: ~106s with enum + drop off changes 
-						//Computation time: ~122s with enum + asm
+spec DeliveryDroneMain //Computation time: ~106s with enum + drop off changes 
 /*This spec file include:
  * Drone must stop moving when it has nothing to do - no new requests to pick up and nothing to drop off
  * Drone must drop off a package/envelope at the moment it arrives the destination
