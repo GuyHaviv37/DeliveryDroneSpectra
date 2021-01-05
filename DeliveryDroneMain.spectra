@@ -1,7 +1,11 @@
 import "./imports/DwyerPatterns.spectra"
 
-spec DeliveryDroneMain //Computation time: 60s
-
+spec DeliveryDroneMain //Computation time: ~80s
+/*This spec file include:
+ * Drone must stop moving when it has nothing to do - no new requests to pick up and nothing to drop off
+ * Drone must drop off a package/envelope at the moment it arrives the destination
+ * Features includes: energy, priority and winds (can comment them out)
+ */
 /* ======================================== TYPES ==============================================*/
 type Cord = Int(0..GRID_DIM);
 
@@ -80,10 +84,11 @@ asm G outWarehousePackages[0] -> next(outWarehousePackages[0]) | pickUpThisState
 asm G outWarehousePackages[1] -> next(outWarehousePackages[1]) | pickUpThisState=6;
 asm G outWarehousePackages[2] -> next(outWarehousePackages[2]) | pickUpThisState=7;
 asm G outWarehousePackages[3] -> next(outWarehousePackages[3]) | pickUpThisState=8;	
-asm G outHousePackages[0] -> (next(outHousePackages[0]) & next(envelopeRequests[0])=envelopeRequests[0]) | pickUpThisState=1;
-asm G outHousePackages[1] ->(next(outHousePackages[1]) & next(envelopeRequests[1])=envelopeRequests[1]) | pickUpThisState=2;
-asm G outHousePackages[2] -> (next(outHousePackages[2]) & next(envelopeRequests[2])=envelopeRequests[2]) | pickUpThisState=3;
-asm G outHousePackages[3] -> (next(outHousePackages[3]) & next(envelopeRequests[3])=envelopeRequests[3]) | pickUpThisState=4;
+asm G outHousePackages[0] -> next(outHousePackages[0]) | pickUpThisState=1;
+asm G outHousePackages[1] -> next(outHousePackages[1]) | pickUpThisState=2;
+asm G outHousePackages[2] -> next(outHousePackages[2]) | pickUpThisState=3;
+asm G outHousePackages[3] -> next(outHousePackages[3]) | pickUpThisState=4;
+//asm G outHousePackages[0] -> (next(outHousePackages[0]) & next(envelopeRequests[0])=envelopeRequests[0]) | pickUpThisState=1; // TODO: explain in bla bla
 
 /* ======================================== INVENTORY ==============================================*/
 //all packages on the drone
@@ -151,9 +156,8 @@ gar dropOffThisState = 0;
 gar droneMoves:
 	G moveDir(drone[0]) & moveDir(drone[1]) | (notMoveDir(drone[0]) & moveDir(drone[1])) | (moveDir(drone[0]) & notMoveDir(drone[1])) | (notMoveDir(drone[0]) & notMoveDir(drone[1]));
 //Drone does not move if there nothing to do
-gar G (!packageWaitingInWarehouse & !packageWaitingInHouses & totalEnvelopesToWH=0 & totalPackages=0) & atWarehouse-> stay;
-//gar G dropOffThisState>0 -> stay;
-gar trig [true]*[!packageWaitingInWarehouse & !packageWaitingInHouses & totalEnvelopesToWH=0 & totalPackages=0] |=> [true]{0,5}[atWarehouse];
+gar G (!packageWaitingInWarehouse & !packageWaitingInHouses & totalEnvelopesToWH=0 & totalPackages=0) -> stay;
+gar G dropOffThisState>0 -> stay;
 
 // ================================== PICKUP LOGIC ======================================
 // guarantees when a pickup can be made + implications on monitor
@@ -185,7 +189,7 @@ gar G dropOffThisState = 2 iff atHouse2 & droneToHouseCap2 > 0;
 gar G dropOffThisState = 3 iff atHouse3 & droneToHouseCap3 > 0;
 gar G dropOffThisState = 4 iff atHouse4 & droneToHouseCap4 > 0;
 gar G dropOffThisState = 5 iff atWarehouse & droneToWarehouseCap > 0;
-gar G dropOffThisState = 6 iff atWarehouse & totalEnvelopesToWH > 0;
+gar G dropOffThisState = 6 iff atWarehouse & totalEnvelopesToWH > 0 & droneToWarehouseCap = 0;
 
 // always eventually drop-off packages that are carried by the drone
 gar pRespondsToS(droneToHouseCap1 > 0,atHouse1);
@@ -195,7 +199,7 @@ gar pRespondsToS(droneToHouseCap4 > 0,atHouse4);
 gar pRespondsToS(droneToWarehouseCap > 0,atWarehouse);
 gar pRespondsToS(totalEnvelopesToWH > 0,atWarehouse);
 
-// drone have to drop-off all packages before leaving the house/warehouse
+//// drone have to drop-off all packages before leaving the house/warehouse
 gar G atHouse1 & droneToHouseCap1 > 1 | 
 	atHouse2 & droneToHouseCap2 > 1 | 
 	atHouse3 & droneToHouseCap3 > 1 | 
