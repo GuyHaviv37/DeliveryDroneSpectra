@@ -94,7 +94,8 @@ forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
 asm initEnvelopeModeOff:
 forall i in Int(0..NUM_OF_HOUSES_MINUS_ONE) .
 		envelopeRequests[i] = false;
-	
+		
+//Requests can not disappears	
 asm G outWarehousePackages[0] -> next(outWarehousePackages[0]) | pickUpThisState=PICKUP_TO_HOUSE1;
 asm G outWarehousePackages[1] -> next(outWarehousePackages[1]) | pickUpThisState=PICKUP_TO_HOUSE2;
 asm G outWarehousePackages[2] -> next(outWarehousePackages[2]) | pickUpThisState=PICKUP_TO_HOUSE3;
@@ -103,6 +104,7 @@ asm G outHousePackages[0] -> next(outHousePackages[0]) | pickUpThisState=PICKUP_
 asm G outHousePackages[1] -> next(outHousePackages[1]) | pickUpThisState=PICKUP_FROM_HOUSE2;
 asm G outHousePackages[2] -> next(outHousePackages[2]) | pickUpThisState=PICKUP_FROM_HOUSE3;
 asm G outHousePackages[3] -> next(outHousePackages[3]) | pickUpThisState=PICKUP_FROM_HOUSE4;
+
 /* ======================================== INVENTORY ==============================================*/
 //all packages on the drone
 counter totalPackages(0..PACKAGE_CAPACITY){ 

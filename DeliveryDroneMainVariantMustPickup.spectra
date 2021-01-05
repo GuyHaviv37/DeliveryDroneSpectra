@@ -1,6 +1,6 @@
 import "./imports/DwyerPatterns.spectra"
 
-spec DeliveryDroneMainVariantMustPickup //Computation time: ~102s  
+spec DeliveryDroneMainVariantMustPickup //Computation time: ~100s  
 /*This spec file include:
  * Drone must pick up a request of package/envelope before leaving houses (does not have to pickup from warehouse. 
  * In addition, if drone is charging and does not came directly from warehouse, next step is warehouse
