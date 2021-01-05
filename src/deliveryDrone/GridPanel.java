@@ -50,8 +50,6 @@ public class GridPanel extends JPanel implements ActionListener {
 	private int[] droneToHouseCap = new int[NUM_OF_HOUSES];
 	private int droneToWarehouseCap;
 	private int totalEnvelopes;
-//	private boolean[] houseMonitors = new boolean[NUM_OF_HOUSES];
-//	private boolean[] warehouseMonitors = new boolean[NUM_OF_HOUSES];
 	private int energy = 0;
 	private int priorityCap = 0;
 
@@ -307,14 +305,14 @@ public class GridPanel extends JPanel implements ActionListener {
 
 	public void addPickupRequest(int requestNumber) {
 		if (requestNumber >= 1 && requestNumber <= 4) {
-			if(!this.houseRequests[requestNumber-1]) {
+			if(pickUpThisState.getIndex() != requestNumber) {
 				this.houseRequests[requestNumber - 1] = true;
 				this.envelopeRequests[requestNumber - 1] = false;				
 			}
 		} else if (requestNumber >= 5 && requestNumber <= 8) {
 			this.warehouseRequests[requestNumber - 5] = true;
 		} else if (requestNumber >= 9 && requestNumber <= 12) {
-			if(!this.houseRequests[requestNumber-9]) {
+			if(pickUpThisState.getIndex() != requestNumber - 8) {
 				this.houseRequests[requestNumber - 9] = true;
 				this.envelopeRequests[requestNumber - 9] = true;	
 			}
