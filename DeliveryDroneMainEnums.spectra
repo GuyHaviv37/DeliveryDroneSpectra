@@ -99,14 +99,11 @@ asm G outWarehousePackages[0] -> next(outWarehousePackages[0]) | pickUpThisState
 asm G outWarehousePackages[1] -> next(outWarehousePackages[1]) | pickUpThisState=PICKUP_TO_HOUSE2;
 asm G outWarehousePackages[2] -> next(outWarehousePackages[2]) | pickUpThisState=PICKUP_TO_HOUSE3;
 asm G outWarehousePackages[3] -> next(outWarehousePackages[3]) | pickUpThisState=PICKUP_TO_HOUSE4;	
-asm G outHousePackages[0] -> (next(outHousePackages[0]) & next(envelopeRequests[0])=envelopeRequests[0]) | pickUpThisState=PICKUP_FROM_HOUSE1;
-asm G outHousePackages[1] -> (next(outHousePackages[1]) & next(envelopeRequests[1])=envelopeRequests[1]) | pickUpThisState=PICKUP_FROM_HOUSE2;
-asm G outHousePackages[2] -> (next(outHousePackages[2]) & next(envelopeRequests[2])=envelopeRequests[2]) | pickUpThisState=PICKUP_FROM_HOUSE3;
-asm G outHousePackages[3] -> (next(outHousePackages[3]) & next(envelopeRequests[3])=envelopeRequests[3]) | pickUpThisState=PICKUP_FROM_HOUSE4;
-//asm G outHousePackages[0] -> next(outHousePackages[0]) | pickUpThisState=PICKUP_FROM_HOUSE1;
-//asm G outHousePackages[1] -> next(outHousePackages[1]) | pickUpThisState=PICKUP_FROM_HOUSE2;
-//asm G outHousePackages[2] -> next(outHousePackages[2]) | pickUpThisState=PICKUP_FROM_HOUSE3;
-//asm G outHousePackages[3] -> next(outHousePackages[3]) | pickUpThisState=PICKUP_FROM_HOUSE4;
+asm G outHousePackages[0] -> next(outHousePackages[0]) | pickUpThisState=PICKUP_FROM_HOUSE1;
+asm G outHousePackages[1] -> next(outHousePackages[1]) | pickUpThisState=PICKUP_FROM_HOUSE2;
+asm G outHousePackages[2] -> next(outHousePackages[2]) | pickUpThisState=PICKUP_FROM_HOUSE3;
+asm G outHousePackages[3] -> next(outHousePackages[3]) | pickUpThisState=PICKUP_FROM_HOUSE4;
+
 /* ======================================== INVENTORY ==============================================*/
 //all packages on the drone
 counter totalPackages(0..PACKAGE_CAPACITY){ 
