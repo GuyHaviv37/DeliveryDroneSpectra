@@ -72,6 +72,7 @@ public class GridPanel extends JPanel implements ActionListener {
 	JLabel leavesGIF1;
 	JLabel leavesGIF2;
 	boolean setWindsOn = false;
+	int setWindsOnState = 0;
 
 	int gridSize = 600;
 	int squareSize = 150;
@@ -130,7 +131,7 @@ public class GridPanel extends JPanel implements ActionListener {
 
 	private void paintBackground(Graphics g) {
 		g.drawImage(im.getImage("backgroundImg"), 0, 0, gridSize, gridSize, null);
-		if(setWindsOn && !(drone.isMoving()) && windsFeature) {
+		if(setWindsOn && (setWindsOnState+1 < stateNum) && !(drone.isMoving()) && windsFeature) {
 			this.leavesGIF1.setVisible(true);
 			this.leavesGIF2.setVisible(true);
 			setWindsOn = false;
@@ -332,12 +333,12 @@ public class GridPanel extends JPanel implements ActionListener {
 	public void toggleWinds(boolean newWinds) {
 		this.windsMode = newWinds;
 		if(newWinds) {
-//			leavesGIF1.setVisible(true);
-//			leavesGIF2.setVisible(true);
 			setWindsOn = true;
+			setWindsOnState = stateNum;
 		} else {			
 			leavesGIF1.setVisible(false);
 			leavesGIF2.setVisible(false);
+			setWindsOn = false;
 		}
 		updateEnvironment();
 		// getNewState();
@@ -382,7 +383,6 @@ public class GridPanel extends JPanel implements ActionListener {
 		// When we have animation we will check that no animation is running before
 		// getting new state
 		if(drone.isStocking() && drone.isInLastStockFrame()) {
-			System.out.println("PUTS: "+ pickUpThisState);
 			clearPickedRequests();
 		}
 		if (!(drone.isMoving() || drone.isStocking())) {
