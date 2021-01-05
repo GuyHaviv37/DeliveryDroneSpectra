@@ -1,11 +1,15 @@
 import "./imports/DwyerPatterns.spectra"
 
 spec DeliveryDroneUnrealMustPickup_Dropoff //UnRealizable
-/*This spec file is unRealizable:
- * Because of line 213-214 when the drone must drop off two kinds of requests at the same time 
- * and because of the must pick up guarantee it can not avoid getting to this situation
- * Suggestion for solving this problem:
+/*This specification is unrealizable:
+ * On previous versions of the specification and because of line 213-214: 
+ * There is a conflict when the drone has both a package and an envelope to drop off,
+ * System can only decide on a single dropOffThisState value.
+ * Regularly this is made realizable since the drone can decide to only carry either house packages OR house envelopes.
+ * But on must-pick-up this cannot happen because it needs to carry both types if it picks up every request it runs into.
+ * Suggestion for solving this problem, generally as well as in the specification:
  * gar G dropOffThisState = DROPOFF_AT_WH_ENVELOPE iff atWarehouse & totalEnvelopesToWH > 0 & droneToWarehouseCap = 0;
+ * i.e. prioritizing envelopes drop-off over packages at the warehouse.
  */
 type Cord = Int(0..GRID_DIM);
 

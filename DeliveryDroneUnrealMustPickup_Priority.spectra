@@ -1,12 +1,14 @@
 import "./imports/DwyerPatterns.spectra"
 
 spec DeliveryDroneUnrealMustPickup_Priority //UnRealizable
-/*This spec is unRealizable:
- * Lines 204-207 can not be with priority, because we can not force the drone pickup a request from house if priority mode forbid pickup
- * from houses at same time
+/*This specification is unrealizable:
+ * Lines 204-207: 
+ * We cannot enforce must-pick-up in an environment that allows priority mode,
+ * since we can arrive at a house where all basic conditions for a pickup applies (room, at location, waiting package) - but priority forbids it.
  * We solve the problem by comment out priority mode, but we also could change the guarantee to:
  * gar G (!priorityMode | priorityCap=0 | !packageWaitingInWarehouse) & atHouse1 & waitingPackageOutHouse1 & 
  * 			((!envelopeRequests[0] & roomForPickupPackage) |(envelopeRequests[0] & roomForPickupEnvelope)) -> stay;
+ * To keep computing times short, we chose the former solution.
  */
 /* ======================================== TYPES ==============================================*/
 type Cord = Int(0..GRID_DIM);

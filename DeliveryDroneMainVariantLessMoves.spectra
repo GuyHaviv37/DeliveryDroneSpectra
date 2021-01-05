@@ -1,11 +1,12 @@
 import "./imports/DwyerPatterns.spectra"
 
 spec DeliveryDroneMainVariantLessMoves //Computation time: ~158s 
-/*This spec file include:
- * Drone must come back to the warehouse when it nothing to do - no new requests to pick up and nothing to drop off
- * Don't stagger in a house - when visiting a house, after 1 safety states for stocking, do not visit that house for 4 states.
- * Drone must drop off a package/envelope after at most 2 other steps
- * Drone must drop off a package/envelope at the moment it arrives the destination
+/*This specification includes:
+ * When drone has no more tasks (no requests nor drop-offs) - it returns to the warehouse.
+ * Don't stagger in a house - when visiting a house, after 1 safety state for stocking,
+   do not visit that house for at least 4 states.
+ * After every pickup Drone must drop off that package/envelope after at most 2 other steps.
+ * Drone must drop off a package/envelope upon arriving to its destination.
  * Features includes: energy (can comment them out)
  */
 /* ======================================== TYPES ==============================================*/

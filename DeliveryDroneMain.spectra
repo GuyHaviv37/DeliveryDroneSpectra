@@ -1,9 +1,9 @@
 import "./imports/DwyerPatterns.spectra"
 
 spec DeliveryDroneMain //Computation time: ~80s 
-/*This spec file include:
- * Drone must stop moving when it has nothing to do - no new requests to pick up and nothing to drop off
- * Drone must drop off a package/envelope at the moment it arrives the destination
+/*This specification includes:
+ * When drone has no more tasks (no requests nor drop-offs) - it stays put.
+ * Drone must drop off a package/envelope upon arriving to its destination.
  * Features includes: energy, priority and winds (can comment them out)
  */
 /* ======================================== TYPES ==============================================*/

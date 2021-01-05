@@ -1,9 +1,8 @@
 import "./imports/DwyerPatterns.spectra"
 
 spec DeliveryDroneUnrealMustPickup_MustWarehouse //UnRealizable  
-/*This spec is unRealizable:
- * Drone could not must pick up from warehouse
- * line 206
+/*This specification is unrealizable:
+ * line 206 : the drone cannot enforce a must-pick-up policy on the warehouse.
  */
 /* ======================================== TYPES ==============================================*/
 type Cord = Int(0..GRID_DIM);

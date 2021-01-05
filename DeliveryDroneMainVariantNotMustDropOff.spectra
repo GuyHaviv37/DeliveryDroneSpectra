@@ -2,7 +2,7 @@ import "./imports/DwyerPatterns.spectra"
 
 spec DeliveryDroneMainVariantNotMustDropOff //Computation time: ~50s
 /*This spec file include:
- * Everything from main despite, drone does not have to drop off a package/envelope as soon as it is at the destination. 
+ * Same as main specification, but is not required to make a drop-off when eligible. 
  * Features includes: energy, priority and winds (can comment them out)
  */
 /* ======================================== TYPES ==============================================*/

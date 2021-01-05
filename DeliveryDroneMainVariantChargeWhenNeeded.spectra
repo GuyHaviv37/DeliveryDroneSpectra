@@ -1,8 +1,8 @@
 import "./imports/DwyerPatterns.spectra"
 
 spec DeliveryDroneMainVariantChargeWhenNeeded //Computation time: ~120s 
-/*This spec file include:
- * Everything as main and the new guarantee - the drone would not go to the charge station before it has less then X energy
+/*This specification includes:
+ * Same as main specification + a new guarantee - the drone would not go to the charge station before it has less then X energy
  * Features includes: energy, priority and winds (can comment them out)
  */
 /* ======================================== TYPES ==============================================*/

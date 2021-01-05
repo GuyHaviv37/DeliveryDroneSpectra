@@ -1,7 +1,7 @@
 import "./imports/DwyerPatterns.spectra"
 
 spec DeliveryDroneUnrealLessMoves //UnRealizable
-/*This spec file is unRealizable:
+/*This specification is unrealizable:
  * Because of line 179 - after drop off, if there is a request, pick it up in at most 3 steps. 
  */
 /* ======================================== TYPES ==============================================*/
