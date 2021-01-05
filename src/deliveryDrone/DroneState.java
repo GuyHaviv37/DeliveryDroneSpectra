@@ -27,8 +27,8 @@ public class DroneState {
 		sysValues.put("drone[0]", "3");
 		sysValues.put("drone[1]", "3");
 		// PUTS , DOTS
-		sysValues.put("pickUpThisState", "0");
-		sysValues.put("dropOffThisState", "0");
+		sysValues.put("pickUpThisState", "NO_PICKUP");
+		sysValues.put("dropOffThisState", "NO_DROPOFF");
 		// Inventory counters
 		sysValues.put("totalPackages", "0");
 		sysValues.put("droneToWarehouseCap", "0");
