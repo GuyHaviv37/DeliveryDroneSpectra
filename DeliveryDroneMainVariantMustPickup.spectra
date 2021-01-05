@@ -1,8 +1,9 @@
 import "./imports/DwyerPatterns.spectra"
 
-spec DeliveryDroneMainVariantMustPickup //Computation time: s  
+spec DeliveryDroneMainVariantMustPickup //Computation time: ~102s  
 /*This spec file include:
- * Drone must pick up a request of package/envelope before before leaving the house (does not have to pickup from warehouse. 
+ * Drone must pick up a request of package/envelope before leaving houses (does not have to pickup from warehouse. 
+ * In addition, if drone is charging and does not came directly from warehouse, next step is warehouse
  * Drone must stop moving when it has nothing to do - no new requests to pick up and nothing to drop off
  * Drone must drop off a package/envelope at the moment it arrives the destination
  * Features includes: energy and winds (can comment them out)
@@ -204,6 +205,9 @@ gar G  atHouse1 & outHousePackages[0] & ((!envelopeRequests[0] & roomForPickupPa
 gar G  atHouse2 & outHousePackages[1] & ((!envelopeRequests[1] & roomForPickupPackage) |(envelopeRequests[1] & roomForPickupEnvelope)) -> stay;
 gar G  atHouse3 & outHousePackages[2] & ((!envelopeRequests[2] & roomForPickupPackage) |(envelopeRequests[2] & roomForPickupEnvelope)) ->stay;
 gar G  atHouse4 & outHousePackages[3] & ((!envelopeRequests[3] & roomForPickupPackage) |(envelopeRequests[3] & roomForPickupEnvelope)) ->stay;
+
+// When charging (and not coming from warehouse) , checkout the warehouse;
+gar trig [true]*[!atWarehouse][atChargingStation] |=> [atWarehouse];
 
 // ================================== MUST DROP OFF LOGIC ======================================
 // guarantees when a drop-off can be made
