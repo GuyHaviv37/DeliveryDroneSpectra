@@ -44,8 +44,8 @@ public class GridPanel extends JPanel implements ActionListener {
 	// SYS in-house variables
 	private Drone drone;
 
-	private int pickUpThisState = 0;
-	private int dropOffThisState = 0;
+	private PickUp pickUpThisState = PickUp.NO_PICKUP;
+	private DropOff dropOffThisState = DropOff.NO_DROPOFF;
 	private int totalPackages = 0;
 	private int[] droneToHouseCap = new int[NUM_OF_HOUSES];
 	private int droneToWarehouseCap;
@@ -172,11 +172,13 @@ public class GridPanel extends JPanel implements ActionListener {
 		}
 		g.drawString("Stocking:", col * squareSize + paddingWide, row * squareSize + stringRow4);
 		if (drone.isStocking()) {
-			if (pickUpThisState > 0) {
+			// pickUpThisState > 0
+			if (pickUpThisState != PickUp.NO_PICKUP) {
 				g.drawImage(im.getImage("greenArrowImg"), (col + 1) * squareSize - 70, row * squareSize + stringRow4 - 12, arrowSize,
 						arrowSize, null);
 			}
-			if (dropOffThisState > 0) {
+			// dropOffThisState > 0
+			if (dropOffThisState != DropOff.NO_DROPOFF) {
 				g.drawImage(im.getImage("redArrowImg"), (col + 1) * squareSize - 50, row * squareSize + stringRow4 - 12, arrowSize,
 						arrowSize, null);
 			}
@@ -243,19 +245,13 @@ public class GridPanel extends JPanel implements ActionListener {
 			g.drawImage(im.getImage("houseImg"), col * squareSize, row * squareSize, squareSize, squareSize, null);
 			g.setColor(Color.black);
 			g.drawString("" + (houseNum + 1), (col + 1) * squareSize - 15, row * squareSize + 45);
-			boolean houseRequest = Boolean.parseBoolean(controller.getEnvVar("outHousePackages[" + houseNum + "]"));
-//			if(houseRequests[houseNum]) {
-//				BufferedImage waitingImg = envelopeRequests[houseNum] ? im.getImage("envelopeImg") : im.getImage("packageImg_TWH");
-//				g.drawImage(waitingImg, col * squareSize + 10, (row + 1) * squareSize - 60, packageSize_Big,
-//						packageSize_Big, null);
-//			}
 			if(housePackageDisplay[houseNum]) {
 				BufferedImage waitingImg = envelopeRequests[houseNum] ? im.getImage("envelopeImg") : im.getImage("packageImg_TWH");
 				g.drawImage(waitingImg, col * squareSize + 10, (row + 1) * squareSize - 60, packageSize_Big,
 						packageSize_Big, null);
 			}
 			if (drone.isStocking()) {
-				if (dropOffThisState == (houseNum + 1)) {
+				if (dropOffThisState.getIndex() == (houseNum + 1)) {
 					g.drawImage(im.getImage("packageImg_TH"), (col + 1) * squareSize - (packageSize_Big + 10),
 							(row + 1) * squareSize - 60, packageSize_Big, packageSize_Big, null);
 				}
@@ -280,10 +276,10 @@ public class GridPanel extends JPanel implements ActionListener {
 		col = warehouseLocation[1];
 		g.drawImage(im.getImage("warehouseImg"), col * squareSize, row * squareSize, squareSize, squareSize, null);
 		if (drone.isStocking()) {
-			if (dropOffThisState == 5) {
+			if (dropOffThisState == DropOff.DROPOFF_AT_WH_PACKAGE) {
 				g.drawImage(im.getImage("packageImg_TWH"), (col + 1) * squareSize - (packageSize_Big + 10),
 						(row + 1) * squareSize - 60, packageSize_Big, packageSize_Big, null);
-			} else if (dropOffThisState == 6) {
+			} else if (dropOffThisState == DropOff.DROPOFF_AT_WH_ENVELOPE) {
 				g.drawImage(im.getImage("envelopeImg"), (col + 1) * squareSize - (packageSize_Big + 10),
 						(row + 1) * squareSize - 60, packageSize_Big, packageSize_Big, null);
 			}
@@ -395,7 +391,8 @@ public class GridPanel extends JPanel implements ActionListener {
 			getNewState();
 		}
 	}
-	public void updateScenario() {
+	
+	private void updateScenario() {
 		if(this.currentScenario == null) {
 			if(afterScenarioEffect) {
 				if(drone.isStocking()) {
@@ -497,7 +494,7 @@ public class GridPanel extends JPanel implements ActionListener {
 				drone.move();
 			} else {
 				// Drone should halt
-				if (pickUpThisState > 0 || dropOffThisState > 0 || drone.isCharging()) {
+				if (pickUpThisState != PickUp.NO_PICKUP || dropOffThisState != DropOff.NO_DROPOFF || drone.isCharging()) {
 					// MOVING SHOULD BE FALSE , STOCKING SHOULD BE TRUE
 					drone.toggleMoving(false, true);
 				} else {
@@ -556,8 +553,8 @@ public class GridPanel extends JPanel implements ActionListener {
 		// Drone is updated on the updateDrone method
 
 		// PUTS , DOTS
-		this.pickUpThisState = Integer.parseInt(controller.getSysVar("pickUpThisState"));
-		this.dropOffThisState = Integer.parseInt(controller.getSysVar("dropOffThisState"));
+		this.pickUpThisState = PickUp.parsePickUpEnum((controller.getSysVar("pickUpThisState")));
+		this.dropOffThisState = DropOff.parseDropOffEnum((controller.getSysVar("dropOffThisState")));
 		// Inventory, Envelopes counters
 		this.totalPackages = Integer.parseInt(controller.getSysVar("totalPackages"));
 		for (i = 0; i < NUM_OF_HOUSES; i++) {
@@ -599,13 +596,33 @@ public class GridPanel extends JPanel implements ActionListener {
 	}
 	
 	private void clearPickedRequests() {
-		if (pickUpThisState >= 1 && pickUpThisState <= 4) {
-			this.houseRequests[pickUpThisState - 1] = false;
-			this.envelopeRequests[pickUpThisState - 1] = false;
-			this.housePackageDisplay[pickUpThisState - 1] = false;
-		} else if (pickUpThisState >= 5 && pickUpThisState <= 8) {
-			this.warehouseRequests[pickUpThisState - 5] = false;
+		int pickupIndex = pickUpThisState.getIndex();
+		switch(pickUpThisState) {
+		case NO_PICKUP:
+			break;
+		case PICKUP_FROM_HOUSE1:
+		case PICKUP_FROM_HOUSE2:
+		case PICKUP_FROM_HOUSE3:
+		case PICKUP_FROM_HOUSE4:
+			this.houseRequests[pickupIndex - 1] = false;
+			this.envelopeRequests[pickupIndex - 1] = false;
+			this.housePackageDisplay[pickupIndex - 1] = false;
+			break;
+		case PICKUP_TO_HOUSE1:
+		case PICKUP_TO_HOUSE2:
+		case PICKUP_TO_HOUSE3:
+		case PICKUP_TO_HOUSE4:
+			this.warehouseRequests[pickupIndex - 5] = false;
+		default:
+			break;
 		}
+//		if (pickUpThisState >= 1 && pickUpThisState <= 4) {
+//			this.houseRequests[pickUpThisState - 1] = false;
+//			this.envelopeRequests[pickUpThisState - 1] = false;
+//			this.housePackageDisplay[pickUpThisState - 1] = false;
+//		} else if (pickUpThisState >= 5 && pickUpThisState <= 8) {
+//			this.warehouseRequests[pickUpThisState - 5] = false;
+//		}
 		updateEnvironment();
 		repaint();
 	}
@@ -637,3 +654,4 @@ public class GridPanel extends JPanel implements ActionListener {
 enum DemoMode{
 	IDLE,WAITING,RUNNING;
 }
+

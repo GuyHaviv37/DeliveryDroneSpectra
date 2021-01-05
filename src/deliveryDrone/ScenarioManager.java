@@ -73,8 +73,8 @@ public class ScenarioManager {
 		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.ONE,stepNumber++, house, warehouse0) {
 
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests,  int pickUpThisState, int dropOffThisState) {
-				if(pickUpThisState == randomNum+5) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests,  PickUp pickUpThisState, DropOff dropOffThisState) {
+				if(pickUpThisState.getIndex() == randomNum+5) {
 					return true;
 				}
 				return false;
@@ -85,8 +85,8 @@ public class ScenarioManager {
 		ScenarioStep scenarioStep1 = new ScenarioStep(ScenarioNumber.ONE,stepNumber++, house, warehouse1) {
 
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests,  int pickUpThisState, int dropOffThisState) {
-				if(dropOffThisState == randomNum+1) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, PickUp pickUpThisState, DropOff dropOffThisState) {
+				if(dropOffThisState.getIndex() == randomNum+1) {
 					return true;
 				}
 				return false;
@@ -115,19 +115,21 @@ public class ScenarioManager {
 		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.TWO,stepNumber++, house, warehouse0, false, false, envelope) {
 
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests,  int pickUpThisState, int dropOffThisState) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, PickUp pickUpThisState, DropOff dropOffThisState) {
 				switch (pickUpThisState) {
-				case 1:
+				case PICKUP_FROM_HOUSE1:
 					this.getPrivateData()[0]=true;
 					break;
-				case 2:
+				case PICKUP_FROM_HOUSE2:
 					this.getPrivateData()[1]=true;
 					break;
-				case 3:
+				case PICKUP_FROM_HOUSE3:
 					this.getPrivateData()[2]=true;
 					break;
-				case 4:
+				case PICKUP_FROM_HOUSE4:
 					this.getPrivateData()[3]=true;
+					break;
+				default:
 					break;
 				}
 				for(int i=0; i< GridPanel.NUM_OF_HOUSES ; i++) {
@@ -158,13 +160,15 @@ public class ScenarioManager {
 		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.THREE,stepNumber++, house, warehouse0,false, true, envelope) {
 
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests,  int pickUpThisState, int dropOffThisState) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, PickUp pickUpThisState, DropOff dropOffThisState) {
 				switch (pickUpThisState) {
-				case 1:
+				case PICKUP_FROM_HOUSE1:
 					this.getPrivateData()[0]=true;
 					break;
-				case 3:
+				case PICKUP_FROM_HOUSE3:
 					this.getPrivateData()[2]=true;
+					break;
+				default:
 					break;
 				}
 				if(this.getPrivateData()[2] && this.getPrivateData()[0]) {
@@ -197,22 +201,24 @@ public class ScenarioManager {
 		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.FOUR,stepNumber++, house, warehouse0,false, true, envelope) {
 
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests,  int pickUpThisState, int dropOffThisState) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, PickUp pickUpThisState, DropOff dropOffThisState) {
 				switch (pickUpThisState) {
-				case 1:
+				case PICKUP_FROM_HOUSE1:
 					this.getPrivateData()[0]=true;
 					break;
-				case 3:
+				case PICKUP_FROM_HOUSE3:
 					this.getPrivateData()[2]=true;
 					break;
-				case 6:
+				case PICKUP_TO_HOUSE2:
 					this.getPrivateData()[5]=true;
 					break;
-				case 7:
+				case PICKUP_TO_HOUSE3:
 					this.getPrivateData()[6]=true;
 					break;
-				case 8:
+				case PICKUP_TO_HOUSE4:
 					this.getPrivateData()[7]=true;
+					break;
+				default:
 					break;
 				}
 
@@ -243,8 +249,8 @@ public class ScenarioManager {
 		Arrays.fill(house, Boolean.TRUE);
 		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house, warehouse0) {
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
-				if(pickUpThisState>0) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, PickUp pickUpThisState, DropOff dropOffThisState) {
+				if(pickUpThisState != PickUp.NO_PICKUP) {
 					this.getPrivateData()[0]=true;
 					return false;
 				}
@@ -261,8 +267,8 @@ public class ScenarioManager {
 		Arrays.fill(house1, Boolean.TRUE);
 		ScenarioStep scenarioStep1 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house1, warehouse0) {
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
-				if(pickUpThisState>0) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, PickUp pickUpThisState, DropOff dropOffThisState) {
+				if(pickUpThisState != PickUp.NO_PICKUP) {
 					this.getPrivateData()[0]=true;
 					return false;
 				}
@@ -279,8 +285,8 @@ public class ScenarioManager {
 		Arrays.fill(house2, Boolean.TRUE);
 		ScenarioStep scenarioStep2 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house2, warehouse0,true,false,envelope) {
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
-				if(pickUpThisState>0) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, PickUp pickUpThisState, DropOff dropOffThisState) {
+				if(pickUpThisState != PickUp.NO_PICKUP) {
 					this.getPrivateData()[0]=true;
 					return false;
 				}
@@ -297,8 +303,8 @@ public class ScenarioManager {
 		Arrays.fill(house3, Boolean.TRUE);
 		ScenarioStep scenarioStep3 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house3, warehouse0,true,false,envelope) {
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
-				if(pickUpThisState>0) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, PickUp pickUpThisState, DropOff dropOffThisState) {
+				if(pickUpThisState != PickUp.NO_PICKUP) {
 					this.getPrivateData()[0]=true;
 					return false;
 				}
@@ -315,8 +321,8 @@ public class ScenarioManager {
 		Arrays.fill(house4, Boolean.TRUE);
 		ScenarioStep scenarioStep4 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house4, warehouse0,true,false,envelope) {
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
-				if(pickUpThisState>0) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, PickUp pickUpThisState, DropOff dropOffThisState) {
+				if(pickUpThisState != PickUp.NO_PICKUP) {
 					this.getPrivateData()[0]=true;
 					return false;
 				}
@@ -331,14 +337,14 @@ public class ScenarioManager {
 		scenarioSteps.offer(scenarioStep4); 
 		ScenarioStep scenarioStep5 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house, warehouse0) {
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, PickUp pickUpThisState, DropOff dropOffThisState) {
 				for(int i=0; i< GridPanel.NUM_OF_HOUSES;i++) {
 					if(houseRequests[i]) {
 						return false;
 					}
 
 				}
-				if((droneToWarehouseCap + totalEnvelopes)==1 && dropOffThisState>0) {
+				if((droneToWarehouseCap + totalEnvelopes)==1 && dropOffThisState != DropOff.NO_DROPOFF) {
 					return true;
 				}
 				return false;
@@ -369,32 +375,34 @@ public class ScenarioManager {
 		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.SIX,stepNumber++, house, warehouse,true, false, envelope) {
 
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, PickUp pickUpThisState, DropOff dropOffThisState) {
 
 				switch (pickUpThisState) {
-				case 1:
+				case PICKUP_FROM_HOUSE1:
 					this.getPrivateData()[0]=true;
 					break;
-				case 2:
+				case PICKUP_FROM_HOUSE2:
 					this.getPrivateData()[1]=true;
 					break;
-				case 3:
+				case PICKUP_FROM_HOUSE3:
 					this.getPrivateData()[2]=true;
 					break;
-				case 4:
+				case PICKUP_FROM_HOUSE4:
 					this.getPrivateData()[3]=true;
 					break;
-				case 5:
+				case PICKUP_TO_HOUSE1:
 					this.getPrivateData()[4]=true;
 					break;
-				case 6:
+				case PICKUP_TO_HOUSE2:
 					this.getPrivateData()[5]=true;
 					break;
-				case 7:
+				case PICKUP_TO_HOUSE3:
 					this.getPrivateData()[6]=true;
 					break;
-				case 8:
+				case PICKUP_TO_HOUSE4:
 					this.getPrivateData()[7]=true;
+					break;
+				default:
 					break;
 				}
 				for(int i=0; i<GridPanel.NUM_OF_HOUSES*2;i++) {
@@ -406,7 +414,7 @@ public class ScenarioManager {
 				for(int i=0; i<GridPanel.NUM_OF_HOUSES;i++) {
 					totalCap+= droneToHouseCap[i];
 				}
-				if(totalCap==1 && dropOffThisState>0) {
+				if(totalCap==1 && dropOffThisState != DropOff.NO_DROPOFF) {
 					return true;
 				}
 				return false;
@@ -434,8 +442,8 @@ public class ScenarioManager {
 		envelope[0]=true;
 		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.SEVEN,stepNumber++, house, warehouse0,false,false, envelope) {
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
-				if(pickUpThisState>0) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, PickUp pickUpThisState, DropOff dropOffThisState) {
+				if(pickUpThisState != PickUp.NO_PICKUP) {
 					this.getPrivateData()[0]=true;
 					return false;
 				}
@@ -454,8 +462,8 @@ public class ScenarioManager {
 		envelope1[1]=true;
 		ScenarioStep scenarioStep1 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house1, warehouse0, false,false, envelope1) {
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
-				if(pickUpThisState>0) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, PickUp pickUpThisState, DropOff dropOffThisState) {
+				if(pickUpThisState != PickUp.NO_PICKUP) {
 					this.getPrivateData()[0]=true;
 					return false;
 				}
@@ -474,8 +482,8 @@ public class ScenarioManager {
 		envelope2[3]=true;
 		ScenarioStep scenarioStep2 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house2, warehouse0, false,false, envelope2) {
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
-				if(pickUpThisState>0) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, PickUp pickUpThisState, DropOff dropOffThisState) {
+				if(pickUpThisState != PickUp.NO_PICKUP) {
 					this.getPrivateData()[0]=true;
 					return false;
 				}
@@ -494,8 +502,8 @@ public class ScenarioManager {
 		envelope3[2]=true;
 		ScenarioStep scenarioStep3 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house3, warehouse0, false,false,envelope3) {
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
-				if(pickUpThisState>0) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, PickUp pickUpThisState, DropOff dropOffThisState) {
+				if(pickUpThisState != PickUp.NO_PICKUP) {
 					this.getPrivateData()[0]=true;
 					return false;
 				}
@@ -510,13 +518,13 @@ public class ScenarioManager {
 		scenarioSteps.offer(scenarioStep3); 
 		ScenarioStep scenarioStep4 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house, warehouse0) {
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, PickUp pickUpThisState, DropOff dropOffThisState) {
 				for(int i=0; i< GridPanel.NUM_OF_HOUSES;i++) {
 					if(houseRequests[i]) {
 						return false;
 					}
 				}
-				if((droneToWarehouseCap + totalEnvelopes)==1 && dropOffThisState>0) {
+				if((droneToWarehouseCap + totalEnvelopes)==1 && dropOffThisState != DropOff.NO_DROPOFF) {
 					return true;
 				}
 				return false;
@@ -542,8 +550,8 @@ public class ScenarioManager {
 		ScenarioStep scenarioStep0 = new ScenarioStep(ScenarioNumber.EIGHT,stepNumber++, house, warehouse0) {
 
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
-				if(pickUpThisState == randomNum+5) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, PickUp pickUpThisState, DropOff dropOffThisState) {
+				if(pickUpThisState.getIndex() == randomNum+5) {
 					return true;
 				}
 				return false;
@@ -556,8 +564,8 @@ public class ScenarioManager {
 		ScenarioStep scenarioStep1 = new ScenarioStep(ScenarioNumber.EIGHT,stepNumber++, house1, warehouse1) {
 
 			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, int pickUpThisState,  int dropOffThisState) {
-				if(pickUpThisState == randomNum+1) {
+			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, PickUp pickUpThisState, DropOff dropOffThisState) {
+				if(pickUpThisState.getIndex() == randomNum+1) {
 					return true;
 				}
 				return false;
