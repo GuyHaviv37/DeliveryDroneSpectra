@@ -2,7 +2,7 @@ import "./imports/DwyerPatterns.spectra"
 
 spec DeliveryDroneUnrealMustPickup_Priority //UnRealizable
 /*This specification is unrealizable:
- * Lines 204-207: 
+ * Lines 206-209: 
  * We cannot enforce must-pick-up in an environment that allows priority mode,
  * since we can arrive at a house where all basic conditions for a pickup applies (room, at location, waiting package) - but priority forbids it.
  * We solve the problem by comment out priority mode, but we also could change the guarantee to:

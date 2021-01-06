@@ -2,7 +2,7 @@ import "./imports/DwyerPatterns.spectra"
 
 spec DeliveryDroneUnrealMustPickup_Dropoff //UnRealizable
 /*This specification is unrealizable:
- * On previous versions of the specification and because of line 213-214: 
+ * On previous versions of the specification and because of line 217-218: 
  * There is a conflict when the drone has both a package and an envelope to drop off,
  * System can only decide on a single dropOffThisState value.
  * Regularly this is made realizable since the drone can decide to only carry either house packages OR house envelopes.
