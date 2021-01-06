@@ -317,25 +317,7 @@ public class ScenarioManager {
 			}
 		};
 		scenarioSteps.offer(scenarioStep3); 
-		boolean[] house4 = new boolean[GridPanel.NUM_OF_HOUSES];
-		Arrays.fill(house4, Boolean.TRUE);
-		ScenarioStep scenarioStep4 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house4, warehouse0,true,false,envelope) {
-			@Override
-			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, PickUp pickUpThisState, DropOff dropOffThisState) {
-				if(pickUpThisState != PickUp.NO_PICKUP) {
-					this.getPrivateData()[0]=true;
-					return false;
-				}
-				else {
-					if(this.getPrivateData()[0]) {
-						return true;
-					}
-				}
-				return false;
-			}
-		};
-		scenarioSteps.offer(scenarioStep4); 
-		ScenarioStep scenarioStep5 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house, warehouse0) {
+		ScenarioStep scenarioStep4 = new ScenarioStep(ScenarioNumber.FIVE,stepNumber++, house, warehouse0) {
 			@Override
 			public boolean isFinished(int[] droneToHouseCap, int droneToWarehouseCap, int totalEnvelopes, boolean[] houseRequests, PickUp pickUpThisState, DropOff dropOffThisState) {
 				for(int i=0; i< GridPanel.NUM_OF_HOUSES;i++) {
@@ -350,7 +332,7 @@ public class ScenarioManager {
 				return false;
 			}
 		};
-		scenarioSteps.offer(scenarioStep5); 
+		scenarioSteps.offer(scenarioStep4); 
 		return scenarioSteps;
 	}
 	/*
