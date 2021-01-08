@@ -1,12 +1,38 @@
 MustPickup -
-Unrealizabilty - our initial attempt to make this feature was to add guarantees that when the drone has the correct conditions to pick up a waiting package/envelope then it must stay at that location untill pickup.
-This became unrealizble - by now we realized that this cannot be enforced in the case that priority mode is on - there can be a state where the drone's local conditions for a pickup (at location, there's a request waiting and has space in inventory),
-are not enough to enforce a pickup - since a global condition - such as priority - can disqualify those conditions.
-Compute time - once we solved the first issue, we encounted that adding this feature to the main specification increased the computing time tremendously.
-The simple soultion was to strip the specification of features - which can be adjusted to the GUI.
+Unrealizabilty: our initial attempt to make this feature was to add guarantees that when the drone has the correct conditions to pick up a waiting package/envelope at a house
+then it must stay at that house untill pickup.
 
-Triggers - 
-When developing the Triggers variant of the spec. we found it very difficult to attain complex and rich requirements
-using triggers only.
-Once the rule consisted of regular expressions that indicate more than the drone's location it was made either unrealizable or did not achieve the expected results.
-As we still wanted to have a variant using triggers, we did come up with simple, yet meaningful, uses of this spec. feature.
+1) Priority - Firstly this became unrealizble - we realized that this cannot be enforced in the case that priority mode is on,
+there can be a state where the drone's local conditions for a pickup (at location, there's a request waiting and has space in inventory),
+are not enough to enforce a pickup - since a global condition - such as priority - can disqualify those conditions.
+We solved the problem by comment out priority mode, but we also could change the guarantee to:
+gar G (!priorityMode | priorityCap=0 | !packageWaitingInWarehouse) & atHouse1 & waitingPackageOutHouse1 & 
+			((!envelopeRequests[0] & roomForPickupPackage) |(envelopeRequests[0] & roomForPickupEnvelope)) -> stay;
+To keep computing times short, we chose the former solution.
+2) Dropoff - we found another conflict in behavior, in a previous drop-off system, that when the drone has both a package and an envelope to drop off,
+System can only decide on a single dropOffThisState value.
+Regularly this is made realizable since the drone can decide to only carry either house packages OR house envelopes.
+But on must-pick-up this cannot happen because it needs to carry both types if it picks up every request it runs into.
+Suggestion for solving this problem, generally as well as in the main specification:
+gar G dropOffThisState = DROPOFF_AT_WH_ENVELOPE iff atWarehouse & totalEnvelopesToWH > 0 & droneToWarehouseCap = 0;
+ i.e. prioritizing packages drop-off over envelopes at the warehouse.
+3) Warehouse - we tried to implement this behavior for warehouse pick ups as well, but this was unrealizable, and we could not find a core (compute time) / explaination to that case.
+
+LessMoves:
+Adding a trigger guarantee that asks the drone to make a pickup in 3 steps, if you just made a dropoff and there is a request waiting.
+This made the specification unrealizable, but we could no find a core (compute time) / explaination to that case.
+
+GUI:
+Changing requests type "last-second":
+The GUI had an edge case on house pickups:
+when the drone is moving to a house and making a pickup of a request, another request to that house of a different type could be made such that
+it was updated on the GUI but not to the controller.
+For example, if the drone is just now at the animation of picking up a package at house1, a user can request an envelope to house1 such that
+if timed correctly it can appear on screen as the drone "picked up an envelope" although the controller actually picked the package that was there before.
+In order to keep the ability to change requests types in general,
+this was solved by trashing requests for a house were a pickup is currently made (i.e. PickUpThisState is true for that house).
+All other requests can still be made.
+
+Vacuity:
+In general, we had difficulties to compute a vacuity check of our main specification file.
+

@@ -29,12 +29,15 @@ Front-end:
 * Add Modularity Features (GUI):
 ** Upon program start and based on the current spec. synthesized - adjust the features to be shown on the GUI (priority, winds, energy).
 ** This is done by a pop-up window at the start of the program.
+* Changed the PickUpThisState and DropOffThisState types to be Enums.
+* (Sprint4) Changed to control panel styling.
 
 
 Specification:
 * Create the basic Drone mechanism : Request Delivery, Pickup , Drop-off packages from/to houses and warehouse.
 * Implemented a capacity and inventory management system
 * Variant (MustDropoff) : implemented a controller that must drop-off all items for a destination upon entering that location.
+NoMustDropOff was added as a variant (disabling this behavior).
 * Implement a 'Charging' mechanism: 
 s.t. the drone can make an at most X amount of pickups without being charged (returning to the charging station)
 * Implement 'Priority Mode' - an environment variable that when is true (i.e. 'Priority Mode' is on) we change our pickup policy:
@@ -45,13 +48,22 @@ s.t. the drone can make an at most X amount of pickups without being charged (re
 * Implement 'Strong Winds' environment - forbids drone's movement diagonally.
 * Added 'envelopes' - light-weight packages.
 * Integrated 'Must-Drop-Off' feature to the main specification.
+* (Sprint4) Changed the monitors system to an assumption-based system:
+** Instead of monitors to keep track of waiting requests, we included environment assumption s.t. a request is true untill it is picked up. 
+* Changed the PickUpThisState and DropOffThisState types to be Enums.
+* Added to the Main variant a functionality s.t. if drone has no requests waiting or packages to deliver it stays put.
 
-* Variants:
+* Added Variants (sprint4):
 
-** Added 'Triggers' specification variant.
-*** Includes a simple use of triggers to enforce specific movement of the drone:
-**** If charging (and did not come from warehouse) - pass by the warehouse.
-**** "House visit fairness" - If at a house, after 2 "safety" states (for pickup/drop-off) , do not visit the same house for at least 5 states.
+** Added 'LessMoves' specification variant.
+*** This variant attemps to make fewer drone movement steps, at certain situations: 
+**** When drone has no more tasks (no requests nor drop-offs) - it returns to the warehouse.
+**** Don't stagger in a house - when visiting a house, after 1 safety state for stocking,
+do not visit that house for at least 4 states.
+**** After every pickup Drone must drop off that package/envelope after at most 2 other steps.
+**** Drone must drop off a package/envelope upon arriving to its destination.
+**** Features included: energy 
+*** In addition, we added an unrealizable version we encountered.
 
 ** Added 'Charge only when needed' specification variant.
 *** Do not pass by the charging station unless some amount of eneregy had been used.
@@ -61,7 +73,9 @@ s.t. the drone can make an at most X amount of pickups without being charged (re
 *** In this spec. if the drone is at a house where there's a package/envelope waiting, and he has the capabilty to pick it up - then it must do so.
 *** Since this guarantee added to the main spec. increased computing time significantly (about an hour), we created basic option:
 **** A basic drone spec. file (no priority, winds nor energy) with the added functionality (about 6 min. of compute time).
-*** In addition, an unrealizable version we encountered.
+*** In addition, we added an unrealizable versions we encountered.
+*** If charging (and did not come from warehouse) - pass by the warehouse.
+**** Features included: energy & winds.
 
 * Add Modularity Features (Specification):
 ** Since we built our main spec. with 3 non-basic features (priority, winds, energy) that are non-dependent, we wanted to add the user the ability to turn them on/off easily.

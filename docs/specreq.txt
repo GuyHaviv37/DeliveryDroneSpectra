@@ -1,58 +1,58 @@
 Assumptions:
 
-* At initial state - there are no package delivery requests (from all houses and the warehouse).
+* At initial state - there are no package/envelope delivery requests (from all houses and the warehouse).
 * At initial state - Priority Mode and Winds Mode are off.
 
-Monitors:
-* After a request, the packages is waiting to be picked up , until the drone actually picks it up.
-** There is an implicit assumption made, that every request for (src,dest) is made when there is a waiting package of type (src,dest),
-the packages are "aggregated" - i.e they are now considered as ONE package waiting to be picked up.
+* Global - when a any request is made, the request variable is on until the drone picks it up.
 
 Guarantees:
 
-* At initial state - drone starts at Charging Station location.
+* At initial state - drone starts at Warehouse location.
 * At initial state - the drone does not pick-up or drop-off any package.
-* At each state the drone must make a mobility decision , i.e. whether to move a cell (and to which one) or stay put.
+
 
 REQUESTS / PICKUP / DROP-OFF MECHANISM
-* A package (src,dest) is PICKED-UP only if the drone is at (src), there is a packages waiting at (src) and there's room in the drone's inventory.
-* A packaged being picked up also guarantees that there is no longer a package waiting at (src) , unless another request was instantly made.
-* The system guarantee that for each waiting package, the drone will respond with a pickup of that package.
-* A package (src,dest) is DROPPED-OFF only if the drone is at (dest) and there is a packaged intended for (dest) at the drone's inventory.
-* The system guarantee that while there are packages intended for (dest) at the drone's inventory,
+* A request (src,dest) is PICKED-UP only if the drone is at (src), there is a request waiting at (src) and there's room in the drone's inventory (of the proper type - package/envelope).
+* The system guarantees that for each waiting request, the drone will respond with a pickup of that request.
+* A request (src,dest) is DROPPED-OFF if and only if the drone is at (dest) and there is a package/envelope intended for (dest) at the drone's inventory.
+* The system guarantees that while there are packages/envelopes intended for (dest) at the drone's inventory,
 the drone will respond by going to (dest)'s location.
-* "Must-Drop-Off" when the drone is at a location for which it has a package to deliver - it must drop-off that package.
 * (Variant) "Must-Pickup" - if the drone is at a house where there's a package/envelope waiting, and he has the capabilty to pick it up - then it must do so.
-** This is implemented by adding a guarantee to each house pickup conditions set.
+** This is implemented by adding a guarantee to each house.
+
+MOVEMENT:
+* At each state the drone must make a mobility decision , i.e. whether to move a cell (and to which one) or stay put.
+** If the drone has no tasks at hand (no requests , no packages/envelopes on it to deliver) it must stay put.
+* At the 'Must-Pickup' variant - if the drone is at the charging station, if he did not come from the warehouse, he must pass by the warehouse.
+* At 'LessMoves' variant:
+** When drone has no more tasks (no requests nor drop-offs) - it returns to the warehouse.
+** Don't stagger in a house - when visiting a house, after 1 safety state for stocking, do not visit that house for at least 4 states.
+** After every pickup Drone must drop off that package/envelope after at most 2 other steps.
 
 INVENTORY MANAGEMENT:
 The entire inventory management is implemented with counters:
-*totalPackages - # of packages on the drone , incremented at pickup and decremented at drop-off (of any package)
-*(dest)Capacity - # of packages on the drone -intended for (dest)- . incremented when picking up a package to (dest)
+*totalPackages/Envelopes - # of packages/envelopes on the drone , incremented at pickup and decremented at drop-off.
+*(dest)Capacity - # of packages on the drone -intended for (dest)-  incremented when picking up a package to (dest)
 and decremented at drop-off.
 
 ENVELOPES:
-A new kind of "packages" - 'envelopes'
-* This is implemented by a new environment boolean array s.t. if index X is TRUE then package requests at house (X+1) is an envelope.
-* Have their own inventory on the drone - implemented by a new counter.
+A different type of request:
+* This is implemented by an environment boolean array s.t. if index X is TRUE then package requests at house (X+1) is an envelope.
+* Have their own inventory on the drone - implemented by a counter.
 * Do not count as 'energy-wasters' - does not decrement the energy counter.
 * Note : This is only implemented from Houses.
 ** A house can request a delivery to either a package OR an envelope (only the last request will made will be satisfied). 
 
 WINDS LOGIC:
-* The drone can only move sideways when the winds env variable is true
+* The drone can only move sideways when the winds env variable is true.
 
 PRIORITY HANDLING:
 * When the priority mode env variable is true:
-The drone can pick up at most PRIORITY_CAP number of packages from Houses before it makes a Warehouse pickup.
+The drone can pick up at most PRIORITY_CAP number of requests from Houses before it makes a Warehouse pickup.
 
 BATTERY & ENERGY:
-* The drone can make at most MAX_ENERGY pickups before it passes through the Charging Station.
-(Variant) * "Charge-When-Needed" - Do not pass by the charging station unless some amount of eneregy had been used.
+* The drone can make at most MAX_ENERGY package pickups before it passes through the Charging Station.
+* (Variant) "Charge-When-Needed" - Do not pass by the charging station unless some amount of eneregy had been used.
 ** This is implemented by a single guarantee s.t. you can be at the chargining station only if the sys variable energy is at a ceration threshold.
-
-(Variant) TRIGGERS:
-* If charging (and did not come from warehouse) - pass by the warehouse.
-* "House visit fairness" - If at a house, after 2 "safety" states (for pickup/drop-off) , do not visit the same house for at least 5 states.
 
 

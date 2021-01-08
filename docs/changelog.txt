@@ -2,12 +2,17 @@ From Third Sprint:
 
 * Added more scenarios.
 * Added Tooltips to scenario menu (information about each scenario), as well as general buttons.
-* Added 'Triggers' specification variant.
+* Added 'LessMoves' specification variant.
 * Added 'Charge only when needed' specification variant (that can be parameterized).
 * Added 'MustPickup' specification variants ("basic" - based on the most basic specification).
-** In addition, an unrealizable version we encountered.
+** In addition, we added all unrealizable versions we encountered.
 * Added GUI Winds animation.
 * Added 'Random Request' abilities.
 * Added 'Fast Forward Step' functionality to scenarios.
 * Added Modularity GUI and Spec. features.
+* Changed monitors system to new environment assumptions.
+* Added Enums to both the specification and GUI for PickUpThisState, DropOffThisState.
+* Added the Main variant functionality to stay put if drone has not tasks left.
+* Changed the must-drop-off guarantees s.t. there is not confilct between dropping off packages and envelopes in the warehouse.
+** This is fully explained in the issues file.
 
