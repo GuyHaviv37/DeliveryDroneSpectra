@@ -20,7 +20,10 @@ gar G dropOffThisState = DROPOFF_AT_WH_ENVELOPE iff atWarehouse & totalEnvelopes
 
 LessMoves:
 Adding a trigger guarantee that asks the drone to make a pickup in 3 steps, if you just made a dropoff and there is a request waiting.
-This made the specification unrealizable, but we could no find a core (compute time) / explaination to that case.
+This made the specification unrealizable, since there exists a scenario when there is a request waiting after a drop-off but the battery is empty,
+so the drone must pass at the charging station before pickup, a process that can take more then 3 steps.
+A solution that can be made is to change the trigger to 7 steps - and this is realizable - but realizability check is over 30mins, so we decided to exclude this guarantee.
+
 
 GUI:
 Changing requests type "last-second":

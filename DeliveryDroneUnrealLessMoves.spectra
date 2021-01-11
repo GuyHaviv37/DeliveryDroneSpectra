@@ -2,7 +2,10 @@ import "./imports/DwyerPatterns.spectra"
 
 spec DeliveryDroneUnrealLessMoves //UnRealizable
 /*This specification is unrealizable:
- * Because of line 179 - after drop off, if there is a request, pick it up in at most 3 steps. 
+ * Because of line 182 - added trigger: after drop off, if there is a request, pick it up in at most 3 steps.
+ * There exists a scenario when there is a request waiting after a drop-off but the battery is empty,
+ * so the drone must pass at the charging station before pickup, a process that can take more then 3 steps.
+ * A solution that can be made is to change the trigger to 7 steps - and this is realizable - but realizability check is over 30mins, so we decided to exclude this guarantee. 
  */
 /* ======================================== TYPES ==============================================*/
 type Cord = Int(0..GRID_DIM);
